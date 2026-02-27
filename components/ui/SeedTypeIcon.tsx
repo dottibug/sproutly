@@ -1,20 +1,22 @@
 import { View, Text, StyleSheet } from 'react-native';
-import type { SeedType } from '../lib/seedCatalog';
+import type { SeedType } from '../../lib/seedCatalog';
+import { colors } from '../../styles/theme';
 
 type SeedTypeIconProps = {
   readonly type: SeedType;
   readonly size: 'small' | 'medium';
 };
 
+// Renders a seed type icon (colored badge with initials of the seed type). Must pass in the seed type as a prop. Default size is medium.
 export default function SeedTypeIcon({ type, size = 'medium' }: SeedTypeIconProps) {
   const seedTypeColor = {
-    Vegetable: '#4B927A', // green: #4B927A
-    Flower: '#DE86BF', // pink #DE86BF
-    Fruit: '#D65564', // red #D65564
-    Herb: '#6D5379', // lavender: #6D5379
+    Vegetable: colors.teal,
+    Flower: colors.pink,
+    Fruit: colors.red,
+    Herb: colors.lavender,
   };
 
-  const seedTypeAbbreviation = {
+  const seedTypeInitials = {
     Vegetable: 'V',
     Flower: 'FL',
     Fruit: 'FR',
@@ -23,21 +25,21 @@ export default function SeedTypeIcon({ type, size = 'medium' }: SeedTypeIconProp
 
   const backgroundColor = seedTypeColor[type];
   const iconSize = size === 'small' ? 24 : 32;
-  const abbreviation = seedTypeAbbreviation[type];
-  const abbreviationSize = size === 'small' ? 12 : 14;
-  const abbreviationLineHeight = size === 'small' ? 24 : 32;
+  const initials = seedTypeInitials[type];
+  const initialsSize = size === 'small' ? 12 : 14;
+  const initialsLineHeight = size === 'small' ? 24 : 32;
   const seedTypeTextSize = size === 'small' ? 14 : 16;
 
   const iconStyle = [styles.icon, { backgroundColor: backgroundColor, width: iconSize, height: iconSize }];
 
-  const abbreviationStyle = [styles.abbreviation, { fontSize: abbreviationSize, lineHeight: abbreviationLineHeight }];
+  const initialsStyle = [styles.abbreviation, { fontSize: initialsSize, lineHeight: initialsLineHeight }];
 
   const seedTypeTextStyle = [styles.seedTypeText, { fontSize: seedTypeTextSize }];
 
   return (
     <View style={styles.container}>
       <View style={iconStyle}>
-        <Text style={abbreviationStyle}>{abbreviation}</Text>
+        <Text style={initialsStyle}>{initials}</Text>
       </View>
       <Text style={seedTypeTextStyle}>{type}</Text>
     </View>
@@ -53,9 +55,9 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   abbreviation: {
-    textAlign: 'center',
-    fontWeight: 'bold',
     color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   seedTypeText: {
     marginLeft: 8,

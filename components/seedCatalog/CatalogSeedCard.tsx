@@ -1,8 +1,9 @@
-import { View, Text, Image, StyleSheet, Pressable } from 'react-native';
-import type { SeedCatalogItem } from '../lib/seedCatalog';
+import { View, Image, StyleSheet, Pressable } from 'react-native';
+import type { SeedCatalogItem } from '../../lib/seedCatalog';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import SeedTypeIcon from './SeedTypeIcon';
+import SeedTypeIcon from '../ui/SeedTypeIcon';
 import { useRouter } from 'expo-router';
+import Heading from '../ui/Heading';
 
 type CatalogSeedCardProps = {
   readonly seed: SeedCatalogItem;
@@ -20,9 +21,9 @@ export default function CatalogSeedCard({ seed }: CatalogSeedCardProps) {
 
         {/* Seed info */}
         <View style={styles.seedInfo}>
-          <Text style={styles.name}>
+          <Heading size="medium">
             {seed.name} {seed.category} {seed.bean_type ? `(${seed.bean_type})` : ''}
-          </Text>
+          </Heading>
           <View style={styles.seedType}>
             <SeedTypeIcon type={seed.type} size="small" />
           </View>
@@ -63,10 +64,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     marginLeft: 12,
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   seedType: {
     alignItems: 'center',

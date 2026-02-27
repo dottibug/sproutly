@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native';
+import { colors } from '../../styles/theme';
 
 export type exposureType = 'Full sun' | 'Part sun' | 'Full sun to part shade' | 'Part shade' | 'Shade';
 
@@ -6,6 +7,7 @@ type ExposureProps = {
   readonly exposure: exposureType;
 };
 
+// Renders a badge with the required sun exposure. Must pass in the exposure as a prop.
 export default function Exposure({ exposure }: ExposureProps) {
   return (
     <View style={styles.container}>
@@ -16,7 +18,7 @@ export default function Exposure({ exposure }: ExposureProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#669BBC', // blue #669BBC
+    backgroundColor: colors.blue,
     borderRadius: 50,
     padding: 8,
   },
