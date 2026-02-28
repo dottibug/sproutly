@@ -1,11 +1,11 @@
 import { View, Text, StyleSheet } from 'react-native';
 
-// Main screen 'My Seeds' tab
-export default function MySeedsScreen() {
+// Main screen 'Home' tab
+export default function Home() {
   return (
     <View style={styles.container}>
       <Text>Sproutly App</Text>
-      <Text style={styles.title}>My Seeds</Text>
+      <Text style={styles.title}>Home</Text>
       <Text>User seed collection goes here</Text>
     </View>
   );

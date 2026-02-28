@@ -1,12 +1,13 @@
 import { View, Text, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Reminders tab screen
 export default function RemindersScreen() {
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Reminders</Text>
       <Text>Reminders will go here.</Text>
-    </View>
+    </SafeAreaView>
   );
 }
 
