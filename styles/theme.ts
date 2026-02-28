@@ -5,6 +5,7 @@ export type Color = 'primary' | 'secondary';
 export const colors = {
   primary: '#000',
   secondary: '#666',
+  white: '#FFF',
   gray: '#666',
   hunterGreen: '#38684C', // #38684C
   blue: '#669BBC', // blue #669BBC
