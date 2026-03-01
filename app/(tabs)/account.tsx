@@ -13,7 +13,7 @@ export default function AccountScreen() {
     console.log('Signing out');
     await signOut();
     console.log('Signed out');
-    router.replace('/(auth)');
+    router.replace('/(auth)/');
     console.log('Redirected to auth');
   };
 

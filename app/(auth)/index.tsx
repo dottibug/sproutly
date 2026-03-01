@@ -35,7 +35,7 @@ export default function SignIn() {
 
     try {
       await signIn(usernameTrim, pin);
-      router.replace('/(tabs)');
+      router.replace('/(tabs)/home');
     } catch (error) {
       Alert.alert('Sign in failed', error instanceof Error ? error.message : 'Please check username and PIN');
     } finally {

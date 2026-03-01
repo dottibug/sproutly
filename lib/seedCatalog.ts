@@ -26,6 +26,30 @@ export type SeedCatalogItem = {
   image: string;
 };
 
+export type UserSeedItem = {
+  id: string;
+  catalog_seed_id: string | null;
+  custom_seed_id: string | null;
+  name: string;
+  sku: string;
+  type: SeedType;
+  bean_type: string | null;
+  category: string;
+  latin: string | null;
+  difficulty: string | null;
+  exposure: string | null;
+  matures_in_days: number | null;
+  matures_under_days: number | null;
+  description: string | null;
+  timing: string | null;
+  starting: string | null;
+  growing: string | null;
+  harvest: string | null;
+  companion_planting: string | null;
+  image: string;
+  notes: string | null;
+};
+
 // Get the cached seed catalog from AsyncStorage
 async function getCachedSeedCatalog(): Promise<SeedCatalogItem[] | null> {
   try {

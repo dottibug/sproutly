@@ -11,7 +11,7 @@ export default function TabsLayout() {
     <Tabs screenOptions={{ tabBarActiveTintColor: 'purple', tabBarInactiveTintColor: 'gray', headerShown: false }}>
       {/* Home*/}
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
           title: 'Home',
           tabBarLabel: 'Home',

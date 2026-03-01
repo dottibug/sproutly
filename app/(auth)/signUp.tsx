@@ -31,7 +31,7 @@ export default function SignUp() {
 
     try {
       await signUp(usernameTrim);
-      router.replace('/(tabs)');
+      router.replace('/(tabs)/home');
     } catch (error) {
       Alert.alert('Sign up failed', error instanceof Error ? error.message : 'Username may be taken already');
     } finally {

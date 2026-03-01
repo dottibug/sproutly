@@ -31,4 +31,9 @@ const SMALL_SPACING = 8;
 const MEDIUM_SPACING = 16;
 const LARGE_SPACING = 24;
 
-export const sharedStyles = StyleSheet.create({});
+export const appStyles = StyleSheet.create({
+  resultsList: {
+    flex: 1,
+    gap: 16,
+  },
+});

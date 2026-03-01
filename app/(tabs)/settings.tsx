@@ -9,6 +9,7 @@ export default function SettingsScreen() {
       <Text>Settings will go here.</Text>
       <Text>Dark mode</Text>
       <Text>Quick filters</Text>
+      <Text>Possibly basic vs detailed seed cards on the user collection screen</Text>
     </SafeAreaView>
   );
 }
