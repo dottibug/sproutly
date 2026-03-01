@@ -14,7 +14,7 @@ const LOAD_START = 'LOAD_START';
 const LOAD_SUCCESS = 'LOAD_SUCCESS';
 const LOAD_ERROR = 'LOAD_ERROR';
 const ADD_SEED = 'ADD_SEED';
-const REMOVE_SEED = 'REMOVE_SEED';
+const DELETE_SEED = 'DELETE_SEED';
 
 // State
 type UserSeedsState = {
@@ -29,7 +29,7 @@ type UserSeedsAction =
   | { type: typeof LOAD_SUCCESS; payload: UserSeedItem[] }
   | { type: typeof LOAD_ERROR; payload: string }
   | { type: typeof ADD_SEED; payload: UserSeedItem }
-  | { type: typeof REMOVE_SEED; payload: string };
+  | { type: typeof DELETE_SEED; payload: string };
 
 // Initial state
 const initialState: UserSeedsState = {
@@ -82,7 +82,7 @@ function userSeedsReducer(state: UserSeedsState, action: UserSeedsAction): UserS
           },
         ],
       };
-    case REMOVE_SEED:
+    case DELETE_SEED:
       const catalogSeedId = action.payload;
       return { ...state, seeds: state.seeds.filter((s) => s.catalog_seed_id !== catalogSeedId) };
     default:
@@ -95,6 +95,8 @@ type UserSeedsContextValue = {
   seeds: UserSeedItem[];
   loading: boolean;
   error: string | null;
+  addSeed: (seed: UserSeedItem) => void;
+  deleteSeed: (seed: UserSeedItem) => void;
   refresh: () => Promise<void>;
 };
 
@@ -195,9 +197,9 @@ export function UserSeedsProvider({ children }: { children: React.ReactNode }) {
     [profile?.id],
   );
 
-  const removeSeed = useCallback(
+  const deleteSeed = useCallback(
     (seed: UserSeedItem) => {
-      dispatch({ type: REMOVE_SEED, payload: seed.id });
+      dispatch({ type: DELETE_SEED, payload: seed.id });
 
       supabase
         .from('user_seed_collection')
@@ -231,10 +233,10 @@ export function UserSeedsProvider({ children }: { children: React.ReactNode }) {
       loading: state.loading,
       error: state.error,
       addSeed,
-      removeSeed,
+      deleteSeed,
       refresh: loadUserSeeds,
     }),
-    [state.seeds, state.loading, state.error, addSeed, removeSeed, loadUserSeeds],
+    [state.seeds, state.loading, state.error, addSeed, deleteSeed, loadUserSeeds],
   );
 
   return <UserSeedsContext.Provider value={value}>{children}</UserSeedsContext.Provider>;

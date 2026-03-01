@@ -26,7 +26,7 @@ export default function Heading({ children, color = 'primary', size = 'medium', 
 
 const styles = StyleSheet.create({
   smallHeading: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   mediumHeading: {

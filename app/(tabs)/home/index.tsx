@@ -7,6 +7,8 @@ import Heading from '../../../components/ui/Heading';
 import UserSeedList from '../../../components/ui/seedList/UserSeedList';
 import { appStyles } from '../../../styles/theme';
 
+// TODO: change scrollview to flatlist?? (ditto in catalog screen)
+
 const LOAD_MESSAGE = 'Loading your seeds…';
 const LIST_TITLE = 'My Seeds';
 const EMPTY_SEEDS_LIST = 'Your collection is empty. Add seeds to get started.';

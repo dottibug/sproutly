@@ -15,7 +15,7 @@ export default function SeedCardInfo({ name, category, beanType, type }: SeedCar
 
   return (
     <View style={styles.seedInfo}>
-      <Heading size="medium">{heading}</Heading>
+      <Heading size="small">{heading}</Heading>
       <View style={styles.seedType}>
         <SeedTypeIcon type={type} size="small" />
       </View>
