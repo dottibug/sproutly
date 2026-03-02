@@ -1,5 +1,5 @@
-import type { UserSeedItem } from '../../../lib/seedCatalog';
-import UserSeedCard from '../../userSeeds/UserSeedCard';
+import type { UserSeedItem } from '../../lib/seedCatalog';
+import UserSeedCard from './UserSeedCard';
 import { Fragment } from 'react';
 
 type UserSeedListProps = {

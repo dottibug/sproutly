@@ -1,8 +1,9 @@
 import type { UserSeedItem } from '../../lib/seedCatalog';
 import { useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { Pressable } from 'react-native';
 import SeedCard from '../ui/seedCard/SeedCard';
 import { useUserSeeds } from '../../lib/contexts/UserSeedsContext';
+import SeedCardAction from '../ui/seedCard/SeedCardAction';
 
 type UserSeedCardProps = {
   readonly seed: UserSeedItem;
@@ -23,5 +24,31 @@ export default function UserSeedCard({ seed }: UserSeedCardProps) {
     console.log('User seed card pressed');
   };
 
-  return <SeedCard cardType="user" seed={seed} onPress={handlePress} />;
+  const handleLongPress = () => {
+    setShowDeleteConfirmation(true);
+    console.log('Long press detected');
+  };
+
+  const handleCancel = () => {
+    setShowDeleteConfirmation(false);
+    console.log('Delete confirmation cancelled');
+  };
+
+  const handleDelete = () => {
+    // deleteSeed(seed);
+    setShowDeleteConfirmation(false);
+    console.log('Delete confirmation confirmed');
+  };
+
+  return (
+    <Pressable onLongPress={handleLongPress} delayLongPress={500}>
+      {/* Show the seed card */}
+      {!showDeleteConfirmation && <SeedCard cardType="user" seed={seed} onPress={handlePress} />}
+
+      {/* Show the delete confirmation */}
+      {showDeleteConfirmation && (
+        <SeedCardAction seedName={seed.name} seedCategory={seed.category} action="Delete" onCancel={handleCancel} onAction={handleDelete} />
+      )}
+    </Pressable>
+  );
 }

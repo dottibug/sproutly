@@ -1,11 +1,11 @@
-import { ScrollView } from 'react-native';
+import { ScrollView, Text, StyleSheet } from 'react-native';
 import { useUserSeeds } from '../../../lib/contexts/UserSeedsContext';
 import Loading from '../../../components/ui/Loading';
 import ScreenMessage from '../../../components/ui/ScreenMessage';
 import ScreenContainer from '../../../components/ui/ScreenContainer';
 import Heading from '../../../components/ui/Heading';
-import UserSeedList from '../../../components/ui/seedList/UserSeedList';
-import { appStyles } from '../../../styles/theme';
+import UserSeedList from '../../../components/userSeeds/UserSeedList';
+import { appStyles, colors } from '../../../styles/theme';
 
 // TODO: change scrollview to flatlist?? (ditto in catalog screen)
 
@@ -25,6 +25,7 @@ export default function Home() {
       <Heading size="medium" marginVertical={18} uppercase>
         {LIST_TITLE}
       </Heading>
+      {!emptySeedsList && <Text style={styles.deleteHint}>Long press to delete a seed</Text>}
       <ScrollView style={appStyles.resultsList}>
         {emptySeedsList && <ScreenMessage message={EMPTY_SEEDS_LIST} />}
         <UserSeedList seeds={seeds} />
@@ -32,3 +33,13 @@ export default function Home() {
     </ScreenContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  deleteHint: {
+    fontSize: 14,
+    color: colors.secondary,
+    marginTop: -10,
+    marginBottom: 24,
+    fontStyle: 'italic',
+  },
+});

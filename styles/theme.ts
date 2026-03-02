@@ -7,12 +7,20 @@ export const colors = {
   secondary: '#666',
   white: '#FFF',
   gray: '#666',
+  mediumGray: '#999',
+  lightGray: '#ccc',
   hunterGreen: '#38684C', // #38684C
   blue: '#669BBC', // blue #669BBC
   teal: '#4B927A', // teal #4B927A
   pink: '#DE86BF', // pink #DE86BF
   red: '#D65564', // red #D65564
   lavender: '#6D5379', // lavender #6D5379
+};
+
+export const buttonColorMap = {
+  primary: colors.hunterGreen,
+  secondary: colors.mediumGray,
+  danger: colors.red,
 };
 
 export const typography = StyleSheet.create({
