@@ -18,7 +18,7 @@ export default function UserSeedCard({ seed }: UserSeedCardProps) {
   // State
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
-  const { deleteSeed } = useUserSeeds();
+  //   const { deleteSeed } = useUserSeeds();
 
   const handlePress = () => {
     console.log('User seed card pressed');

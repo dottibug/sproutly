@@ -15,6 +15,8 @@ const EMPTY_SEEDS_LIST = 'Your collection is empty. Add seeds to get started.';
 
 // Main screen 'Home' tab
 export default function Home() {
+  console.log('Home screen rendered');
+
   const { seeds, loading, error } = useUserSeeds();
   if (loading) return <Loading message={LOAD_MESSAGE} />;
   if (error) return <ScreenMessage message={error} />;

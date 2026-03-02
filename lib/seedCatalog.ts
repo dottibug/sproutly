@@ -5,7 +5,7 @@ const CATALOG_STORAGE_KEY = '@sproutly/seed_catalog';
 
 export type SeedType = 'Vegetable' | 'Flower' | 'Fruit' | 'Herb';
 
-export type SeedCatalogItem = {
+export type CatalogSeedItem = {
   id: string;
   name: string;
   sku: string;
@@ -51,12 +51,12 @@ export type UserSeedItem = {
 };
 
 // Get the cached seed catalog from AsyncStorage
-async function getCachedSeedCatalog(): Promise<SeedCatalogItem[] | null> {
+async function getCachedSeedCatalog(): Promise<CatalogSeedItem[] | null> {
   try {
     const data = await AsyncStorage.getItem(CATALOG_STORAGE_KEY);
     if (!data) return null;
 
-    const parsed = JSON.parse(data) as SeedCatalogItem[];
+    const parsed = JSON.parse(data) as CatalogSeedItem[];
 
     // Check that the parsed data is an array
     return Array.isArray(parsed) ? parsed : null;
@@ -67,12 +67,12 @@ async function getCachedSeedCatalog(): Promise<SeedCatalogItem[] | null> {
 }
 
 // Set the cached seed catalog in AsyncStorage
-async function setCachedSeedCatalog(items: SeedCatalogItem[]): Promise<void> {
+async function setCachedSeedCatalog(items: CatalogSeedItem[]): Promise<void> {
   await AsyncStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(items));
 }
 
 // Fetch the seed catalog from the database (alphabetical order by name)
-async function fetchSeedCatalogFromDatabase(): Promise<SeedCatalogItem[]> {
+async function fetchSeedCatalogFromDatabase(): Promise<CatalogSeedItem[]> {
   const { data, error } = await supabase
     .from('seed_catalog')
     .select(
@@ -81,11 +81,11 @@ async function fetchSeedCatalogFromDatabase(): Promise<SeedCatalogItem[]> {
     .order('name', { ascending: true });
 
   if (error) throw error;
-  return (data ?? []) as SeedCatalogItem[];
+  return (data ?? []) as CatalogSeedItem[];
 }
 
 // Get the seed catalog from the database or cache. Only fetches from database if the cache is empty. Caching limits the number of database queries and demonstrates offline capability.
-export async function getSeedCatalog(): Promise<SeedCatalogItem[]> {
+export async function getSeedCatalog(): Promise<CatalogSeedItem[]> {
   const cached = await getCachedSeedCatalog();
 
   if (cached && cached.length > 0) return cached;

@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import type { SeedCatalogItem } from '../../lib/seedCatalog';
+import type { CatalogSeedItem } from '../../lib/seedCatalog';
 import SeedCard from '../ui/seedCard/SeedCard';
 import { Pressable } from 'react-native';
 import { useState } from 'react';
@@ -7,14 +7,14 @@ import { useUserSeeds } from '../../lib/contexts/UserSeedsContext';
 import SeedCardAction from '../ui/seedCard/SeedCardAction';
 
 type CatalogSeedCardProps = {
-  readonly seed: SeedCatalogItem;
+  readonly seed: CatalogSeedItem;
 };
 
 export default function CatalogSeedCard({ seed }: CatalogSeedCardProps) {
   // State
   const [showAddConfirmation, setShowAddConfirmation] = useState(false);
 
-  const { addSeed } = useUserSeeds();
+  const { addSeedFromCatalog } = useUserSeeds();
   const router = useRouter();
 
   const handlePress = () => router.push(`/catalog/${seed.id}`);
@@ -30,9 +30,9 @@ export default function CatalogSeedCard({ seed }: CatalogSeedCardProps) {
   };
 
   const handleAdd = () => {
-    // addSeed(seed);
+    addSeedFromCatalog(seed);
     setShowAddConfirmation(false);
-    console.log('Add confirmation confirmed');
+    console.log('✅ Seed added to collection');
   };
 
   return (

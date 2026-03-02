@@ -1,12 +1,12 @@
 import { View, StyleSheet, Pressable } from 'react-native';
 import SeedCardImage from './SeedCardImage';
-import type { SeedCatalogItem, UserSeedItem } from '../../../lib/seedCatalog';
+import type { CatalogSeedItem, UserSeedItem } from '../../../lib/seedCatalog';
 import SeedCardInfo from './SeedCardInfo';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 type SeedCardProps = {
   readonly cardType: 'user' | 'catalog';
-  readonly seed: UserSeedItem | SeedCatalogItem;
+  readonly seed: UserSeedItem | CatalogSeedItem;
   readonly onPress: () => void;
 };
 
