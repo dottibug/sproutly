@@ -18,7 +18,7 @@ export default function UserSeedCard({ seed }: UserSeedCardProps) {
   // State
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
-  //   const { deleteSeed } = useUserSeeds();
+  const { deleteSeedByCatalogId } = useUserSeeds();
 
   const handlePress = () => {
     console.log('User seed card pressed');
@@ -31,13 +31,11 @@ export default function UserSeedCard({ seed }: UserSeedCardProps) {
 
   const handleCancel = () => {
     setShowDeleteConfirmation(false);
-    console.log('Delete confirmation cancelled');
   };
 
   const handleDelete = () => {
-    // deleteSeed(seed);
+    deleteSeedByCatalogId(seed);
     setShowDeleteConfirmation(false);
-    console.log('Delete confirmation confirmed');
   };
 
   return (
