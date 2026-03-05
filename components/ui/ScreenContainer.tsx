@@ -26,7 +26,6 @@ export default function ScreenContainer({ children, fullScreen = false }: Screen
 const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
-    justifyContent: 'center',
   },
   screenContainer: {
     flex: 1,

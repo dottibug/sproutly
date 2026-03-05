@@ -4,7 +4,6 @@ import { useSeedCatalog } from '../../../lib/contexts/SeedCatalogContext';
 import ScreenContainer from '../../../components/ui/ScreenContainer';
 import SeedDetails from '../../../components/seedDetails/SeedDetails';
 
-// TODO: Add the accordions for each section of the seed details
 // TODO: Allow the user to add the seed to their collection
 
 // Catalog seed details screen

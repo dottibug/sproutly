@@ -1,10 +1,9 @@
 import { ScrollView, Image, View, StyleSheet } from 'react-native';
 import { CatalogSeedItem, UserSeedItem } from '../../lib/seedCatalog';
-import Heading from '../ui/Heading';
-import SeedDetailSection from './SeedDetailSection';
-import SeedSKU from './SeedSku';
-import SeedBadges from './SeedBadges';
 import type { ExposureType } from '../../lib/seedCatalog';
+import Accordion from '../accordion/Accordion';
+import SeedQuickFacts from './SeedQuickFacts';
+import SeedHeader from './SeedHeader';
 
 type SeedDetailsProps = {
   readonly seed: CatalogSeedItem | UserSeedItem;
@@ -25,47 +24,30 @@ export default function SeedDetails({ seed, inUserCollection = false }: SeedDeta
   const action = inUserCollection ? 'Delete' : 'Add';
 
   return (
-    <ScrollView>
+    <ScrollView style={styles.scrollView}>
       <Image source={{ uri: seed.image }} style={styles.image} resizeMode="cover" />
 
-      <View style={styles.seedInfo}>
-        {/* Seed name */}
-        <Heading size="large">
-          {seed.name} {seed.category} {seed.bean_type ? `(${seed.bean_type})` : ''}
-        </Heading>
+      <View>
+        <SeedHeader
+          name={seed.name}
+          category={seed.category}
+          beanType={seed.bean_type}
+          seedSKU={seed.sku}
+          catalogId={seed.id}
+          inUserCollection={inUserCollection}
+          type={seed.type}
+          exposure={seed.exposure as ExposureType}
+        />
 
-        {/* SKU */}
-        <SeedSKU seedSKU={seed.sku} catalogId={seed.id} inUserCollection={inUserCollection} />
+        <Accordion title={DESCRIPTION} content={seed.description as string}>
+          <SeedQuickFacts maturesInDays={seed.matures_in_days} difficulty={seed.difficulty} />
+        </Accordion>
 
-        {/* Seed badges */}
-        <SeedBadges type={seed.type} exposure={seed.exposure as ExposureType} />
-
-        {/* Description */}
-        <SeedDetailSection title={DESCRIPTION} details={seed.description}>
-          {/* Matures in days */}
-          {seed.matures_in_days && (
-            <Heading size="small" color="secondary">
-              Matures in {seed.matures_in_days} days
-            </Heading>
-          )}
-
-          {/* Difficulty */}
-          {seed.difficulty && (
-            <Heading size="small" color="secondary">
-              Difficulty: {seed.difficulty}
-            </Heading>
-          )}
-        </SeedDetailSection>
-
-        {seed.timing && <SeedDetailSection title={TIMING} details={seed.timing} />}
-
-        {seed.starting && <SeedDetailSection title={STARTING} details={seed.starting} />}
-
-        {seed.growing && <SeedDetailSection title={GROWING} details={seed.growing} />}
-
-        {seed.harvest && <SeedDetailSection title={HARVEST} details={seed.harvest} />}
-
-        {seed.companion_planting && <SeedDetailSection title={COMPANION_PLANTING} details={seed.companion_planting} />}
+        {seed.timing && <Accordion title={TIMING} content={seed.timing} />}
+        {seed.starting && <Accordion title={STARTING} content={seed.starting} />}
+        {seed.growing && <Accordion title={GROWING} content={seed.growing} />}
+        {seed.harvest && <Accordion title={HARVEST} content={seed.harvest} />}
+        {seed.companion_planting && <Accordion title={COMPANION_PLANTING} content={seed.companion_planting} />}
       </View>
     </ScrollView>
   );
@@ -76,17 +58,8 @@ const styles = StyleSheet.create({
     height: 400,
     width: '100%',
   },
-  seedInfo: {
-    padding: 16,
-  },
-  sku: {
-    fontSize: 16,
-    color: '#666',
-    marginTop: 4,
-    marginBottom: 16,
-  },
-  badges: {
-    alignItems: 'center',
-    flexDirection: 'row',
+  scrollView: {
+    // flex: 1,
+    // marginBottom: 16,
   },
 });

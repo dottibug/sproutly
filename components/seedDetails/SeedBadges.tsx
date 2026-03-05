@@ -22,11 +22,7 @@ const styles = StyleSheet.create({
   badges: {
     alignItems: 'center',
     borderColor: '#ccc',
-    borderBottomWidth: 1,
-    borderTopWidth: 1,
     flexDirection: 'row',
-    marginBottom: 18,
-    paddingVertical: 18,
     gap: 8,
   },
   seedTypeAndExposure: {
