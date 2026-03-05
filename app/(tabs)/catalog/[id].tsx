@@ -1,7 +1,7 @@
 import { Text } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
 import { useSeedCatalog } from '../../../lib/contexts/SeedCatalogContext';
+import ScreenContainer from '../../../components/ui/ScreenContainer';
 import SeedDetails from '../../../components/seedDetails/SeedDetails';
 
 // TODO: Add the accordions for each section of the seed details
@@ -9,21 +9,21 @@ import SeedDetails from '../../../components/seedDetails/SeedDetails';
 
 // Catalog seed details screen
 export default function CatalogSeedDetailsScreen() {
-  const { id } = useLocalSearchParams();
+  const { id, inUserCollection } = useLocalSearchParams();
   const { seeds } = useSeedCatalog();
   const seed = seeds.find((s) => s.id === id);
 
   if (!seed) {
     return (
-      <SafeAreaView>
+      <ScreenContainer>
         <Text>Seed not found</Text>
-      </SafeAreaView>
+      </ScreenContainer>
     );
   }
 
   return (
-    <SafeAreaView edges={['bottom', 'left', 'right']}>
-      <SeedDetails seed={seed} />
-    </SafeAreaView>
+    <ScreenContainer fullScreen>
+      <SeedDetails seed={seed} inUserCollection={inUserCollection === 'true'} />
+    </ScreenContainer>
   );
 }

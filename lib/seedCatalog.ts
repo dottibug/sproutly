@@ -50,6 +50,8 @@ export type UserSeedItem = {
   notes: string | null;
 };
 
+export type ExposureType = 'Full sun' | 'Part sun' | 'Full sun to part shade' | 'Part shade' | 'Shade';
+
 // Get the cached seed catalog from AsyncStorage
 async function getCachedSeedCatalog(): Promise<CatalogSeedItem[] | null> {
   try {

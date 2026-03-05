@@ -11,16 +11,29 @@ export const colors = {
   lightGray: '#ccc',
   hunterGreen: '#38684C', // #38684C
   blue: '#669BBC', // blue #669BBC
+  dusk: '#445A9C', // dusk #445A9C
   teal: '#4B927A', // teal #4B927A
-  pink: '#DE86BF', // pink #DE86BF
+  pink: '#F4608C', // pink #F4608C
+  peach: '#f79d65', // peach #f79d65
   red: '#D65564', // red #D65564
   lavender: '#6D5379', // lavender #6D5379
+  grapefruit: '#FB7A78', // grapefruit #FB7A78
+  amethyst: '#AD6FB3', // amethyst #AD6FB3
+  grape: '#584778', // grape #584778
+  yellow: '#F3C51F', // yellow2 #fcdc5d
 };
 
 export const buttonColorMap = {
   primary: colors.hunterGreen,
   secondary: colors.mediumGray,
   danger: colors.red,
+};
+
+export const seedTypeColorMap = {
+  Vegetable: colors.teal,
+  Flower: colors.peach,
+  Fruit: colors.pink,
+  Herb: colors.lavender,
 };
 
 export const typography = StyleSheet.create({

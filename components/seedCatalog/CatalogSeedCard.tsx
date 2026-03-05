@@ -5,6 +5,7 @@ import { Pressable } from 'react-native';
 import { useState } from 'react';
 import { useUserSeeds } from '../../lib/contexts/UserSeedsContext';
 import SeedCardAction from '../ui/seedCard/SeedCardAction';
+import { UserSeedItem } from '../../lib/seedCatalog';
 
 type CatalogSeedCardProps = {
   readonly seed: CatalogSeedItem;
@@ -14,10 +15,19 @@ export default function CatalogSeedCard({ seed }: CatalogSeedCardProps) {
   // State
   const [showAddConfirmation, setShowAddConfirmation] = useState(false);
 
-  const { addSeedFromCatalog } = useUserSeeds();
   const router = useRouter();
 
-  const handlePress = () => router.push(`/catalog/${seed.id}`);
+  const { seeds: userSeeds, addSeedFromCatalog } = useUserSeeds();
+
+  const inUserCollection = userSeeds.some((s: UserSeedItem) => s.catalog_seed_id === seed.id);
+
+  const handlePress = () =>
+    router.push({
+      pathname: `/catalog/${seed.id}`,
+      params: {
+        inUserCollection: inUserCollection ? 'true' : 'false',
+      },
+    });
 
   const handleLongPress = () => {
     setShowAddConfirmation(true);
@@ -38,7 +48,7 @@ export default function CatalogSeedCard({ seed }: CatalogSeedCardProps) {
   return (
     <Pressable onLongPress={handleLongPress} delayLongPress={500}>
       {/* Show the seed card */}
-      {!showAddConfirmation && <SeedCard cardType="catalog" seed={seed} onPress={handlePress} />}
+      {!showAddConfirmation && <SeedCard cardType="catalog" seed={seed} inUserCollection={inUserCollection} onPress={handlePress} />}
 
       {/* Show the add confirmation */}
       {showAddConfirmation && (

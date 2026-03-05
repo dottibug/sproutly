@@ -1,12 +1,14 @@
-import { ScrollView, Image, View, Text, StyleSheet } from 'react-native';
-import { SeedCatalogItem } from '../../lib/seedCatalog';
+import { ScrollView, Image, View, StyleSheet } from 'react-native';
+import { CatalogSeedItem, UserSeedItem } from '../../lib/seedCatalog';
 import Heading from '../ui/Heading';
-import SeedTypeExposure from './SeedTypeExposure';
-import type { exposureType } from './Exposure';
 import SeedDetailSection from './SeedDetailSection';
+import SeedSKU from './SeedSku';
+import SeedBadges from './SeedBadges';
+import type { ExposureType } from '../../lib/seedCatalog';
 
 type SeedDetailsProps = {
-  readonly seed: SeedCatalogItem;
+  readonly seed: CatalogSeedItem | UserSeedItem;
+  readonly inUserCollection?: boolean;
 };
 
 const DESCRIPTION = 'Description';
@@ -16,7 +18,12 @@ const GROWING = 'Growing';
 const HARVEST = 'Harvest';
 const COMPANION_PLANTING = 'Companion Planting';
 
-export default function SeedDetails({ seed }: SeedDetailsProps) {
+export default function SeedDetails({ seed, inUserCollection = false }: SeedDetailsProps) {
+  const isCustomSeed = 'custom_seed_id' in seed && seed.custom_seed_id !== null;
+
+  // UserSeedItem has 'notes'; CatalogSeedItem does not
+  const action = inUserCollection ? 'Delete' : 'Add';
+
   return (
     <ScrollView>
       <Image source={{ uri: seed.image }} style={styles.image} resizeMode="cover" />
@@ -28,10 +35,10 @@ export default function SeedDetails({ seed }: SeedDetailsProps) {
         </Heading>
 
         {/* SKU */}
-        <Text style={styles.sku}>SKU: {seed.sku}</Text>
+        <SeedSKU seedSKU={seed.sku} catalogId={seed.id} inUserCollection={inUserCollection} />
 
-        {/* Seed type and exposure */}
-        <SeedTypeExposure type={seed.type} exposure={seed.exposure as exposureType} />
+        {/* Seed badges */}
+        <SeedBadges type={seed.type} exposure={seed.exposure as ExposureType} />
 
         {/* Description */}
         <SeedDetailSection title={DESCRIPTION} details={seed.description}>
@@ -77,5 +84,9 @@ const styles = StyleSheet.create({
     color: '#666',
     marginTop: 4,
     marginBottom: 16,
+  },
+  badges: {
+    alignItems: 'center',
+    flexDirection: 'row',
   },
 });

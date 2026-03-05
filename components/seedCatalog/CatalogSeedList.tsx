@@ -1,15 +1,15 @@
 import { Fragment } from 'react';
-import type { SeedCatalogItem } from '../../lib/seedCatalog';
+import type { CatalogSeedItem } from '../../lib/seedCatalog';
 import CatalogSeedCard from './CatalogSeedCard';
 
 type CatalogSeedListProps = {
-  readonly seeds: SeedCatalogItem[];
+  readonly seeds: CatalogSeedItem[];
 };
 
 export default function CatalogSeedList({ seeds }: CatalogSeedListProps) {
   return (
     <Fragment>
-      {seeds.map((seed: SeedCatalogItem) => (
+      {seeds.map((seed: CatalogSeedItem) => (
         <CatalogSeedCard key={seed.id} seed={seed} />
       ))}
     </Fragment>

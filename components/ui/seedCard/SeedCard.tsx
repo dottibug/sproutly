@@ -8,6 +8,7 @@ type SeedCardProps = {
   readonly cardType: 'user' | 'catalog';
   readonly seed: UserSeedItem | CatalogSeedItem;
   readonly onPress: () => void;
+  readonly inUserCollection?: boolean;
 };
 
 // TODO: decide how to include an "add seed" button on the catalog cards (and a remove seed on the user cards)
@@ -15,12 +16,19 @@ type SeedCardProps = {
 // TODO: should the user cards include a way to show sun exposure and other seed details? Maybe the user can choose between basic and detailed seed cards in their collection (in the user settings page, or on the seed list page itself?)
 // TODO: might be able to delete cardType prop (wait until after you've figured out the basic/detailed user seed cards)
 
-export default function SeedCard({ cardType, seed, onPress }: SeedCardProps) {
+export default function SeedCard({ cardType, seed, onPress, inUserCollection = false }: SeedCardProps) {
   return (
     <View style={styles.card}>
       <View style={styles.content}>
         <SeedCardImage imageUri={seed.image} />
-        <SeedCardInfo name={seed.name} category={seed.category} beanType={seed.bean_type} type={seed.type} />
+        <SeedCardInfo
+          name={seed.name}
+          category={seed.category}
+          beanType={seed.bean_type}
+          seedType={seed.type}
+          cardType={cardType}
+          inUserCollection={inUserCollection}
+        />
       </View>
       <View style={styles.seedDetailsButton}>
         <Pressable onPress={onPress}>

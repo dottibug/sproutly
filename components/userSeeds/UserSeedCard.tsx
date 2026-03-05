@@ -4,14 +4,13 @@ import { Pressable } from 'react-native';
 import SeedCard from '../ui/seedCard/SeedCard';
 import { useUserSeeds } from '../../lib/contexts/UserSeedsContext';
 import SeedCardAction from '../ui/seedCard/SeedCardAction';
+import { useRouter } from 'expo-router';
 
 type UserSeedCardProps = {
   readonly seed: UserSeedItem;
 };
 
-// TODO: on press, show seed details (same as catalog seed card)
-
-// TODO: Removing a seed: direct button on card, which slides a confirmation message into the card. If user confirms, seed optimistically removed from list, then from supabase. If user cancels, seed remains in list. LATER, if time (or mention in further dev discussion): Swipe action to the right to remove seed (still shows the same confirmation message as pressing the trash button, or alternatively an undo button with a timed delay before actually removing the seed from the list)
+// TODO: Show a snackbar message when a seed is successfully deleted?
 
 // TODO enable basic and detailed versions (user preferences setting probably)
 export default function UserSeedCard({ seed }: UserSeedCardProps) {
@@ -19,20 +18,24 @@ export default function UserSeedCard({ seed }: UserSeedCardProps) {
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   const { deleteSeedByCatalogId } = useUserSeeds();
+  const router = useRouter();
 
+  // Press handler to navigate to the seed details screen
   const handlePress = () => {
-    console.log('User seed card pressed');
+    const seedId = seed.custom_seed_id ? seed.custom_seed_id : seed.catalog_seed_id;
+
+    const source = seed.custom_seed_id ? 'custom' : 'catalog';
+
+    router.push(`/home/${seedId}?source=${source}`);
   };
 
-  const handleLongPress = () => {
-    setShowDeleteConfirmation(true);
-    console.log('Long press detected');
-  };
+  // Show the delete confirmation
+  const handleLongPress = () => setShowDeleteConfirmation(true);
 
-  const handleCancel = () => {
-    setShowDeleteConfirmation(false);
-  };
+  // Hide the delete confirmation
+  const handleCancel = () => setShowDeleteConfirmation(false);
 
+  // Delete the seed from the database
   const handleDelete = () => {
     deleteSeedByCatalogId(seed);
     setShowDeleteConfirmation(false);
