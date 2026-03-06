@@ -26,7 +26,13 @@ export default function UserSeedCard({ seed }: UserSeedCardProps) {
 
     const source = seed.custom_seed_id ? 'custom' : 'catalog';
 
-    router.push(`/home/${seedId}?source=${source}`);
+    router.push({
+      pathname: `/home/${seedId}`,
+      params: {
+        source: source,
+        tab: 'home',
+      },
+    });
   };
 
   // Show the delete confirmation

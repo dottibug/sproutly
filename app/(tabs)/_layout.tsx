@@ -2,20 +2,40 @@ import { Tabs } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { colors } from '../../styles/theme';
 
 // JS tabs: https://docs.expo.dev/router/advanced/tabs/
+// https://docs.expo.dev/router/advanced/tabs/#tab-bar-options
+
+// TODO: change tabBarActiveTintColor
 
 // Tabs layout for the app
 export default function TabsLayout() {
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: 'purple', tabBarInactiveTintColor: 'gray', headerShown: false }}>
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: 'purple',
+        tabBarInactiveTintColor: 'gray',
+        headerShown: false,
+        tabBarItemStyle: {
+          marginTop: 6,
+        },
+        tabBarStyle: {
+          paddingHorizontal: 12,
+        },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          marginTop: 2,
+        },
+      }}>
       {/* Home*/}
       <Tabs.Screen
         name="home"
         options={{
           title: 'Home',
-          tabBarLabel: 'Home',
-          tabBarIcon: ({ color, size }) => <FontAwesome6 name="house" size={22} color={color} />,
+
+          tabBarLabel: 'My Seeds',
+          tabBarIcon: ({ color }) => <FontAwesome6 name="seedling" size={24} color={color} />,
         }}
       />
 
@@ -24,8 +44,8 @@ export default function TabsLayout() {
         name="catalog"
         options={{
           title: 'Seed Catalog',
-          tabBarLabel: 'Seed Catalog',
-          tabBarIcon: ({ color, size }) => <FontAwesome6 name="seedling" size={22} color={color} />,
+          tabBarLabel: 'Catalog',
+          tabBarIcon: ({ color }) => <Ionicons name="library" size={24} color={color} />,
         }}
       />
 
@@ -35,7 +55,7 @@ export default function TabsLayout() {
         options={{
           title: 'Reminders',
           tabBarLabel: 'Reminders',
-          tabBarIcon: ({ color, size }) => <Ionicons name="alarm" size={size ?? 24} color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons name="alarm" size={28} color={color} />,
         }}
       />
 
@@ -45,7 +65,7 @@ export default function TabsLayout() {
         options={{
           title: 'Settings',
           tabBarLabel: 'Settings',
-          tabBarIcon: ({ color, size }) => <Ionicons name="settings-sharp" size={size ?? 24} color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons name="settings-sharp" size={26} color={color} />,
         }}
       />
 
@@ -55,7 +75,7 @@ export default function TabsLayout() {
         options={{
           title: 'Account',
           tabBarLabel: 'Account',
-          tabBarIcon: ({ color, size }) => <MaterialIcons name="account-circle" size={size ?? 24} color={color} />,
+          tabBarIcon: ({ color }) => <MaterialIcons name="account-circle" size={28} color={color} />,
         }}
       />
     </Tabs>

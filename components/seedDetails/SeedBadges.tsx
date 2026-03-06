@@ -6,13 +6,14 @@ import { colors, seedTypeColorMap } from '../../styles/theme';
 type SeedBadgesProps = {
   readonly type: SeedType;
   readonly exposure: ExposureType;
+  readonly inUserCollection: boolean;
 };
 
-export default function SeedBadges({ type, exposure }: SeedBadgesProps) {
+export default function SeedBadges({ type, exposure, inUserCollection }: SeedBadgesProps) {
   return (
     <View style={styles.badges}>
+      {inUserCollection && <Badge type="detail" text="In My Seeds" color={colors.dusk} width={110} />}
       <Badge type="detail" text={type} color={seedTypeColorMap[type]} width={96} />
-
       <Badge type="detail" text={exposure} color={colors.yellow} width={exposure === 'Full sun to part shade' ? 180 : 100} />
     </View>
   );

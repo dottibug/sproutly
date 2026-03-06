@@ -3,6 +3,7 @@ import Heading from '../ui/Heading';
 import type { SeedType, ExposureType } from '../../lib/seedCatalog';
 import SeedSKU from './SeedSku';
 import SeedBadges from './SeedBadges';
+import Button from '../ui/buttons/Button';
 
 type SeedHeaderProps = {
   readonly name: string;
@@ -21,8 +22,8 @@ export default function SeedHeader({ name, category, beanType, seedSKU, catalogI
       <Heading size="large">
         {name} {category} {beanType ? `(${beanType})` : ''}
       </Heading>
-      <SeedSKU seedSKU={seedSKU} catalogId={catalogId} inUserCollection={inUserCollection} />
-      <SeedBadges type={type} exposure={exposure} />
+      <SeedSKU seedSKU={seedSKU} catalogId={catalogId} />
+      <SeedBadges type={type} exposure={exposure} inUserCollection={inUserCollection} />
     </View>
   );
 }
@@ -30,5 +31,8 @@ export default function SeedHeader({ name, category, beanType, seedSKU, catalogI
 const styles = StyleSheet.create({
   edgePadding: {
     padding: 16,
+  },
+  addButtonContainer: {
+    marginTop: 16,
   },
 });

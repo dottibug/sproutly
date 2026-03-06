@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useEffect, useContext, useReducer, useMemo } from 'react';
-import { getSeedCatalog, type SeedCatalogItem } from '../seedCatalog';
+import { getSeedCatalog, type CatalogSeedItem } from '../seedCatalog';
 
 // SeedCatalogContext.tsx follows the React context & reducer pattern to manage state for the seed catalog.
 // Prefer this pattern to avoid deep prop drilling in React components.
@@ -12,7 +12,7 @@ const LOAD_ERROR = 'LOAD_ERROR';
 
 // State
 type SeedCatalogState = {
-  seeds: SeedCatalogItem[];
+  seeds: CatalogSeedItem[];
   loading: boolean;
   error: string | null;
 };
@@ -20,7 +20,7 @@ type SeedCatalogState = {
 // Actions
 type SeedCatalogAction =
   | { type: typeof LOAD_START }
-  | { type: typeof LOAD_SUCCESS; payload: SeedCatalogItem[] }
+  | { type: typeof LOAD_SUCCESS; payload: CatalogSeedItem[] }
   | { type: typeof LOAD_ERROR; payload: string };
 
 // Initial state
@@ -46,7 +46,7 @@ function seedCatalogReducer(state: SeedCatalogState, action: SeedCatalogAction):
 
 // Context value type to pass to provider
 type SeedCatalogContextValue = {
-  seeds: SeedCatalogItem[];
+  seeds: CatalogSeedItem[];
   loading: boolean;
   error: string | null;
   refresh: () => Promise<void>;

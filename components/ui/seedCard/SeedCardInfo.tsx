@@ -29,7 +29,7 @@ export default function SeedCardInfo({ name, category, beanType, seedType, cardT
     <View style={styles.seedInfo}>
       <Heading size="small">{heading}</Heading>
       <View style={styles.badges}>
-        <Badge type="card" text={seedType} color={backgroundColor} width={96} />
+        <Badge type="card" text={seedType} color={backgroundColor} width={100} />
         {cardType === 'catalog' && inUserCollection && <Badge type="card" text="Owned" color={colors.dusk} width={72} />}
       </View>
     </View>

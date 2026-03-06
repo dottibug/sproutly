@@ -26,6 +26,7 @@ export default function CatalogSeedCard({ seed }: CatalogSeedCardProps) {
       pathname: `/catalog/${seed.id}`,
       params: {
         inUserCollection: inUserCollection ? 'true' : 'false',
+        tab: 'catalog',
       },
     });
 

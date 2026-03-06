@@ -1,28 +1,23 @@
 import { View, Text, StyleSheet } from 'react-native';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { colors } from '../../styles/theme';
-import Badge from '../ui/Badge';
 
 type SeedSKUProps = {
   readonly seedSKU: string | null;
   readonly catalogId: string;
-  readonly inUserCollection: boolean;
 };
-export default function SeedSKU({ seedSKU, catalogId, inUserCollection }: SeedSKUProps) {
+export default function SeedSKU({ seedSKU, catalogId }: SeedSKUProps) {
   return (
     <View style={styles.skuContainer}>
       <Text style={styles.sku}>SKU: {seedSKU ?? 'Custom seed'}</Text>
-
-      {inUserCollection && <Badge type="mini" text="Owned" color={colors.grape} width={90} />}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   skuContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: 'row',
+    gap: 12,
     marginBottom: 16,
     marginTop: 4,
   },
