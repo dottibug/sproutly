@@ -23,7 +23,7 @@ export default function Accordion({ title, children, content, openByDefault = fa
       onPress={handlePress}
       expanded={expanded}>
       <View style={styles.accordionContent}>
-        <Text style={typography.textSmall}>{content}</Text>
+        <Text style={typography.textMedium}>{content}</Text>
         {children}
       </View>
     </List.Accordion>
@@ -32,7 +32,6 @@ export default function Accordion({ title, children, content, openByDefault = fa
 
 const styles = StyleSheet.create({
   accordionContainer: {
-    // backgroundColor: colors.hunterGreen,
     borderTopWidth: 1,
     borderColor: '#ccc',
   },
@@ -40,7 +39,6 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontSize: 18,
     fontWeight: 'bold',
-    textTransform: 'uppercase',
   },
   accordionContent: {
     flexDirection: 'column',

@@ -79,7 +79,7 @@ export default function Button({
 const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
-    borderRadius: 4,
+    borderRadius: 100,
     borderWidth: 2,
     flexDirection: 'row',
     gap: 6,

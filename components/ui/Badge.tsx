@@ -23,9 +23,17 @@ export default function Badge({ type, text, color, width = '100%' }: BadgeProps)
   };
 
   return (
-    <View style={[badgeStyleMap[type], { backgroundColor: color, width }]}>
+    <View
+      style={[
+        badgeStyleMap[type],
+        {
+          borderColor: color,
+          backgroundColor: colors.white,
+          width,
+        },
+      ]}>
       {type === 'mini' && <MaterialCommunityIcons name="check-circle" size={16} color={colors.white} />}
-      <Text style={badgeTextMap[type]}>{text}</Text>
+      <Text style={[badgeTextMap[type], { color: color }]}>{text}</Text>
     </View>
   );
 }
@@ -33,10 +41,11 @@ export default function Badge({ type, text, color, width = '100%' }: BadgeProps)
 const styles = StyleSheet.create({
   badgeStyleCard: {
     alignItems: 'center',
-    borderRadius: 50,
+    borderRadius: 0,
+    borderWidth: 1,
     marginTop: 8,
     opacity: 0.8,
-    padding: 6,
+    padding: 2,
   },
   badgeTextCard: {
     color: colors.white,
@@ -47,7 +56,8 @@ const styles = StyleSheet.create({
   },
   badgeStyleDetail: {
     alignItems: 'center',
-    borderRadius: 50,
+    borderRadius: 0,
+    borderWidth: 2,
     opacity: 0.8,
     padding: 8,
   },

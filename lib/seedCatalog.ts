@@ -5,6 +5,10 @@ const CATALOG_STORAGE_KEY = '@sproutly/seed_catalog';
 
 export type SeedType = 'Vegetable' | 'Flower' | 'Fruit' | 'Herb';
 
+export type Exposure = 'Full sun' | 'Part sun' | 'Full sun to part shade' | 'Part shade' | 'Shade';
+
+export type Difficulty = 'Easy' | 'Standard' | 'Intermediate' | 'Advanced' | 'Expert';
+
 export type CatalogSeedItem = {
   id: string;
   name: string;
@@ -49,8 +53,6 @@ export type UserSeedItem = {
   image: string;
   notes: string | null;
 };
-
-export type ExposureType = 'Full sun' | 'Part sun' | 'Full sun to part shade' | 'Part shade' | 'Shade';
 
 // Get the cached seed catalog from AsyncStorage
 async function getCachedSeedCatalog(): Promise<CatalogSeedItem[] | null> {

@@ -1,45 +1,44 @@
-import { ScrollView, Text, StyleSheet } from 'react-native';
-import { useUserSeeds } from '../../../lib/contexts/UserSeedsContext';
+import { useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSeedCatalog } from '../../../lib/contexts/SeedCatalogContext';
 import Loading from '../../../components/ui/Loading';
 import ScreenMessage from '../../../components/ui/ScreenMessage';
-import ScreenContainer from '../../../components/ui/ScreenContainer';
-import Heading from '../../../components/ui/Heading';
-import UserSeedList from '../../../components/userSeeds/UserSeedList';
-import { appStyles, colors } from '../../../styles/theme';
+import Tabs from '../../../components/seeds/Tabs';
+import UserSeeds from '../../../components/userSeeds/UserSeeds';
+import BrowseSeeds from '../../../components/seedCatalog/BrowseSeeds';
+import { colors } from '../../../styles/theme';
 
-// TODO: change scrollview to flatlist?? (ditto in catalog screen)
+// Seed Catalog screen
+// TODO: top/bottom scroll buttons to quick scroll to the top/bottom of the list
 
-const LOAD_MESSAGE = 'Loading your seeds…';
-const LIST_TITLE = 'My Seeds';
-const EMPTY_SEEDS_LIST = 'Your collection is empty. Add seeds to get started.';
+const LOAD_MESSAGE = 'Loading…';
+const MY_SEEDS = 'mySeeds';
+const BROWSE = 'browse';
 
-// Main screen 'Home' tab
-export default function Home() {
-  const { seeds, loading, error } = useUserSeeds();
+type ActiveTab = 'mySeeds' | 'browse';
+
+export default function SeedCatalogScreen() {
+  // Context
+  const { loading, error } = useSeedCatalog();
+
+  // State
+  const [activeTab, setActiveTab] = useState<ActiveTab>(MY_SEEDS);
+
+  function handleTabPress() {
+    setActiveTab((prev) => (prev === MY_SEEDS ? BROWSE : MY_SEEDS));
+  }
+
   if (loading) return <Loading message={LOAD_MESSAGE} />;
   if (error) return <ScreenMessage message={error} />;
-  const emptySeedsList: boolean = seeds.length === 0;
 
+  // Renders the seed catalog (either all seeds, filtered seeds, or search results).
   return (
-    <ScreenContainer>
-      <Heading size="medium" marginVertical={18} uppercase>
-        {LIST_TITLE}
-      </Heading>
-      {!emptySeedsList && <Text style={styles.deleteHint}>Long press to delete a seed</Text>}
-      <ScrollView style={appStyles.resultsList}>
-        {emptySeedsList && <ScreenMessage message={EMPTY_SEEDS_LIST} />}
-        <UserSeedList seeds={seeds} />
-      </ScrollView>
-    </ScreenContainer>
+    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: colors.white }}>
+      <Tabs activeTab={activeTab} onTabPress={handleTabPress} />
+
+      {activeTab === MY_SEEDS && <UserSeeds />}
+
+      {activeTab === BROWSE && <BrowseSeeds />}
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  deleteHint: {
-    fontSize: 14,
-    color: colors.secondary,
-    marginTop: -10,
-    marginBottom: 24,
-    fontStyle: 'italic',
-  },
-});

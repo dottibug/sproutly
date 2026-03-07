@@ -24,6 +24,11 @@ export default function AccountScreen() {
       <Text>change username</Text>
       <Text>change avatar</Text>
       <Text>delete account</Text>
+      <Text>settings link</Text>
+      <Text>Settings to include on the settings screen:</Text>
+      <Text>Dark mode</Text>
+      <Text>Quick filters</Text>
+      <Text>Possibly basic vs detailed seed cards on the user collection screen</Text>
 
       <Pressable style={styles.signOut} onPress={handleSignOut}>
         <MaterialIcons name="logout" size={24} color="black" />

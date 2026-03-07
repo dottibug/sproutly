@@ -29,7 +29,7 @@ export default function TabsLayout() {
         },
       }}>
       {/* Home*/}
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="home"
         options={{
           title: 'Home',
@@ -37,15 +37,15 @@ export default function TabsLayout() {
           tabBarLabel: 'My Seeds',
           tabBarIcon: ({ color }) => <FontAwesome6 name="seedling" size={24} color={color} />,
         }}
-      />
+      /> */}
 
-      {/* Seed Catalog Tab */}
+      {/* Home Tab */}
       <Tabs.Screen
-        name="catalog"
+        name="home"
         options={{
-          title: 'Seed Catalog',
-          tabBarLabel: 'Catalog',
-          tabBarIcon: ({ color }) => <Ionicons name="library" size={24} color={color} />,
+          title: 'Home',
+          tabBarLabel: 'Seeds',
+          tabBarIcon: ({ color }) => <FontAwesome6 name="seedling" size={24} color={color} />,
         }}
       />
 
@@ -56,16 +56,6 @@ export default function TabsLayout() {
           title: 'Reminders',
           tabBarLabel: 'Reminders',
           tabBarIcon: ({ color }) => <Ionicons name="alarm" size={28} color={color} />,
-        }}
-      />
-
-      {/* Settings Tab */}
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: 'Settings',
-          tabBarLabel: 'Settings',
-          tabBarIcon: ({ color }) => <Ionicons name="settings-sharp" size={26} color={color} />,
         }}
       />
 

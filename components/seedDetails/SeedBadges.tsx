@@ -1,11 +1,11 @@
 import { View, StyleSheet } from 'react-native';
-import type { SeedType, ExposureType } from '../../lib/seedCatalog';
+import type { SeedType, Exposure } from '../../lib/seedCatalog';
 import Badge from '../ui/Badge';
 import { colors, seedTypeColorMap } from '../../styles/theme';
 
 type SeedBadgesProps = {
   readonly type: SeedType;
-  readonly exposure: ExposureType;
+  readonly exposure: Exposure;
   readonly inUserCollection: boolean;
 };
 

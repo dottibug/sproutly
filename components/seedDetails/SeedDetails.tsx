@@ -1,12 +1,17 @@
-import { ScrollView, Image, View, StyleSheet } from 'react-native';
+import { ScrollView, Image, View, StyleSheet, Text } from 'react-native';
 import { CatalogSeedItem, UserSeedItem } from '../../lib/seedCatalog';
-import type { ExposureType } from '../../lib/seedCatalog';
+import type { Exposure } from '../../lib/seedCatalog';
 import Accordion from '../accordion/Accordion';
 import SeedQuickFacts from './SeedQuickFacts';
 import SeedHeader from './SeedHeader';
 import Button from '../ui/buttons/Button';
 import { useUserSeeds } from '../../lib/contexts/UserSeedsContext';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { typography } from '../../styles/theme';
+import Heading from '../ui/Heading';
+import ScreenContainer from '../ui/ScreenContainer';
+
+// TODO: I think description should not be in an accordion? Because some seeds have only a description and no other details (making the screen look strange)
 
 // TODO: the screen should automatically be scrolled to their notes/photos/history section of that seed.
 
@@ -56,7 +61,7 @@ export default function SeedDetails({ seed }: SeedDetailsProps) {
   };
 
   return (
-    <ScrollView>
+    <ScrollView style={styles.scrollStyle}>
       <Image source={{ uri: seed.image }} style={styles.image} resizeMode="cover" />
 
       <View>
@@ -68,12 +73,14 @@ export default function SeedDetails({ seed }: SeedDetailsProps) {
           catalogId={seed.id}
           inUserCollection={inUserCollection}
           type={seed.type}
-          exposure={seed.exposure as ExposureType}
+          exposure={seed.exposure as Exposure}
         />
 
-        <Accordion title={DESCRIPTION} content={seed.description as string} openByDefault={true}>
+        <View style={styles.description}>
+          <Heading size="medium">{DESCRIPTION}</Heading>
+          <Text style={typography.textMedium}>{seed.description as string}</Text>
           <SeedQuickFacts maturesInDays={seed.matures_in_days} difficulty={seed.difficulty} />
-        </Accordion>
+        </View>
 
         {seed.timing && <Accordion title={TIMING} content={seed.timing} />}
         {seed.starting && <Accordion title={STARTING} content={seed.starting} />}
@@ -82,21 +89,21 @@ export default function SeedDetails({ seed }: SeedDetailsProps) {
         {seed.companion_planting && <Accordion title={COMPANION_PLANTING} content={seed.companion_planting} />}
       </View>
 
-      {tab === 'catalog' && !inUserCollection && (
+      {tab === 'browse' && !inUserCollection && (
         <View style={styles.buttonContainer}>
-          <Button text={ADD} onPress={handleAddToCollection} />
+          <Button text={ADD} width={218} size="medium" onPress={handleAddToCollection} />
         </View>
       )}
 
       {tab === 'catalog' && inUserCollection && (
         <View style={styles.buttonContainer}>
-          <Button text={MY_SEED} onPress={handleGoToMySeed} />
+          <Button text={MY_SEED} size="medium" onPress={handleGoToMySeed} />
         </View>
       )}
 
-      {tab === 'home' && (
+      {tab === 'mySeeds' && (
         <View style={styles.buttonContainer}>
-          <Button text={DELETE} color="danger" size="medium" onPress={handleDeleteFromCollection} />
+          <Button text={DELETE} color="danger" size="medium" width={268} onPress={handleDeleteFromCollection} />
         </View>
       )}
     </ScrollView>
@@ -104,13 +111,21 @@ export default function SeedDetails({ seed }: SeedDetailsProps) {
 }
 
 const styles = StyleSheet.create({
+  scrollStyle: {
+    flex: 1,
+  },
   image: {
     height: 400,
     width: '100%',
   },
+  description: {
+    flexDirection: 'column',
+    gap: 16,
+    padding: 16,
+  },
   buttonContainer: {
-    marginTop: 16,
+    marginBottom: 32,
+    marginTop: 24,
     paddingHorizontal: 16,
-    // marginBottom: -16,
   },
 });

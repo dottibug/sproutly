@@ -23,10 +23,10 @@ export default function CatalogSeedCard({ seed }: CatalogSeedCardProps) {
 
   const handlePress = () =>
     router.push({
-      pathname: `/catalog/${seed.id}`,
+      pathname: `/home/${seed.id}`,
       params: {
         inUserCollection: inUserCollection ? 'true' : 'false',
-        tab: 'catalog',
+        tab: 'browse',
       },
     });
 

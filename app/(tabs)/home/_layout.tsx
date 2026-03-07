@@ -1,10 +1,16 @@
 import { Stack } from 'expo-router';
 
-// Screen stack for the home tab
-export default function HomeLayout() {
+// Screen stack for the catalog tab
+export default function CatalogLayout() {
   return (
     <Stack screenOptions={{ headerShown: true }}>
-      <Stack.Screen name="index" options={{ title: 'My Seeds' }} />
+      <Stack.Screen
+        name="index"
+        options={{
+          title: 'Seed Catalog',
+          headerShown: false,
+        }}
+      />
       <Stack.Screen
         name="[id]"
         options={{

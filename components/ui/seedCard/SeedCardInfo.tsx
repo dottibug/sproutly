@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   seedInfo: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
     marginLeft: 12,
   },
   badges: {

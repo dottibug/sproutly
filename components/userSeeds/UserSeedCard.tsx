@@ -30,7 +30,7 @@ export default function UserSeedCard({ seed }: UserSeedCardProps) {
       pathname: `/home/${seedId}`,
       params: {
         source: source,
-        tab: 'home',
+        tab: 'mySeeds',
       },
     });
   };
