@@ -1,6 +1,6 @@
-import type { UserSeedItem, CatalogSeedItem } from '../seedCatalog';
+import type { UserSeedItem, CatalogSeedItem, Planting } from '../seedCatalog';
 
-export function createUserSeedFromDatabase(row: any): UserSeedItem {
+export function createUserSeedFromDatabase(row: any, planting: Planting[]): UserSeedItem {
   const source = row.seed_catalog ?? row.custom_seeds;
   if (!source) throw new Error(`User row ${row.id} has no seed data`);
 
@@ -26,6 +26,7 @@ export function createUserSeedFromDatabase(row: any): UserSeedItem {
     harvest: source.harvest,
     companion_planting: source.companion_planting,
     image: source.image,
+    planting: planting,
   };
   return newSeed;
 }
@@ -52,6 +53,7 @@ export function createUserSeedFromCatalog(seed: CatalogSeedItem) {
     harvest: seed.harvest,
     companion_planting: seed.companion_planting,
     image: seed.image,
+    planting: seed.planting ?? [],
     notes: null,
   };
 
@@ -80,6 +82,7 @@ export function createUserSeedFromCustom(seed: CatalogSeedItem) {
     harvest: seed.harvest,
     companion_planting: seed.companion_planting,
     image: seed.image,
+    planting: seed.planting ?? [],
     notes: null,
   };
 

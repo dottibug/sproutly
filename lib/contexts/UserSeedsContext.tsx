@@ -1,7 +1,7 @@
 import { createContext, useReducer, useCallback, useMemo, useEffect, useContext } from 'react';
 import { useAuth } from './AuthContext';
 import { supabase } from '../supabase';
-import type { UserSeedItem, CatalogSeedItem } from '../seedCatalog';
+import { fetchPlantingActions, type UserSeedItem, type CatalogSeedItem, getCategoryPlantingActions } from '../seedCatalog';
 import { createUserSeedFromCatalog, createUserSeedFromCustom, createUserSeedFromDatabase } from '../contexts/databaseUtils';
 
 // UserSeedsContext.tsx follows the React context & reducer pattern to manage state for the user's seeds.
@@ -96,22 +96,30 @@ export function UserSeedsProvider({ children }: UserSeedsProviderProps) {
     dispatch({ type: LOAD_START });
 
     try {
-      const { data, error } = await supabase
-        .from('user_seed_collection')
-        .select(
-          `id,catalog_seed_id,custom_seed_id,notes,
+      const [collection, plantingActions] = await Promise.all([
+        supabase
+          .from('user_seed_collection')
+          .select(
+            `id,catalog_seed_id,custom_seed_id,notes,
           seed_catalog (id, name, sku, type, bean_type, category, latin, difficulty, exposure, matures_in_days, matures_under_days, description, timing, starting, growing, harvest, companion_planting, image),
           custom_seeds (id, name, type, bean_type, category, latin, difficulty, exposure, matures_in_days, matures_under_days, description, timing, starting, growing, harvest, companion_planting, image)`,
-        )
-        .eq('user_id', profile?.id);
+          )
+          .eq('user_id', profile?.id),
+        fetchPlantingActions(),
+      ]);
 
-      if (error) {
-        dispatch({ type: LOAD_ERROR, payload: error.message });
+      if (collection.error) {
+        dispatch({ type: LOAD_ERROR, payload: collection.error.message });
         return;
       }
 
-      // Map database rows to UserSeedItem type
-      const userSeeds: UserSeedItem[] = (data ?? []).map((row: any) => createUserSeedFromDatabase(row));
+      const userSeeds: UserSeedItem[] = (collection.data ?? []).map((row: any) => {
+        const source = row.seed_catalog ?? row.custom_seeds;
+        const category = source?.category ?? '';
+        const planting = getCategoryPlantingActions(category, plantingActions);
+        return createUserSeedFromDatabase(row, planting);
+      });
+
       dispatch({ type: LOAD_SUCCESS, payload: userSeeds });
     } catch (error) {
       dispatch({ type: LOAD_ERROR, payload: error instanceof Error ? error.message : 'Failed to load user seeds' });

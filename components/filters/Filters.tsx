@@ -15,7 +15,7 @@ import { View } from 'react-native';
 
 // Life cycle (for flowers): Annual, Biennial, Hardy Annual, Perennial
 
-// Start inoors, sow directly
+// start_indoors, direct_sow, (transplant)
 
 // Starting month
 
