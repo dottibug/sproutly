@@ -13,6 +13,10 @@ import {
 } from '../../lib/contexts/FiltersContext';
 import FilterSection from './FilterSection';
 
+// TODO: when filters are collapsed, any active filters should show in a chip list (that can be cleared individually or all at once with a clear all command)
+
+// TODO: Adjust the empty seed message. If user has no seeds in collection, can stay as is. If user has seeds but filters (or search) result in no matches, need a new message.
+
 // Filter Options: expandable dropdowns or horizontal scrollable...
 // I think dropdown; if filters are selected, then when the user closes the filter dropdown, show the selected filters in a chip list.
 

@@ -2,19 +2,21 @@ import { View, StyleSheet, ScrollView, Text } from 'react-native';
 import { useUserSeeds } from '../../lib/contexts/UserSeedsContext';
 import Loading from '../ui/Loading';
 import ScreenMessage from '../ui/ScreenMessage';
-import Heading from '../ui/Heading';
 import UserSeedList from './UserSeedList';
 import Filters from '../filters/Filters';
 import { colors, appStyles } from '../../styles/theme';
+import { useFilters, applyFilters } from '../../lib/contexts/FiltersContext';
 
 const LOAD_MESSAGE = 'Loading your seeds…';
-const LIST_TITLE = 'My Seeds';
 const EMPTY_SEEDS_LIST = 'Your collection is empty. Add seeds to get started.';
 
 export default function UserSeeds() {
   // Context
   const { seeds, loading, error } = useUserSeeds();
-  const emptySeedsList: boolean = seeds.length === 0;
+  const { selected } = useFilters();
+
+  const filteredSeeds = applyFilters(seeds, selected);
+  const emptySeedsList: boolean = filteredSeeds.length === 0;
 
   // Loading or error messages
   if (loading) return <Loading message={LOAD_MESSAGE} />;
@@ -22,8 +24,6 @@ export default function UserSeeds() {
 
   return (
     <ScrollView style={styles.userSeedsContainer}>
-      {/* TODO: Filters */}
-
       <Filters />
 
       {/* TODO: Search bar */}
@@ -34,7 +34,7 @@ export default function UserSeeds() {
 
         <View style={appStyles.resultsList}>
           {emptySeedsList && <ScreenMessage message={EMPTY_SEEDS_LIST} />}
-          <UserSeedList seeds={seeds} />
+          <UserSeedList seeds={filteredSeeds} />
         </View>
       </View>
     </ScrollView>

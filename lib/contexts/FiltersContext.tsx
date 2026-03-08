@@ -3,6 +3,33 @@ import { Profile, useAuth } from './AuthContext';
 import { supabase } from '../supabase';
 import { PlantingAction, SeedType, UserSeedItem } from '../seedCatalog';
 
+// ---- CONSTANTS ----
+export const PLANT_TYPES: SeedType[] = ['Vegetable', 'Flower', 'Fruit', 'Herb'];
+export const STARTING = ['Start indoors', 'Direct sow'];
+export const EXPOSURE = ['Full sun', 'Full sun to part shade', 'Part shade'];
+export const SEASON = ['Winter', 'Spring', 'Summer', 'Fall'];
+export const MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+export const READY_TO_HARVEST = ['Under 50 days', '50 to 70 days', '80 to 100 days', '110 to 130 days', 'Over 130 days'];
+export const DIFFICULTY = ['Easy', 'Standard', 'Intermediate', 'Advanced', 'Expert'];
+
+export const MONTH_MAP: Record<string, number> = {
+  Jan: 1,
+  Feb: 2,
+  Mar: 3,
+  Apr: 4,
+  May: 5,
+  Jun: 6,
+  Jul: 7,
+  Aug: 8,
+  Sep: 9,
+  Oct: 10,
+  Nov: 11,
+  Dec: 12,
+};
+export type Filter = 'plantType' | 'starting' | 'exposure' | 'season' | 'month' | 'readyToHarvest' | 'difficulty';
+
+export const FILTERS: Filter[] = ['plantType', 'starting', 'exposure', 'season', 'month', 'readyToHarvest', 'difficulty'];
+
 // ---- INITIAL STATE SETUP ----
 type FilterState = {
   preferences: UserFilterPreferences;
@@ -327,8 +354,6 @@ function filterByReadyToHarvest(seed: UserSeedItem, selected: string[]) {
 }
 
 // ---- TYPES ----
-export type Filter = 'plantType' | 'starting' | 'exposure' | 'season' | 'month' | 'readyToHarvest' | 'difficulty';
-
 export type SelectedFilters = Record<Filter, string[]>;
 export type ExpandedFilters = Partial<Record<Filter, boolean>>;
 
@@ -347,29 +372,3 @@ export type FilterAction =
   | { type: 'LOAD_FILTER_PREFERENCES'; payload: UserFilterPreferences }
   | { type: 'SAVE_FILTER_PREFERENCES'; payload: UserFilterPreferences }
   | { type: 'RESET_FILTER_PREFERENCES' };
-
-// ---- CONSTANTS ----
-export const FILTERS: Filter[] = ['plantType', 'starting', 'exposure', 'season', 'month', 'readyToHarvest', 'difficulty'] as const;
-
-export const PLANT_TYPES: SeedType[] = ['Vegetable', 'Flower', 'Fruit', 'Herb'];
-export const STARTING = ['Start indoors', 'Direct sow'];
-export const EXPOSURE = ['Full sun', 'Full sun to part shade', 'Part shade'];
-export const SEASON = ['Winter', 'Spring', 'Summer', 'Fall'];
-export const MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-export const READY_TO_HARVEST = ['Under 50 days', '50 to 70 days', '80 to 100 days', '110 to 130 days', 'Over 130 days'];
-export const DIFFICULTY = ['Easy', 'Standard', 'Intermediate', 'Advanced', 'Expert'];
-
-export const MONTH_MAP: Record<string, number> = {
-  Jan: 1,
-  Feb: 2,
-  Mar: 3,
-  Apr: 4,
-  May: 5,
-  Jun: 6,
-  Jul: 7,
-  Aug: 8,
-  Sep: 9,
-  Oct: 10,
-  Nov: 11,
-  Dec: 12,
-};
