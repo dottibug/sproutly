@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     flexDirection: 'row',
     gap: 24,
-    marginBottom: 18,
+    // marginBottom: 18,
     paddingHorizontal: 16,
     paddingTop: 18,
   },

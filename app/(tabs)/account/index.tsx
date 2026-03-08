@@ -1,7 +1,7 @@
 import { Text, StyleSheet, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { useAuth } from '../../lib/contexts/AuthContext';
+import { useAuth } from '../../../lib/contexts/AuthContext';
 import { useRouter } from 'expo-router';
 
 // Account tab screen

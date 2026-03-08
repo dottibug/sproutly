@@ -1,8 +1,8 @@
-import type { SeedCatalogItem } from '../lib/seedCatalog';
+import type { CatalogSeedItem } from '../lib/seedCatalog';
 import type { PlantType } from '../components/seedCatalog/PlantTypeFilterIcon';
 
 // Filter and search catalog seeds. Returns a list of seeds that match the selected filters and search query. Filters are applied first, then search query is applied.
-export const filterAndSearchCatalog = (seeds: SeedCatalogItem[], selectedFilters: Set<PlantType>, searchQuery: string) => {
+export const filterAndSearchCatalog = (seeds: CatalogSeedItem[], selectedFilters: Set<PlantType>, searchQuery: string) => {
   let list = seeds;
   list = filterCatalogSeeds(list, selectedFilters);
   list = searchCatalogSeeds(list, searchQuery);
@@ -10,7 +10,7 @@ export const filterAndSearchCatalog = (seeds: SeedCatalogItem[], selectedFilters
 };
 
 // Helper function to filter seeds
-function filterCatalogSeeds(seeds: SeedCatalogItem[], selectedFilters: Set<PlantType>): SeedCatalogItem[] {
+function filterCatalogSeeds(seeds: CatalogSeedItem[], selectedFilters: Set<PlantType>): CatalogSeedItem[] {
   if (selectedFilters.size > 0) {
     const filterArray = Array.from(selectedFilters);
 
@@ -25,7 +25,7 @@ function filterCatalogSeeds(seeds: SeedCatalogItem[], selectedFilters: Set<Plant
 }
 
 // Helper function to search seeds
-function searchCatalogSeeds(seeds: SeedCatalogItem[], searchQuery: string): SeedCatalogItem[] {
+function searchCatalogSeeds(seeds: CatalogSeedItem[], searchQuery: string): CatalogSeedItem[] {
   let list = seeds;
   const query = searchQuery.trim().toLowerCase();
 

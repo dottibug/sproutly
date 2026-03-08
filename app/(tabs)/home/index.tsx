@@ -35,9 +35,7 @@ export default function SeedCatalogScreen() {
   return (
     <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: colors.white }}>
       <Tabs activeTab={activeTab} onTabPress={handleTabPress} />
-
       {activeTab === MY_SEEDS && <UserSeeds />}
-
       {activeTab === BROWSE && <BrowseSeeds />}
     </SafeAreaView>
   );

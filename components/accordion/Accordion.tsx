@@ -6,13 +6,12 @@ import { colors, typography } from '../../styles/theme';
 type AccordionProps = {
   readonly title: string;
   readonly children?: React.ReactNode;
-  readonly content: string;
+  readonly content?: string;
   readonly openByDefault?: boolean;
 };
 
 export default function Accordion({ title, children, content, openByDefault = false }: AccordionProps) {
   const [expanded, setExpanded] = useState(openByDefault);
-
   const handlePress = () => setExpanded(!expanded);
 
   return (
@@ -23,7 +22,7 @@ export default function Accordion({ title, children, content, openByDefault = fa
       onPress={handlePress}
       expanded={expanded}>
       <View style={styles.accordionContent}>
-        <Text style={typography.textMedium}>{content}</Text>
+        {content && <Text style={typography.textMedium}>{content}</Text>}
         {children}
       </View>
     </List.Accordion>

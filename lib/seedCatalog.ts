@@ -5,7 +5,7 @@ const CATALOG_STORAGE_KEY = '@sproutly/seed_catalog';
 
 export type SeedType = 'Vegetable' | 'Flower' | 'Fruit' | 'Herb';
 
-export type Exposure = 'Full sun' | 'Part sun' | 'Full sun to part shade' | 'Part shade' | 'Shade';
+export type Exposure = 'Full sun' | 'Full sun to part shade' | 'Part shade';
 
 export type Difficulty = 'Easy' | 'Standard' | 'Intermediate' | 'Advanced' | 'Expert';
 
