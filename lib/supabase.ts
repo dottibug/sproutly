@@ -2,7 +2,7 @@ import 'react-native-url-polyfill/auto';
 import { createClient } from '@supabase/supabase-js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Initialize Supabase client with localStorage for auth
+// Initialize Supabase client with async storage for auth
 // https://supabase.com/docs/guides/getting-started/quickstarts/expo-react-native
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;

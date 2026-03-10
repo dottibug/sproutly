@@ -13,7 +13,6 @@ const SIGN_IN = 'Sign in';
 const SIGNING_IN = 'Signing in...';
 const SIGN_UP = 'Sign up';
 const CREATE_ACCOUNT = 'Create an account';
-// const PIN = '1234567';
 
 export default function SignIn() {
   const [username, setUsername] = useState('');
@@ -31,7 +30,6 @@ export default function SignIn() {
     }
 
     setSubmitting(true);
-
     clearError();
 
     try {
@@ -48,7 +46,6 @@ export default function SignIn() {
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <Text style={styles.title}>{TITLE}</Text>
       <Text style={styles.subtitle}>{SUBTITLE}</Text>
-
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
       {/* Username Input */}

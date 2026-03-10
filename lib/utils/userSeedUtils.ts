@@ -1,7 +1,6 @@
 import { Profile } from '../contexts/AuthContext';
 import { UserSeedItem, CatalogSeedItem, Planting } from '../types';
 import { fetchUserSeedsWithoutPlantingActions, fetchPlantingActions } from '../queries';
-
 import { getCategoryPlantingActions } from './plantActionUtils';
 
 export async function getUserSeedCollection(profile: Profile): Promise<UserSeedItem[]> {

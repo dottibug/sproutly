@@ -4,7 +4,7 @@ import { useSeedCatalog } from '../../../lib/contexts/SeedCatalogContext';
 import { useUserSeeds } from '../../../lib/contexts/UserSeedsContext';
 import ScreenContainer from '../../../components/ui/ScreenContainer';
 import SeedDetails from '../../../components/seedDetails/SeedDetails';
-import { CatalogSeedItem, UserSeedItem } from '../../../lib/seedCatalog';
+import { CatalogSeedItem, UserSeedItem } from '../../../lib/types';
 
 // Catalog seed details screen
 export default function SeedDetailsScreen() {

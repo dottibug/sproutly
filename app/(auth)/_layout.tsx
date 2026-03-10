@@ -7,8 +7,6 @@ export default function AuthLayout() {
   const { session, loading } = useAuth();
   const router = useRouter();
 
-  console.log('AuthLayout rendered');
-
   useEffect(() => {
     if (loading) return;
     if (session) router.replace('/(tabs)/home');

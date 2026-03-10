@@ -11,8 +11,6 @@ const CREATING_ACCOUNT = 'Creating...';
 const SIGN_IN = 'Already have an account? Sign in';
 
 export default function SignUp() {
-  console.log('SignUp Screen Reached');
-
   const [username, setUsername] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const { signUp, error, clearError } = useAuth();
