@@ -1,10 +1,10 @@
-import type { UserSeedItem } from '../../lib/seedCatalog';
 import { useState } from 'react';
 import { Pressable } from 'react-native';
-import SeedCard from '../ui/seedCard/SeedCard';
-import { useUserSeeds } from '../../lib/contexts/UserSeedsContext';
-import SeedCardAction from '../ui/seedCard/SeedCardAction';
 import { useRouter } from 'expo-router';
+import { useUserSeeds } from '../../lib/contexts/UserSeedsContext';
+import { UserSeedItem } from '../../lib/types';
+import SeedCard from '../ui/seedCard/SeedCard';
+import SeedCardAction from '../ui/seedCard/SeedCardAction';
 
 type UserSeedCardProps = {
   readonly seed: UserSeedItem;

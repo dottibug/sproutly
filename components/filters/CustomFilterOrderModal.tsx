@@ -1,6 +1,7 @@
 import { View, StyleSheet } from 'react-native';
 import { useCallback, useState, useEffect } from 'react';
-import { useFilters, type Filter } from '../../lib/contexts/FiltersContext';
+import { useFilters } from '../../lib/contexts/FiltersContext';
+import { Filter } from '../../lib/types';
 import AppModal from '../ui/AppModal';
 import Button from '../ui/buttons/Button';
 import DraggableFilterOrder from './DraggableFilterOrder';

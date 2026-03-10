@@ -2,7 +2,8 @@ import { View, StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
 import { colors } from '../../styles/theme';
 import FilterOption from './FilterOption';
-import { Filter, useFilters } from '../../lib/contexts/FiltersContext';
+import { useFilters } from '../../lib/contexts/FiltersContext';
+import { Filter } from '../../lib/types';
 
 type FilterCategoryProps = {
   readonly title: string;

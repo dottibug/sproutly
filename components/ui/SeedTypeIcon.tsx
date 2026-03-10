@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native';
-import type { SeedType } from '../../lib/seedCatalog';
+import { SeedType } from '../../lib/types';
 import { colors } from '../../styles/theme';
 
 type SeedTypeIconProps = {

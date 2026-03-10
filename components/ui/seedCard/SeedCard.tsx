@@ -1,6 +1,6 @@
 import { View, StyleSheet, Pressable } from 'react-native';
 import SeedCardImage from './SeedCardImage';
-import type { CatalogSeedItem, UserSeedItem } from '../../../lib/seedCatalog';
+import { CatalogSeedItem, UserSeedItem } from '../../../lib/types';
 import SeedCardInfo from './SeedCardInfo';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 

@@ -1,11 +1,10 @@
 import { useRouter } from 'expo-router';
-import type { CatalogSeedItem } from '../../lib/seedCatalog';
 import SeedCard from '../ui/seedCard/SeedCard';
 import { Pressable } from 'react-native';
 import { useState } from 'react';
 import { useUserSeeds } from '../../lib/contexts/UserSeedsContext';
 import SeedCardAction from '../ui/seedCard/SeedCardAction';
-import { UserSeedItem } from '../../lib/seedCatalog';
+import { UserSeedItem, CatalogSeedItem } from '../../lib/types';
 
 type CatalogSeedCardProps = {
   readonly seed: CatalogSeedItem;

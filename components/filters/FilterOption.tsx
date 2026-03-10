@@ -1,5 +1,6 @@
 import { Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Filter, useFilters } from '../../lib/contexts/FiltersContext';
+import { useFilters } from '../../lib/contexts/FiltersContext';
+import { Filter } from '../../lib/types';
 import { colors } from '../../styles/theme';
 
 type FilterOptionProps = {

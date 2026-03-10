@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import type { CatalogSeedItem } from '../../lib/seedCatalog';
+import { CatalogSeedItem } from '../../lib/types';
 import CatalogSeedCard from './CatalogSeedCard';
 
 type CatalogSeedListProps = {

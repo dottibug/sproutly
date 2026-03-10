@@ -1,11 +1,12 @@
 import { View, StyleSheet, ScrollView, Text } from 'react-native';
+import { useFilters } from '../../lib/contexts/FiltersContext';
 import { useUserSeeds } from '../../lib/contexts/UserSeedsContext';
+import { applyFilters } from '../../lib/utils/filterUtils';
 import Loading from '../ui/Loading';
 import ScreenMessage from '../ui/ScreenMessage';
 import UserSeedList from './UserSeedList';
 import Filters from '../filters/Filters';
 import { colors, appStyles } from '../../styles/theme';
-import { useFilters, applyFilters } from '../../lib/contexts/FiltersContext';
 
 const LOAD_MESSAGE = 'Loading your seeds…';
 const EMPTY_SEEDS_LIST = 'Your collection is empty. Add seeds to get started.';

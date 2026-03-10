@@ -1,5 +1,5 @@
 import { View, StyleSheet } from 'react-native';
-import { SeedType } from '../../../lib/seedCatalog';
+import { SeedType } from '../../../lib/types';
 import Heading from '../Heading';
 import Badge from '../Badge';
 import { colors } from '../../../styles/theme';

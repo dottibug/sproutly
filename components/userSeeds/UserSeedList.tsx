@@ -1,6 +1,6 @@
-import type { UserSeedItem } from '../../lib/seedCatalog';
-import UserSeedCard from './UserSeedCard';
 import { Fragment } from 'react';
+import { UserSeedItem } from '../../lib/types';
+import UserSeedCard from './UserSeedCard';
 
 type UserSeedListProps = {
   readonly seeds: UserSeedItem[];

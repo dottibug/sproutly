@@ -1,9 +1,8 @@
 import { View, StyleSheet } from 'react-native';
 import Heading from '../ui/Heading';
-import type { SeedType, ExposureType } from '../../lib/seedCatalog';
+import { SeedType, Exposure } from '../../lib/types';
 import SeedSKU from './SeedSku';
 import SeedBadges from './SeedBadges';
-import Button from '../ui/buttons/Button';
 
 type SeedHeaderProps = {
   readonly name: string;
@@ -13,7 +12,7 @@ type SeedHeaderProps = {
   readonly catalogId: string;
   readonly inUserCollection: boolean;
   readonly type: SeedType;
-  readonly exposure: ExposureType;
+  readonly exposure: Exposure;
 };
 
 export default function SeedHeader({ name, category, beanType, seedSKU, catalogId, inUserCollection, type, exposure }: SeedHeaderProps) {

@@ -1,5 +1,5 @@
 import { Switch } from 'react-native-paper';
-import { Filter } from '../../lib/contexts/FiltersContext';
+import { Filter } from '../../lib/types';
 
 type ToggleProps = {
   readonly filter: Filter;
