@@ -13,6 +13,7 @@ const SIGN_IN = 'Sign in';
 const SIGNING_IN = 'Signing in...';
 const SIGN_UP = 'Sign up';
 const CREATE_ACCOUNT = 'Create an account';
+// const PIN = '1234567';
 
 export default function SignIn() {
   const [username, setUsername] = useState('');

@@ -4,19 +4,19 @@ import { colors } from '../../styles/theme';
 import FilterOption from './FilterOption';
 import { Filter, useFilters } from '../../lib/contexts/FiltersContext';
 
-type FilterSectionProps = {
+type FilterCategoryProps = {
   readonly title: string;
   readonly options: string[];
   readonly filter: Filter;
 };
 
-export default function FilterSection({ title, options, filter }: FilterSectionProps) {
-  const { expanded, setExpanded } = useFilters();
-  const isExpanded = expanded[filter];
+export default function FilterCategory({ title, options, filter }: FilterCategoryProps) {
+  const { openFilters, setOpenFilters } = useFilters();
+  const isOpen = openFilters[filter];
 
   const handlePress = () => {
-    const newExpanded = !isExpanded;
-    setExpanded(filter, newExpanded);
+    const newOpen = !isOpen;
+    setOpenFilters(filter, newOpen);
   };
 
   return (
@@ -27,7 +27,7 @@ export default function FilterSection({ title, options, filter }: FilterSectionP
       containerStyle={styles.filterContainer}
       contentStyle={styles.filterContent}
       rippleColor="transparent"
-      expanded={isExpanded}
+      expanded={isOpen}
       onPress={handlePress}>
       <View style={styles.filterOptions}>
         {options.map((option) => (
@@ -41,7 +41,6 @@ export default function FilterSection({ title, options, filter }: FilterSectionP
 const styles = StyleSheet.create({
   filterWrapper: {
     backgroundColor: '#f5f5f5',
-    // backgroundColor: 'red',
     paddingTop: 0,
     paddingBottom: 4,
   },

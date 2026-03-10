@@ -1,8 +1,7 @@
 import { createContext, useReducer, useCallback, useEffect, useMemo, useContext } from 'react';
 import { supabase } from '../supabase';
 import { Session, User } from '@supabase/supabase-js';
-import { getAuthEmail } from '../constants/auth';
-import { UNIVERSAL_PIN } from '../constants/auth';
+import { getAuthEmail, UNIVERSAL_PIN } from '../constants/auth';
 
 // AuthContext.tsx follows the React context & reducer pattern to manage state for user authentication.
 // https://react.dev/learn/scaling-up-with-reducer-and-context
@@ -48,8 +47,12 @@ async function fetchProfile(userId: string): Promise<Profile | null> {
   return { id: data.id, username: data.username };
 }
 
+type AuthProviderProps = {
+  readonly children: React.ReactNode;
+};
+
 // AuthProvider component to provide the auth context to all child components.
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({ children }: AuthProviderProps) {
   const [state, setState] = useReducer((prev: AuthState, next: Partial<AuthState>) => ({ ...prev, ...next }), initialState);
 
   // Load the session and profile when the component mounts

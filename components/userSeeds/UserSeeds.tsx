@@ -31,7 +31,6 @@ export default function UserSeeds() {
 
       <View style={styles.userSeedsContent}>
         {!emptySeedsList && <Text style={styles.deleteHint}>Long press to delete a seed</Text>}
-
         <View style={appStyles.resultsList}>
           {emptySeedsList && <ScreenMessage message={EMPTY_SEEDS_LIST} />}
           <UserSeedList seeds={filteredSeeds} />

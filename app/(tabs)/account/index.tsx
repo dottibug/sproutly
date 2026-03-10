@@ -1,34 +1,39 @@
-import { Text, View, StyleSheet, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { useAuth } from '../../../lib/contexts/AuthContext';
+import { Text, View, StyleSheet, Pressable, ScrollView } from 'react-native';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'expo-router';
+import { useAuth } from '../../../lib/contexts/AuthContext';
 import { useFilters, FILTERS, Filter } from '../../../lib/contexts/FiltersContext';
-import { colors } from '../../../styles/theme';
+import CustomFilterOrderModal from '../../../components/filters/CustomFilterOrderModal';
 import Toggle from '../../../components/ui/Toggle';
-import { useCallback } from 'react';
 import Button from '../../../components/ui/buttons/Button';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { colors } from '../../../styles/theme';
+
+// TODO: styling
+// TODO clicking settings brings you to settings screen to adjust filter order etc?
 
 // Account tab screen
 export default function AccountScreen() {
-  const { signOut } = useAuth();
   const router = useRouter();
-
+  const { signOut } = useAuth();
+  const [modalVisible, setModalVisible] = useState(false);
   const { preferences, setFilterPreferences, saveFilterPreferences } = useFilters();
 
-  const handleExpandedByDefaultToggle = useCallback(
+  const handleOpenByDefaultToggle = useCallback(
     (filter: Filter) => {
-      const expandedByDefault = preferences.expandedByDefault.includes(filter)
-        ? preferences.expandedByDefault.filter((f) => f !== filter)
-        : [...preferences.expandedByDefault, filter];
-      setFilterPreferences({ ...preferences, expandedByDefault });
+      const openByDefault = preferences.openByDefault.includes(filter)
+        ? preferences.openByDefault.filter((f) => f !== filter)
+        : [...preferences.openByDefault, filter];
+      setFilterPreferences({ ...preferences, openByDefault });
     },
     [preferences, setFilterPreferences],
   );
 
   const handleSaveFilterPreferences = useCallback(async () => {
     await saveFilterPreferences();
-  }, [saveFilterPreferences]);
+  }, [saveFilterPreferences, preferences]);
+
+  const handleRequestCloseModal = () => setModalVisible(false);
 
   const handleSignOut = async () => {
     console.log('Signing out');
@@ -38,8 +43,14 @@ export default function AccountScreen() {
     console.log('Redirected to auth');
   };
 
+  const tempHandleFilterOrderPress = () => {
+    console.log('Filter order pressed');
+    console.log('will open modal to adjust filter order');
+    setModalVisible(true);
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>Account</Text>
       <Text>change username</Text>
       <Text>change avatar</Text>
@@ -47,19 +58,21 @@ export default function AccountScreen() {
 
       {/* Settings */}
       <View style={styles.tempFilterSettingsContainer}>
-        <Text style={{ fontWeight: 'bold' }}>Filter Order Settings</Text>
-        <View style={styles.tempFilterOrderContainer}></View>
+        <Pressable style={styles.tempFilterOrderContainer} onPress={tempHandleFilterOrderPress}>
+          <Text style={{ fontWeight: 'bold' }}>Custom Filter Order TEMP</Text>
+          <CustomFilterOrderModal visible={modalVisible} onRequestClose={handleRequestCloseModal} />
+        </Pressable>
 
         <Text style={{ fontWeight: 'bold' }}>Filter Open By Default Settings</Text>
         <View style={styles.tempFilterOpenContainer}>
           {FILTERS.map((filter) => (
             <View key={filter} style={styles.tempFilterOpenItem}>
-              <Toggle filter={filter} value={preferences.expandedByDefault.includes(filter)} onToggle={handleExpandedByDefaultToggle} />
+              <Toggle filter={filter} value={preferences.openByDefault.includes(filter)} onToggle={handleOpenByDefaultToggle} />
               <Text>{filter}</Text>
             </View>
           ))}
-          <Button text="Save Changes" size="small" onPress={handleSaveFilterPreferences} />
         </View>
+        <Button text="Save Changes" size="small" onPress={handleSaveFilterPreferences} />
       </View>
 
       {/* <Text>Reset Filter Preferences</Text> */}
@@ -73,7 +86,7 @@ export default function AccountScreen() {
         <MaterialIcons name="logout" size={24} color="black" />
         <Text style={styles.signOutText}>Sign out</Text>
       </Pressable>
-    </SafeAreaView>
+    </ScrollView>
   );
 }
 
@@ -104,6 +117,8 @@ const styles = StyleSheet.create({
   },
   tempFilterOrderContainer: {
     gap: 12,
+    borderWidth: 1,
+    padding: 12,
   },
   tempFilterOpenContainer: {
     gap: 12,
