@@ -1,4 +1,14 @@
-import { SelectedFilters, UserFilterPreferences, OpenFilters, Filter, UserSeedItem, PlantingAction, SeedType } from '../types';
+import {
+  SelectedFilters,
+  UserFilterPreferences,
+  OpenFilters,
+  Filter,
+  UserSeedItem,
+  PlantingAction,
+  SeedType,
+  CatalogSeedItem,
+  PlantType,
+} from '../types';
 import { fetchUserFilterPrefs, updateUserFilterPrefs } from '../queries';
 
 export const FILTERS: Filter[] = ['plantType', 'starting', 'exposure', 'season', 'month', 'readyToHarvest', 'difficulty'];
@@ -93,6 +103,30 @@ export function filterByReadyToHarvest(seed: UserSeedItem, selected: string[]) {
     if (readyToHarvestLabel === 'Over 130 days') return days > 130;
     return false;
   });
+}
+
+export function searchUserSeeds(seeds: UserSeedItem[], searchQuery: string): UserSeedItem[] {
+  const query = searchQuery.trim().toLowerCase();
+  if (!query) return seeds;
+
+  return seeds.filter(
+    (seed) =>
+      seed.name.toLowerCase().includes(query) || seed.category.toLowerCase().includes(query) || seed.sku.toLowerCase().includes(query),
+  );
+}
+
+export function filterCatalogSeeds(seeds: CatalogSeedItem[], selectedFilters: Set<PlantType>): CatalogSeedItem[] {
+  if (selectedFilters.size > 0) {
+    const filterArray = Array.from(selectedFilters);
+
+    const filters = filterArray.map((plantType) => {
+      if (plantType === 'Veggie') return 'Vegetable';
+      return plantType;
+    });
+
+    return seeds.filter((seed) => new Set(filters).has(seed.type));
+  }
+  return seeds; // No filters applied (return all seeds)
 }
 
 // ---- CONSTANTS ----

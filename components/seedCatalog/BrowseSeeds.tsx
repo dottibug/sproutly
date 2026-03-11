@@ -2,14 +2,16 @@ import { useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import PlantTypeFilters from './PlantTypeFilters';
 import type { PlantType } from './PlantTypeFilterIcon';
-import SearchBar from '../ui/SearchBar';
+
 import Heading from '../ui/Heading';
-import { getCatalogHeading, filterAndSearchCatalog } from '../../utils/filterAndSearchCatalog';
 import { appStyles } from '../../styles/theme';
 import ScreenMessage from '../ui/ScreenMessage';
 import CatalogSeedList from './CatalogSeedList';
 import Loading from '../ui/Loading';
 import { useSeedCatalog } from '../../lib/contexts/SeedCatalogContext';
+import { filterCatalogSeeds } from '../../lib/utils/filterUtils';
+import { searchSeeds } from '../../lib/utils/searchUtils';
+import SearchBar from '../ui/SearchBar';
 
 const NO_SEEDS_MATCH = 'No seeds match your filters or search';
 const LOAD_MESSAGE = 'Loading catalog…';
@@ -23,9 +25,18 @@ export default function BrowseSeeds() {
 
   const [searchQuery, setSearchQuery] = useState('');
 
-  const seedResults = filterAndSearchCatalog(seeds, selectedFilters, searchQuery);
+  // Filter and search seeds
+  const filteredSeeds = filterCatalogSeeds(seeds, selectedFilters);
 
-  const emptySeedResults: boolean = seedResults.length === 0;
+  const displayedSeeds = searchQuery.trim() === '' ? filteredSeeds : searchSeeds(filteredSeeds, searchQuery);
+
+  const emptySeedResults: boolean = displayedSeeds.length === 0;
+
+  const seedListHeading = () => {
+    if (searchQuery !== '') return 'Search Results';
+    if (selectedFilters.size > 0) return 'Filtered Seeds';
+    return 'All Seeds';
+  };
 
   // Toggle filters on/off
   function toggleFilter(plantType: PlantType) {
@@ -47,22 +58,27 @@ export default function BrowseSeeds() {
     <View style={styles.browseContainer}>
       <PlantTypeFilters selectedFilters={selectedFilters} onToggleFilter={toggleFilter} />
 
-      <SearchBar searchQuery={searchQuery} onSearchQueryChange={setSearchQuery} />
+      <SearchBar placeholder="Search seeds..." searchQuery={searchQuery} handleSearchQuery={setSearchQuery} />
 
-      <Heading size="medium" marginVertical={18} uppercase>
-        {getCatalogHeading(searchQuery, selectedFilters.size)}
-      </Heading>
+      <View style={styles.seedListContainer}>
+        <Heading size="medium" marginVertical={18} uppercase>
+          {seedListHeading()}
+        </Heading>
 
-      <ScrollView style={appStyles.resultsList}>
-        {emptySeedResults && <ScreenMessage message={NO_SEEDS_MATCH} />}
-        <CatalogSeedList seeds={seedResults} />
-      </ScrollView>
+        <ScrollView style={appStyles.resultsList}>
+          {emptySeedResults && <ScreenMessage message={NO_SEEDS_MATCH} />}
+          <CatalogSeedList seeds={displayedSeeds} />
+        </ScrollView>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   browseContainer: {
+    flex: 1,
+  },
+  seedListContainer: {
     flex: 1,
     paddingHorizontal: 16,
   },

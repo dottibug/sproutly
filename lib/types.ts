@@ -7,6 +7,8 @@ export type Profile = {
 // ---- SEED INFO TYPES ----
 export type SeedType = 'Vegetable' | 'Flower' | 'Fruit' | 'Herb';
 
+export type PlantType = 'Veggie' | 'Flower' | 'Fruit' | 'Herb';
+
 export type Exposure = 'Full sun' | 'Full sun to part shade' | 'Part shade';
 
 export type Difficulty = 'Easy' | 'Standard' | 'Intermediate' | 'Advanced' | 'Expert';

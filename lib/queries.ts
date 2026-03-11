@@ -2,7 +2,6 @@ import { supabase } from './supabase';
 import { Profile } from './contexts/AuthContext';
 import { UserSeedItem, CatalogSeedItem, PlantingActionRow, UserFilterPreferences, Filter } from './types';
 import { getCategoryPlantingActions } from './utils/plantActionUtils';
-import { DEFAULT_OPEN, FILTERS } from './utils/filterUtils';
 
 // ---- USER SEED COLLECTION QUERIES ----
 export async function fetchUserSeedsWithoutPlantingActions(profile: Profile): Promise<UserSeedItem[]> {
@@ -81,6 +80,10 @@ export async function fetchPlantingActions(): Promise<PlantingActionRow[]> {
 }
 
 // ---- FILTER QUERIES ----
+const FILTERS: Filter[] = ['plantType', 'starting', 'exposure', 'season', 'month', 'readyToHarvest', 'difficulty'];
+
+const DEFAULT_OPEN: Filter[] = ['plantType', 'starting'];
+
 export async function fetchUserFilterPrefs(profileId: string): Promise<UserFilterPreferences> {
   const { data, error } = await supabase.from('profiles').select('filter_order, filter_expanded_by_default').eq('id', profileId).single();
 

@@ -47,6 +47,7 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 12,
     paddingBottom: 4,
+    paddingHorizontal: 16,
   },
   filtersContainer: {
     alignItems: 'center',

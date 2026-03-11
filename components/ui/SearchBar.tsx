@@ -1,44 +1,28 @@
-import { View, TextInput, StyleSheet } from 'react-native';
-import Heading from './Heading';
+import { View, StyleSheet } from 'react-native';
+import { Searchbar } from 'react-native-paper';
+import { colors } from '../../styles/theme';
 
-const PLACEHOLDER = 'Search seeds…';
-
+// TODO: stlying
 type SearchBarProps = {
+  readonly placeholder: string;
   readonly searchQuery: string;
-  readonly onSearchQueryChange: (query: string) => void;
+  readonly handleSearchQuery: (query: string) => void;
 };
 
 // Renders a search bar with a heading and text input. Must pass in the search query and a function to update the search query as props.
-export default function SearchBar({ searchQuery, onSearchQueryChange }: SearchBarProps) {
+export default function SearchBar({ placeholder, searchQuery, handleSearchQuery }: SearchBarProps) {
+  console.log('searchQuery', searchQuery);
+
   return (
-    <View style={styles.container}>
-      <Heading size="small" uppercase>
-        Search
-      </Heading>
-      <TextInput
-        style={styles.input}
-        placeholder={PLACEHOLDER}
-        value={searchQuery}
-        onChangeText={onSearchQueryChange}
-        clearButtonMode="while-editing"
-      />
+    <View style={styles.searchBarContainer}>
+      <Searchbar value={searchQuery} onChangeText={handleSearchQuery} placeholder={placeholder} placeholderTextColor={colors.mediumGray} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-    gap: 8,
-    paddingBottom: 4,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    padding: 8,
-    fontSize: 16,
-    marginBottom: 12,
+  searchBarContainer: {
+    paddingHorizontal: 16,
+    marginVertical: 12,
   },
 });
