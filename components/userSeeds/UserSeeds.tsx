@@ -1,16 +1,17 @@
 import { View, StyleSheet, ScrollView, Text } from 'react-native';
 import { useState } from 'react';
-import SearchBar from '../ui/SearchBar';
-import { useFilters } from '../../lib/contexts/FiltersContext';
 import { useUserSeeds } from '../../lib/contexts/UserSeedsContext';
-import { applyFilters } from '../../lib/utils/filterUtils';
-import Loading from '../ui/Loading';
-import ScreenMessage from '../ui/ScreenMessage';
-import UserSeedList from './UserSeedList';
-import Filters from '../filters/Filters';
-import { colors, appStyles } from '../../styles/theme';
+import { useFilters } from '../../lib/contexts/FiltersContext';
+import { applyFilters, getNumberOfSelectedFilters } from '../../lib/utils/filterUtils';
 import { searchSeeds } from '../../lib/utils/searchUtils';
 import { UserSeedItem } from '../../lib/types';
+import UserSeedList from './UserSeedList';
+import Loading from '../ui/Loading';
+import ScreenMessage from '../ui/ScreenMessage';
+import Filters from '../filters/Filters';
+import FilterChips from '../filters/FilterChips';
+import SearchBar from '../ui/SearchBar';
+import { colors, appStyles } from '../../styles/theme';
 
 const LOAD_MESSAGE = 'Loading your seeds…';
 const EMPTY_SEEDS_LIST = 'Your collection is empty. Add seeds to get started.';
@@ -18,20 +19,20 @@ const NO_RESULTS_MESSAGE = 'No seeds match your filters or search';
 
 export default function UserSeeds() {
   // State
+  const [openFilterMenu, setOpenFilterMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
   // Context
   const { seeds, loading, error } = useUserSeeds();
   const { selected } = useFilters();
-
   const userCollectionSize = seeds.length;
 
   // Filter and search seeds
   const filteredSeeds = applyFilters(seeds, selected);
-
   const displayedSeeds = searchQuery.trim() === '' ? filteredSeeds : searchSeeds(filteredSeeds, searchQuery);
-
   const emptySeedsList: boolean = displayedSeeds.length === 0;
+  const numberOfSelectedFilters = getNumberOfSelectedFilters(selected);
+  const showFilterChips = !openFilterMenu && numberOfSelectedFilters > 0;
 
   // Loading or error messages
   if (loading) return <Loading message={LOAD_MESSAGE} />;
@@ -41,9 +42,9 @@ export default function UserSeeds() {
 
   return (
     <ScrollView style={styles.userSeedsContainer}>
-      <Filters />
+      <Filters open={openFilterMenu} setOpen={setOpenFilterMenu} />
 
-      {/* <Searchbar value={searchQuery} onChangeText={handleSearchQuery} placeholder="Search seeds..." /> */}
+      {showFilterChips && <FilterChips />}
 
       <SearchBar placeholder="Search seeds..." searchQuery={searchQuery} handleSearchQuery={handleSearchQuery} />
 

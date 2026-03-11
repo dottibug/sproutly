@@ -13,6 +13,8 @@ import { filterCatalogSeeds } from '../../lib/utils/filterUtils';
 import { searchSeeds } from '../../lib/utils/searchUtils';
 import SearchBar from '../ui/SearchBar';
 
+// TODO: Styling of browse seeds screen
+
 const NO_SEEDS_MATCH = 'No seeds match your filters or search';
 const LOAD_MESSAGE = 'Loading catalog…';
 

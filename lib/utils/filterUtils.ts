@@ -105,16 +105,6 @@ export function filterByReadyToHarvest(seed: UserSeedItem, selected: string[]) {
   });
 }
 
-export function searchUserSeeds(seeds: UserSeedItem[], searchQuery: string): UserSeedItem[] {
-  const query = searchQuery.trim().toLowerCase();
-  if (!query) return seeds;
-
-  return seeds.filter(
-    (seed) =>
-      seed.name.toLowerCase().includes(query) || seed.category.toLowerCase().includes(query) || seed.sku.toLowerCase().includes(query),
-  );
-}
-
 export function filterCatalogSeeds(seeds: CatalogSeedItem[], selectedFilters: Set<PlantType>): CatalogSeedItem[] {
   if (selectedFilters.size > 0) {
     const filterArray = Array.from(selectedFilters);
@@ -127,6 +117,12 @@ export function filterCatalogSeeds(seeds: CatalogSeedItem[], selectedFilters: Se
     return seeds.filter((seed) => new Set(filters).has(seed.type));
   }
   return seeds; // No filters applied (return all seeds)
+}
+
+export function getNumberOfSelectedFilters(selectedFilters: SelectedFilters): number {
+  console.log(Object.values(selectedFilters));
+
+  return Object.values(selectedFilters).reduce((acc, curr) => acc + curr.length, 0);
 }
 
 // ---- CONSTANTS ----

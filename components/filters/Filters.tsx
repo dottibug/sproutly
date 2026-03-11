@@ -1,6 +1,5 @@
 import { View, StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
-import { useState } from 'react';
 import { useFilters } from '../../lib/contexts/FiltersContext';
 import { FILTER_MAP, FILTER_OPTIONS } from '../../lib/utils/filterUtils';
 import FilterCategory from './FilterCategory';
@@ -12,8 +11,12 @@ import { colors } from '../../styles/theme';
 
 const FILTERS_TITLE = 'Filter Seeds';
 
-export default function Filters() {
-  const [open, setOpen] = useState(false);
+type FiltersProps = {
+  readonly open: boolean;
+  readonly setOpen: (open: boolean) => void;
+};
+
+export default function Filters({ open, setOpen }: FiltersProps) {
   const { applyOpenFilters, preferences } = useFilters();
 
   const handlePress = () => {
