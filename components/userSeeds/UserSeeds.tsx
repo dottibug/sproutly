@@ -1,4 +1,6 @@
 import { View, StyleSheet, ScrollView, Text } from 'react-native';
+import { useState } from 'react';
+import { Searchbar } from 'react-native-paper';
 import { useFilters } from '../../lib/contexts/FiltersContext';
 import { useUserSeeds } from '../../lib/contexts/UserSeedsContext';
 import { applyFilters } from '../../lib/utils/filterUtils';
@@ -6,12 +8,16 @@ import Loading from '../ui/Loading';
 import ScreenMessage from '../ui/ScreenMessage';
 import UserSeedList from './UserSeedList';
 import Filters from '../filters/Filters';
+import SearchBar from '../ui/SearchBar';
 import { colors, appStyles } from '../../styles/theme';
 
 const LOAD_MESSAGE = 'Loading your seeds…';
 const EMPTY_SEEDS_LIST = 'Your collection is empty. Add seeds to get started.';
 
 export default function UserSeeds() {
+  // State
+  const [searchQuery, setSearchQuery] = useState('');
+
   // Context
   const { seeds, loading, error } = useUserSeeds();
   const { selected } = useFilters();
@@ -23,11 +29,17 @@ export default function UserSeeds() {
   if (loading) return <Loading message={LOAD_MESSAGE} />;
   if (error) return <ScreenMessage message={error} />;
 
+  function handleSearchQuery(query: string) {
+    setSearchQuery(query);
+  }
+
   return (
     <ScrollView style={styles.userSeedsContainer}>
       <Filters />
 
       {/* TODO: Search bar */}
+      <Searchbar value={searchQuery} onChangeText={handleSearchQuery} placeholder="Search seeds..." />
+
       {/* TODO: FAB: Add seed */}
 
       <View style={styles.userSeedsContent}>
