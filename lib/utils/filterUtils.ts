@@ -120,8 +120,6 @@ export function filterCatalogSeeds(seeds: CatalogSeedItem[], selectedFilters: Se
 }
 
 export function getNumberOfSelectedFilters(selectedFilters: SelectedFilters): number {
-  console.log(Object.values(selectedFilters));
-
   return Object.values(selectedFilters).reduce((acc, curr) => acc + curr.length, 0);
 }
 

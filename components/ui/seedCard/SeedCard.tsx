@@ -22,6 +22,7 @@ export default function SeedCard({ cardType, seed, onPress, inUserCollection = f
       <View style={styles.content}>
         <SeedCardImage imageUri={seed.image} />
         <SeedCardInfo
+          seedId={seed.id}
           name={seed.name}
           category={seed.category}
           beanType={seed.bean_type}

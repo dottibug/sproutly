@@ -57,4 +57,25 @@ export const appStyles = StyleSheet.create({
     flex: 1,
     gap: 16,
   },
+  modalContainer: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    flex: 1,
+    justifyContent: 'center',
+  },
+  modalContent: {
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderRadius: 20,
+    elevation: 5,
+    gap: 12,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
 });

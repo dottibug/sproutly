@@ -7,9 +7,7 @@ import { colors } from '../../styles/theme';
 // TODO: Styling of chips and clear all filters button
 export default function FilterChips() {
   const { selected, clearAllSelected } = useFilters();
-
   const chips = FILTERS.flatMap((filter) => selected[filter].map((option) => ({ filter, option })));
-
   const handleClearAllFilters = () => clearAllSelected();
 
   return (

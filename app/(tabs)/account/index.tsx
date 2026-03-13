@@ -1,4 +1,5 @@
 import { Text, View, StyleSheet, Pressable, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState, useCallback } from 'react';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../../lib/contexts/AuthContext';
@@ -52,6 +53,7 @@ export default function AccountScreen() {
   };
 
   return (
+    // <SafeAreaView style={{ flex: 1 }} edges={['top']}>
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Account</Text>
       <Text>change username</Text>
@@ -89,12 +91,13 @@ export default function AccountScreen() {
         <Text style={styles.signOutText}>Sign out</Text>
       </Pressable>
     </ScrollView>
+    // </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     padding: 16,
   },
   title: {

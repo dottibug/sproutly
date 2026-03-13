@@ -13,7 +13,6 @@ export default function FilterChip({ filter, option }: FilterChipProps) {
   const { selected, setSelected } = useFilters();
 
   const handleRemoveFilter = () => {
-    console.log(`Removing option '${option}' from filter '${filter}'`);
     const currentSelected = selected[filter];
     const newSelected = currentSelected.filter((o) => o !== option);
     setSelected(filter, newSelected);

@@ -3,18 +3,21 @@ import { buttonColorMap, colors } from '../../../styles/theme';
 import ButtonIcon from './ButtonIcon';
 
 const fontSizeMap = {
+  xsmall: 12,
   small: 14,
   medium: 16,
   large: 18,
 };
 
 const lineHeightMap = {
+  xsmall: 16,
   small: 18,
   medium: 20,
   large: 22,
 };
 
 const paddingMap = {
+  xsmall: 4,
   small: 6,
   medium: 9,
   large: 12,
@@ -24,7 +27,7 @@ type ButtonProps = {
   readonly text: string;
   readonly onPress: () => void;
   readonly color?: 'primary' | 'secondary' | 'danger';
-  readonly size?: 'small' | 'medium' | 'large';
+  readonly size?: 'xsmall' | 'small' | 'medium' | 'large';
   readonly variant?: 'solid' | 'outline';
   readonly icon?: 'add' | 'delete' | 'cancel' | null;
   readonly width?: any;

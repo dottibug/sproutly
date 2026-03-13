@@ -3,6 +3,7 @@ import type { ComponentProps } from 'react';
 import { buttonColorMap } from '../../../styles/theme';
 
 const iconSizeMap = {
+  xsmall: 14,
   small: 16,
   medium: 18,
   large: 20,
@@ -10,7 +11,7 @@ const iconSizeMap = {
 
 type ButtonIconProps = {
   readonly icon: 'add' | 'delete' | 'cancel';
-  readonly size?: 'small' | 'medium' | 'large';
+  readonly size?: 'xsmall' | 'small' | 'medium' | 'large';
   readonly color?: 'primary' | 'secondary' | 'danger';
   readonly variant?: 'solid' | 'outline';
 };

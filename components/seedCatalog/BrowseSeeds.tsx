@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import PlantTypeFilters from './PlantTypeFilters';
 import type { PlantType } from './PlantTypeFilterIcon';
@@ -18,20 +18,22 @@ import SearchBar from '../ui/SearchBar';
 const NO_SEEDS_MATCH = 'No seeds match your filters or search';
 const LOAD_MESSAGE = 'Loading catalog…';
 
-export default function BrowseSeeds() {
+type BrowseSeedsProps = {
+  readonly activeTab: 'mySeeds' | 'browse';
+  readonly browseFromAddSeed?: boolean;
+};
+
+export default function BrowseSeeds({ activeTab, browseFromAddSeed }: BrowseSeedsProps) {
   // Context
   const { seeds, loading, error } = useSeedCatalog();
 
   // State
   const [selectedFilters, setSelectedFilters] = useState<Set<PlantType>>(new Set());
-
   const [searchQuery, setSearchQuery] = useState('');
 
   // Filter and search seeds
   const filteredSeeds = filterCatalogSeeds(seeds, selectedFilters);
-
   const displayedSeeds = searchQuery.trim() === '' ? filteredSeeds : searchSeeds(filteredSeeds, searchQuery);
-
   const emptySeedResults: boolean = displayedSeeds.length === 0;
 
   const seedListHeading = () => {
@@ -53,11 +55,10 @@ export default function BrowseSeeds() {
   }
 
   if (loading) return <Loading message={LOAD_MESSAGE} />;
-
   if (error) return <ScreenMessage message={error} />;
 
   return (
-    <View style={styles.browseContainer}>
+    <View style={[styles.browseContainer, { display: activeTab === 'browse' ? 'flex' : 'none' }]}>
       <PlantTypeFilters selectedFilters={selectedFilters} onToggleFilter={toggleFilter} />
 
       <SearchBar placeholder="Search seeds..." searchQuery={searchQuery} handleSearchQuery={setSearchQuery} />

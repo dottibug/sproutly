@@ -60,7 +60,8 @@ export default function DraggableFilterOrder({ order, onOrderChange }: Draggable
 const styles = StyleSheet.create({
   dragListContainer: {
     // flex: 1,
-    // borderWidth: 1,
+    borderWidth: 1,
+    height: 300,
   },
   item: {
     borderWidth: 1,

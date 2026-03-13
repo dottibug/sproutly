@@ -1,10 +1,10 @@
-import { View, StyleSheet } from 'react-native';
+import { View, Modal } from 'react-native';
 import { useCallback, useState, useEffect } from 'react';
 import { useFilters } from '../../lib/contexts/FiltersContext';
 import { Filter } from '../../lib/types';
-import AppModal from '../ui/AppModal';
 import Button from '../ui/buttons/Button';
 import DraggableFilterOrder from './DraggableFilterOrder';
+import { appStyles } from '../../styles/theme';
 
 // TODO: styling and add description of the setting
 // TODO: styling (and change the close button to a proper x icon in the corner)
@@ -26,19 +26,14 @@ export default function CustomFilterOrderModal({ visible, onRequestClose }: Cust
   useEffect(() => setEditingOrder(preferences.order), [preferences.order]);
 
   return (
-    <AppModal visible={visible} onRequestClose={onRequestClose}>
-      <View style={styles.modalContent}>
-        <DraggableFilterOrder order={editingOrder} onOrderChange={setEditingOrder} />
-        <Button text="Save Changes" size="small" onPress={handleSave} />
-        <Button text="Close" size="small" onPress={onRequestClose} />
+    <Modal visible={visible} onRequestClose={onRequestClose} transparent={true}>
+      <View style={appStyles.modalContainer}>
+        <View style={appStyles.modalContent}>
+          <DraggableFilterOrder order={editingOrder} onOrderChange={setEditingOrder} />
+          <Button text="Save Changes" size="small" onPress={handleSave} />
+          <Button text="Close" size="small" onPress={onRequestClose} />
+        </View>
       </View>
-    </AppModal>
+    </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  modalContent: {
-    gap: 12,
-    height: 400,
-  },
-});

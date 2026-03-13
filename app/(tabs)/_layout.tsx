@@ -8,6 +8,9 @@ import { colors } from '../../styles/theme';
 // https://docs.expo.dev/router/advanced/tabs/#tab-bar-options
 
 // TODO: change tabBarActiveTintColor
+const MY_SEEDS = 'mySeeds';
+const BROWSE = 'browse';
+type ActiveTab = 'mySeeds' | 'browse';
 
 // Tabs layout for the app
 export default function TabsLayout() {
@@ -28,17 +31,6 @@ export default function TabsLayout() {
           marginTop: 2,
         },
       }}>
-      {/* Home*/}
-      {/* <Tabs.Screen
-        name="home"
-        options={{
-          title: 'Home',
-
-          tabBarLabel: 'My Seeds',
-          tabBarIcon: ({ color }) => <FontAwesome6 name="seedling" size={24} color={color} />,
-        }}
-      /> */}
-
       {/* Home Tab */}
       <Tabs.Screen
         name="home"

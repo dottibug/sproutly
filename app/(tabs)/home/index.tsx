@@ -17,26 +17,26 @@ const BROWSE = 'browse';
 
 type ActiveTab = 'mySeeds' | 'browse';
 
-export default function SeedCatalogScreen() {
+export default function HomeScreen() {
   // Context
   const { loading, error } = useSeedCatalog();
 
   // State
   const [activeTab, setActiveTab] = useState<ActiveTab>(MY_SEEDS);
 
-  function handleTabPress() {
-    setActiveTab((prev) => (prev === MY_SEEDS ? BROWSE : MY_SEEDS));
-  }
+  const handleTabPress = () => setActiveTab((prev) => (prev === MY_SEEDS ? BROWSE : MY_SEEDS));
+
+  const handleGoToBrowse = () => setActiveTab(BROWSE);
 
   if (loading) return <Loading message={LOAD_MESSAGE} />;
   if (error) return <ScreenMessage message={error} />;
 
-  // Renders the seed catalog (either all seeds, filtered seeds, or search results).
+  // Renders the user seeds or browse seeds screen based on the active tab
   return (
     <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: colors.white }}>
       <Tabs activeTab={activeTab} onTabPress={handleTabPress} />
-      {activeTab === MY_SEEDS && <UserSeeds />}
-      {activeTab === BROWSE && <BrowseSeeds />}
+      <UserSeeds activeTab={activeTab} onGoToBrowse={handleGoToBrowse} />
+      <BrowseSeeds activeTab={activeTab} />
     </SafeAreaView>
   );
 }
