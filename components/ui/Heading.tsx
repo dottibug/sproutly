@@ -4,7 +4,7 @@ import { colors } from '../../styles/theme';
 type HeadingProps = {
   readonly children: React.ReactNode;
   readonly color?: 'primary' | 'secondary';
-  readonly size?: 'small' | 'medium' | 'large';
+  readonly size?: 'xsmall' | 'small' | 'medium' | 'large';
   readonly marginVertical?: number;
   readonly uppercase?: boolean;
 };
@@ -12,6 +12,7 @@ type HeadingProps = {
 export default function Heading({ children, color = 'primary', size = 'medium', marginVertical = 0, uppercase = false }: HeadingProps) {
   const headingStyle = () => {
     let headingStyles = [];
+    if (size === 'xsmall') headingStyles.push(styles.xsmallHeading);
     if (size === 'small') headingStyles.push(styles.smallHeading);
     if (size === 'medium') headingStyles.push(styles.mediumHeading);
     if (size === 'large') headingStyles.push(styles.largeHeading);
@@ -25,6 +26,10 @@ export default function Heading({ children, color = 'primary', size = 'medium', 
 }
 
 const styles = StyleSheet.create({
+  xsmallHeading: {
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
   smallHeading: {
     fontSize: 16,
     fontWeight: 'bold',

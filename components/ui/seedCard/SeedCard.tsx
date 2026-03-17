@@ -1,8 +1,8 @@
 import { View, StyleSheet, Pressable } from 'react-native';
-import SeedCardImage from './SeedCardImage';
 import { CatalogSeedItem, UserSeedItem } from '../../../lib/types';
 import SeedCardInfo from './SeedCardInfo';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import SeedImage from '../../seeds/SeedImage';
 
 type SeedCardProps = {
   readonly cardType: 'user' | 'catalog';
@@ -20,7 +20,7 @@ export default function SeedCard({ cardType, seed, onPress, inUserCollection = f
   return (
     <View style={styles.card}>
       <View style={styles.content}>
-        <SeedCardImage imageUri={seed.image} />
+        <SeedImage imageUri={seed.image} size="small" />
         <SeedCardInfo
           seedId={seed.id}
           name={seed.name}

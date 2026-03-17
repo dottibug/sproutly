@@ -1,7 +1,7 @@
 import { createContext, useReducer, useCallback, useMemo, useContext } from 'react';
 import { useAuth } from './AuthContext';
 import { SeedType, Difficulty, Exposure, Planting, AddCustomSeedPayload, CatalogSeedItem, UserSeedItem, Profile } from '../types';
-import { insertCustomSeed, addCustomSeedToUserCollection, fetchPlantingActions } from '../queries';
+import { addCustomSeedToUserCollection, fetchPlantingActions, insertToCustomSeedTable } from '../queries';
 import { createUserSeedFromCustom } from '../utils/userSeedUtils';
 import { getCategoryPlantingActions } from '../utils/plantActionUtils';
 
@@ -128,7 +128,7 @@ type CustomSeedContextValue = CustomSeedState & {
   setCompanionPlanting: (companionPlanting: string | null) => void;
   setImage: (image: string | null) => void;
   setPlanting: (planting: Planting[] | null) => void;
-  saveCustomSeed: () => Promise<UserSeedItem>;
+  saveCustomSeed: (imagePath?: string | null) => Promise<UserSeedItem>;
 };
 
 const CustomSeedContext = createContext<CustomSeedContextValue | null>(null);
@@ -191,61 +191,65 @@ export function CustomSeedProvider({ children }: CustomSeedProviderProps) {
 
   const setPlanting = useCallback((planting: Planting[] | null) => dispatch({ type: 'SET_PLANTING', payload: planting }), []);
 
-  const saveCustomSeed = useCallback(async (): Promise<UserSeedItem> => {
-    if (!profile?.id) throw new Error('Profile ID is required');
+  const saveCustomSeed = useCallback(
+    async (imagePath?: string | null): Promise<UserSeedItem> => {
+      if (!profile?.id) throw new Error('Profile ID is required');
 
-    const payload: AddCustomSeedPayload = {
-      name: state.name.trim(),
-      type: state.type,
-      category: state.category.trim(),
-      beanType: state.beanType,
-      latin: state.latin || null,
-      difficulty: state.difficulty || null,
-      exposure: state.exposure || null,
-      maturesInDays: state.maturesInDays || null,
-      maturesUnderDays: state.maturesUnderDays || null,
-      description: state.description || null,
-      timing: state.timing || null,
-      starting: state.starting || null,
-      growing: state.growing || null,
-      harvest: state.harvest || null,
-      companionPlanting: state.companionPlanting || null,
-      image: state.image || null,
-    };
+      const payload: AddCustomSeedPayload = {
+        name: state.name.trim(),
+        type: state.type,
+        category: state.category.trim(),
+        beanType: state.beanType,
+        latin: state.latin || null,
+        difficulty: state.difficulty || null,
+        exposure: state.exposure || null,
+        maturesInDays: state.maturesInDays || null,
+        maturesUnderDays: state.maturesUnderDays || null,
+        description: state.description || null,
+        timing: state.timing || null,
+        starting: state.starting || null,
+        growing: state.growing || null,
+        harvest: state.harvest || null,
+        companionPlanting: state.companionPlanting || null,
+        image: imagePath ?? state.image ?? null,
+      };
 
-    if (!payload.name || !payload.category) throw new Error('Name and category are required');
+      if (!payload.name || !payload.category) throw new Error('Name and category are required');
 
-    const { id } = await insertCustomSeed(profile.id, payload);
+      const { id } = await insertToCustomSeedTable(profile.id, payload);
+      await addCustomSeedToUserCollection(profile.id, id);
 
-    await addCustomSeedToUserCollection(profile.id, id);
+      const plantingAction = await fetchPlantingActions();
+      const planting = getCategoryPlantingActions(payload.category, plantingAction);
 
-    const plantingAction = await fetchPlantingActions();
-    const planting = getCategoryPlantingActions(payload.category, plantingAction);
+      const newCustomSeed: CatalogSeedItem = {
+        id,
+        name: payload.name,
+        sku: '',
+        type: payload.type,
+        bean_type: payload.beanType || null,
+        category: payload.category,
+        latin: payload.latin || null,
+        difficulty: payload.difficulty || null,
+        exposure: payload.exposure || null,
+        matures_in_days: payload.maturesInDays || null,
+        matures_under_days: payload.maturesUnderDays || null,
+        description: payload.description || null,
+        timing: payload.timing || null,
+        starting: payload.starting || null,
+        growing: payload.growing || null,
+        harvest: payload.harvest || null,
+        companion_planting: payload.companionPlanting || null,
+        image: payload.image || '',
+        planting: planting ?? [],
+      };
 
-    const newCustomSeed: CatalogSeedItem = {
-      id,
-      name: payload.name,
-      sku: '',
-      type: payload.type,
-      bean_type: payload.beanType || null,
-      category: payload.category,
-      latin: payload.latin || null,
-      difficulty: payload.difficulty || null,
-      exposure: payload.exposure || null,
-      matures_in_days: payload.maturesInDays || null,
-      matures_under_days: payload.maturesUnderDays || null,
-      description: payload.description || null,
-      timing: payload.timing || null,
-      starting: payload.starting || null,
-      growing: payload.growing || null,
-      harvest: payload.harvest || null,
-      companion_planting: payload.companionPlanting || null,
-      image: payload.image || '',
-      planting: planting ?? [],
-    };
-
-    return createUserSeedFromCustom(newCustomSeed);
-  }, [profile?.id, state]);
+      const newSeed = createUserSeedFromCustom(newCustomSeed);
+      console.log('newSeed', newSeed);
+      return newSeed;
+    },
+    [profile?.id, state],
+  );
 
   const value = useMemo(
     () => ({

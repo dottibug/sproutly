@@ -25,7 +25,7 @@ export async function getUserSeedCollection(profile: Profile): Promise<UserSeedI
       const imageIsPath = seed.image && !seed.image.startsWith('http');
       if (isCustomSeed && imageIsPath) {
         const signedUrl = await getSignedSeedImageUrl(seed.image);
-        return { ...seed, image: signedUrl ?? '' };
+        return signedUrl ? { ...seed, image: signedUrl } : seed;
       }
       return seed;
     }),

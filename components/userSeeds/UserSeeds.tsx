@@ -1,4 +1,4 @@
-import { View, StyleSheet, ScrollView, Text, Pressable } from 'react-native';
+import { View, StyleSheet, ScrollView, Text } from 'react-native';
 import { useState } from 'react';
 import { useUserSeeds } from '../../lib/contexts/UserSeedsContext';
 import { useFilters } from '../../lib/contexts/FiltersContext';

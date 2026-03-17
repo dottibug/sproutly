@@ -111,7 +111,7 @@ export async function updateUserFilterPrefs(profileId: string, userFilterPrefs: 
 }
 
 // ---- CUSTOM SEED QUERIES ----
-export async function insertCustomSeed(userId: string, payload: AddCustomSeedPayload): Promise<{ id: string }> {
+export async function insertToCustomSeedTable(userId: string, payload: AddCustomSeedPayload): Promise<{ id: string }> {
   const { data, error } = await supabase
     .from('custom_seeds')
     .insert({

@@ -72,7 +72,7 @@ export type UserFilterPreferences = {
   openByDefault: Filter[];
 };
 
-// ---- USER SEED TYPES ----
+// ---- CUSTOM SEED TYPES ----
 export type AddCustomSeedPayload = {
   name: string;
   type: SeedType;
@@ -92,3 +92,81 @@ export type AddCustomSeedPayload = {
   image: string | null;
   // planting: Planting[] | null;
 };
+
+export type PreviewImage = {
+  uri: string;
+  mimeType: string | undefined;
+  base64: string | null | undefined;
+};
+
+// ---- CONSTANTS ----
+export const DIFFICULTY = ['Easy', 'Standard', 'Intermediate', 'Advanced', 'Expert'];
+
+export const EXPOSURE = ['Full sun', 'Full sun to part shade', 'Part shade'];
+
+export const DETAILS = ['Description', 'Timing', 'Starting', 'Growing', 'Harvest', 'Companion Planting'];
+
+export const VEGETABLES = [
+  'Bean',
+  'Beet',
+  'Broccoli',
+  'Cabbage',
+  'Carrot',
+  'Cauliflower',
+  'Corn',
+  'Cucumber',
+  'Eggplant',
+  'Kale',
+  'Lettuce',
+  'Onion',
+  'Pea',
+  'Pepper',
+  'Pumpkin',
+  'Radish',
+  'Spinach',
+  'Squash',
+  'Tomato',
+];
+
+export const FLOWERS = [
+  'Agastache',
+  'Alyssum',
+  'Bellis',
+  'Calendula',
+  'California Poppy',
+  'Columbine',
+  'Cornflower',
+  'Cosmos',
+  'Echinacea',
+  'Eucalyptus',
+  'Foxglove',
+  'Marigold',
+  'Nasturtium',
+  'Poppy',
+  'Rudbeckia',
+  'Snapdragon',
+  'Sunflower',
+  'Sweet Pea',
+  'Viola',
+  'Zinnia',
+];
+
+export const FRUITS = ['Melon', 'Strawberry'];
+
+export const HERBS = [
+  'Basil',
+  'Bergamot',
+  'Chamomile',
+  'Chives',
+  'Cilantro',
+  'Dill',
+  'Lavender',
+  'Mint',
+  'Oregano',
+  'Parsley',
+  'Rosemary',
+  'Sage',
+  'Savory',
+  'Shiso',
+  'Thyme',
+];

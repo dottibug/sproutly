@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import PlantTypeFilters from './PlantTypeFilters';
 import type { PlantType } from './PlantTypeFilterIcon';

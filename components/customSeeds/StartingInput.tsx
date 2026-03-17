@@ -1,19 +1,20 @@
-import { Text, TextInput, View } from 'react-native';
+import { TextInput, View } from 'react-native';
 import { useCustomSeed } from '../../lib/contexts/CustomSeedContext';
 import { appStyles } from '../../styles/theme';
+import Heading from '../ui/Heading';
 
-export default function StartingInputAccordion() {
+export default function StartingInput() {
   const { starting, setStarting } = useCustomSeed();
 
   return (
-    <View>
-      <Text>Starting</Text>
+    <View style={appStyles.customSeedInputSection}>
+      <Heading size="xsmall">Starting</Heading>
       <TextInput
         placeholder="Starting"
         value={starting || ''}
         onChangeText={setStarting}
         multiline
-        style={appStyles.customSeedAccordionInput}
+        style={appStyles.customSeedMultilineInput}
       />
     </View>
   );

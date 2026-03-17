@@ -1,19 +1,20 @@
-import { Text, TextInput, View } from 'react-native';
+import { TextInput, View } from 'react-native';
 import { useCustomSeed } from '../../lib/contexts/CustomSeedContext';
 import { appStyles } from '../../styles/theme';
+import Heading from '../ui/Heading';
 
-export default function DescriptionInputAccordion() {
+export default function DescriptionInput() {
   const { description, setDescription } = useCustomSeed();
 
   return (
-    <View>
-      <Text>Description</Text>
+    <View style={appStyles.customSeedInputSection}>
+      <Heading size="xsmall">Description</Heading>
       <TextInput
         placeholder="Description"
         value={description || ''}
         onChangeText={setDescription}
         multiline
-        style={appStyles.customSeedAccordionInput}
+        style={appStyles.customSeedMultilineInput}
       />
     </View>
   );

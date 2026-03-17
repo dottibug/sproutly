@@ -78,15 +78,25 @@ export const appStyles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
   },
-  customSeedAccordionInput: {
+  customSeedInputSection: {
+    gap: 8,
+  },
+  customSeedInput: {
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.gray,
+    borderRadius: 9,
+    fontSize: 16,
+    padding: 12,
+  },
+  customSeedMultilineInput: {
     backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.gray,
     borderRadius: 9,
     fontSize: 16,
     height: 120,
-    padding: 12,
-
     maxHeight: 120,
+    padding: 12,
   },
 });

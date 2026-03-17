@@ -1,145 +1,71 @@
-import { ScrollView, View, Text, TextInput, StyleSheet } from 'react-native';
+import { ScrollView, View, StyleSheet } from 'react-native';
 import { useState } from 'react';
-import { SeedType, Difficulty, Exposure, AddCustomSeedPayload } from '../../../lib/types';
-import { SegmentedButtons, Menu, RadioButton } from 'react-native-paper';
+
 import Button from '../../../components/ui/buttons/Button';
 import { colors } from '../../../styles/theme';
-import DescriptionInputAccordion from '../../../components/accordion/DescriptionInputAccordion';
-import TimingInputAccordion from '../../../components/accordion/TimingInputAccordion';
-import StartingInputAccordion from '../../../components/accordion/StartingInputAccordion';
-import GrowingInputAccordion from '../../../components/accordion/GrowingInputAccordion';
-import HarvestInputAccordion from '../../../components/accordion/HarvestInputAccordion';
-import CompanionPlantingInputAccordion from '../../../components/accordion/CompanionPlantingInputAccordion';
 
-import { pickAndUploadImage } from '../../../lib/utils/userSeedImageUtils';
+import { uploadImage, getSignedSeedImageUrl } from '../../../lib/utils/userSeedImageUtils';
 import { useAuth } from '../../../lib/contexts/AuthContext';
 import { useCustomSeed } from '../../../lib/contexts/CustomSeedContext';
-import SeedImagePreview from '../../../components/userSeeds/SeedImagePreview';
 import { useUserSeeds } from '../../../lib/contexts/UserSeedsContext';
+import { PreviewImage } from '../../../lib/types';
+import ImagePicker from '../../../components/customSeeds/ImagePicker';
+import SeedNameInput from '../../../components/customSeeds/SeedNameInput';
+import Heading from '../../../components/ui/Heading';
+import SeedTypeSelector from '../../../components/customSeeds/SeedTypeSelector';
+import PlantCategoryInput from '../../../components/customSeeds/PlantCategoryInput';
+import BeanTypeSelector from '../../../components/customSeeds/BeanTypeSelector';
+import LatinInput from '../../../components/customSeeds/LatinInput';
+import DifficultySelector from '../../../components/customSeeds/DifficultySelector';
+import ExposureSelector from '../../../components/customSeeds/ExposureSelector';
+import MaturesInDaysInput from '../../../components/customSeeds/MaturesInDaysInput';
+import DescriptionInput from '../../../components/customSeeds/DescriptionInput';
+import TimingInput from '../../../components/customSeeds/TimingInput';
+import StartingInput from '../../../components/customSeeds/StartingInput';
+import GrowingInput from '../../../components/customSeeds/GrowingInput';
+import HarvestInput from '../../../components/customSeeds/HarvestInput';
+import CompanionPlantingInput from '../../../components/customSeeds/CompanionPlantingInput';
 
-// TODO: Add image upload
+// TODO: Refactor for clarity/organization and make component shorter and more readable
+// TODO: image picker should only upload to database on pressing save button
+// TODO: Fix the plant menu functionality
 // TODO: if the category (plant) is not selected from the menu (is a different type of plant than in database), then show the input fields for planting actions: start indoors (seasons and months), direct sow (seasons and months), transplant (seasons and months)
 
-const VEGETABLES = [
-  'Bean',
-  'Beet',
-  'Broccoli',
-  'Cabbage',
-  'Carrot',
-  'Cauliflower',
-  'Corn',
-  'Cucumber',
-  'Eggplant',
-  'Kale',
-  'Lettuce',
-  'Onion',
-  'Pea',
-  'Pepper',
-  'Pumpkin',
-  'Radish',
-  'Spinach',
-  'Squash',
-  'Tomato',
-];
+// TODO: if the bean type is selected, then user switches away from it (ie. it's not a bean type), the bean type needs to be reset to null
 
-const FLOWERS = [
-  'Agastache',
-  'Alyssum',
-  'Bellis',
-  'Calendula',
-  'California Poppy',
-  'Columbine',
-  'Cornflower',
-  'Cosmos',
-  'Echinacea',
-  'Eucalyptus',
-  'Foxglove',
-  'Marigold',
-  'Nasturtium',
-  'Poppy',
-  'Rudbeckia',
-  'Snapdragon',
-  'Sunflower',
-  'Sweet Pea',
-  'Viola',
-  'Zinnia',
-];
-
-const FRUITS = ['Melon', 'Strawberry'];
-
-const HERBS = [
-  'Basil',
-  'Bergamot',
-  'Chamomile',
-  'Chives',
-  'Cilantro',
-  'Dill',
-  'Lavender',
-  'Mint',
-  'Oregano',
-  'Parsley',
-  'Rosemary',
-  'Sage',
-  'Savory',
-  'Shiso',
-  'Thyme',
-];
-
-const DIFFICULTY = ['Easy', 'Standard', 'Intermediate', 'Advanced', 'Expert'];
-
-const EXPOSURE = ['Full sun', 'Full sun to part shade', 'Part shade'];
-
-const DETAILS = ['Description', 'Timing', 'Starting', 'Growing', 'Harvest', 'Companion Planting'];
+// TODO: Export all react components from a single file so this screen is more readable?
 
 export default function AddCustomSeedScreen() {
   const { profile } = useAuth();
-  const customSeed = useCustomSeed();
+  const { saveCustomSeed } = useCustomSeed();
   const { addCustomSeed } = useUserSeeds();
 
-  ////
-  const { image, setImage } = useCustomSeed();
+  const [preview, setPreview] = useState<PreviewImage | null>(null);
 
-  // const [seedName, setSeedName] = useState('');
-  const [seedType, setSeedType] = useState<SeedType>('Vegetable');
-  const [plantMenuVisible, setPlantMenuVisible] = useState(false);
-  const [plant, setPlant] = useState('');
-  // const [beanType, setBeanType] = useState<'Broad' | 'Bush' | 'Pole'>('Broad');
-  // const [latin, setLatin] = useState('');
-  // const [difficulty, setDifficulty] = useState<Difficulty>('Easy');
-  // const [exposure, setExposure] = useState<Exposure>('Full sun');
-  // const [maturesInDays, setMaturesInDays] = useState('');
+  // TODO handle no preview image case -- use a placeholder image from a public bucket instead (i.e. don't require users to upload an image)
 
-  const openMenu = () => setPlantMenuVisible(true);
-  const closeMenu = () => setPlantMenuVisible(false);
-
-  const handleSetPlant = (text: string) => {
-    // TODO: if text string matches an entry in the applicable seed type array, scroll to/highlight that entry in the menu
-    openMenu();
-    setPlant(text);
-  };
-
-  const handleAddPhoto = async () => {
-    console.log('add photo');
-    if (!profile?.id) return;
-    const path = await pickAndUploadImage(profile.id);
-    console.log('path', path);
-    if (path) setImage(path);
-  };
-
+  // TODO: rename some of these helpers to be clearer about what they are doing; possibly roll into a single helper function so this screen is more readable
   const handleAddSeed = async () => {
-    console.log('add seed');
+    if (!profile?.id) return;
+    if (!preview) return;
+
     try {
-      const newCustomSeed = await customSeed.saveCustomSeed();
-      console.log('newCustomSeed', newCustomSeed);
-      addCustomSeed(newCustomSeed);
+      // Upload the preview image to supabase storage bucket
+      const imagePath = await uploadImage(profile.id, preview.mimeType, preview.base64);
+
+      // Add the custom seed to the database using the context state
+      const newCustomSeed = await saveCustomSeed(imagePath ?? null);
+
+      // Get signed URL for the image if it's a path
+      const imageIsPath = newCustomSeed.image && !newCustomSeed.image.startsWith('http');
+      const signedUrl = imageIsPath ? await getSignedSeedImageUrl(newCustomSeed.image) : null;
+      const customSeedWithSignedImage = signedUrl ? { ...newCustomSeed, image: signedUrl } : newCustomSeed;
+
+      addCustomSeed(customSeedWithSignedImage);
     } catch (error) {
       console.error('Error adding seed:', error);
     }
   };
-
-  const PlantMenu: React.ReactNode = (
-    <TextInput placeholder="Bean, Tomato,etc." value={plant} onChangeText={handleSetPlant} style={styles.input} />
-  );
 
   return (
     <ScrollView
@@ -149,115 +75,24 @@ export default function AddCustomSeedScreen() {
       automaticallyAdjustKeyboardInsets
       showsVerticalScrollIndicator>
       <View style={styles.content}>
-        <Text>Add Custom Seed Screen</Text>
+        <Heading size="medium">Add Custom Seed</Heading>
 
-        <View>
-          <Text>Add Photo</Text>
-          <SeedImagePreview path={image} />
-          <Button text="Add Photo" onPress={handleAddPhoto} size="small" />
-        </View>
+        <ImagePicker profileId={profile?.id || null} preview={preview} setPreview={setPreview} />
 
-        <View>
-          <Text>Seed Name</Text>
-          <TextInput placeholder="Seed Name" value={customSeed.name} onChangeText={customSeed.setName} style={styles.input} />
-        </View>
-
-        <View>
-          <Text>Seed Type</Text>
-          <SegmentedButtons
-            value={customSeed.type}
-            onValueChange={customSeed.setType}
-            buttons={[
-              { value: 'Vegetable', label: 'Veggie' },
-              { value: 'Flower', label: 'Flower' },
-              { value: 'Fruit', label: 'Fruit' },
-              { value: 'Herb', label: 'Herb' },
-            ]}
-          />
-        </View>
-
-        <View>
-          <Text>Plant</Text>
-          <Menu visible={plantMenuVisible} onDismiss={closeMenu} anchor={PlantMenu} anchorPosition="bottom">
-            {customSeed.type === 'Vegetable' &&
-              VEGETABLES.map((p) => <Menu.Item key={p} title={p} onPress={() => customSeed.setCategory(p)} />)}
-            {customSeed.type === 'Flower' && FLOWERS.map((p) => <Menu.Item key={p} title={p} onPress={() => customSeed.setCategory(p)} />)}
-            {customSeed.type === 'Fruit' && FRUITS.map((p) => <Menu.Item key={p} title={p} onPress={() => customSeed.setCategory(p)} />)}
-            {customSeed.type === 'Herb' && HERBS.map((p) => <Menu.Item key={p} title={p} onPress={() => customSeed.setCategory(p)} />)}
-          </Menu>
-        </View>
-
-        <View>
-          <Text>Bean Type</Text>
-          <SegmentedButtons
-            value={customSeed.beanType || ''}
-            onValueChange={(value) => customSeed.setBeanType(value as 'Broad' | 'Bush' | 'Pole' | null)}
-            buttons={[
-              { value: 'Broad', label: 'Broad' },
-              { value: 'Bush', label: 'Bush' },
-              { value: 'Pole', label: 'Pole' },
-            ]}
-          />
-        </View>
-
-        <View>
-          <Text>Latin</Text>
-          <TextInput
-            placeholder="Latin"
-            value={customSeed.latin || ''}
-            onChangeText={(text) => customSeed.setLatin(text || null)}
-            style={styles.input}
-          />
-        </View>
-
-        <View>
-          <Text>Difficulty</Text>
-          <RadioButton.Group value={customSeed.difficulty || ''} onValueChange={(value) => customSeed.setDifficulty(value as Difficulty)}>
-            {DIFFICULTY.map((d) => (
-              <RadioButton.Item
-                key={d}
-                label={d}
-                value={d as Difficulty}
-                style={{ backgroundColor: d === customSeed.difficulty ? colors.lightGray : colors.white }}
-              />
-            ))}
-          </RadioButton.Group>
-        </View>
-
-        <View>
-          <Text>Exposure</Text>
-          <RadioButton.Group value={customSeed.exposure || ''} onValueChange={(value) => customSeed.setExposure(value as Exposure)}>
-            {EXPOSURE.map((e) => (
-              <RadioButton.Item
-                key={e}
-                label={e}
-                value={e as Exposure}
-                style={{ backgroundColor: e === customSeed.exposure ? colors.lightGray : colors.white }}
-              />
-            ))}
-          </RadioButton.Group>
-        </View>
-
-        <View>
-          <Text>Matures In Days</Text>
-          <TextInput
-            placeholder="Matures In Days"
-            value={customSeed.maturesInDays?.toString() || ''}
-            onChangeText={(text) => customSeed.setMaturesInDays(text ? Number.parseInt(text) : null)}
-            inputMode="numeric"
-            style={styles.input}
-          />
-        </View>
-
-        <View style={styles.detailsContainer}>
-          <Text>Details</Text>
-          <DescriptionInputAccordion />
-          <TimingInputAccordion />
-          <StartingInputAccordion />
-          <GrowingInputAccordion />
-          <HarvestInputAccordion />
-          <CompanionPlantingInputAccordion />
-        </View>
+        <SeedNameInput />
+        <SeedTypeSelector />
+        <PlantCategoryInput />
+        <BeanTypeSelector />
+        <LatinInput />
+        <DifficultySelector />
+        <ExposureSelector />
+        <MaturesInDaysInput />
+        <DescriptionInput />
+        <TimingInput />
+        <StartingInput />
+        <GrowingInput />
+        <HarvestInput />
+        <CompanionPlantingInput />
 
         <View>
           <Button text="Add Seed" onPress={handleAddSeed} />
@@ -274,8 +109,8 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
+    marginTop: 24,
     paddingBottom: 24,
-    // paddingBottom: 320,
   },
   content: {
     gap: 24,

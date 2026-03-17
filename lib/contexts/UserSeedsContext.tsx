@@ -45,7 +45,7 @@ function userSeedsReducer(state: UserSeedsState, action: UserSeedsAction): UserS
     case 'ADD_SEED_FROM_CATALOG':
       return { ...state, seeds: [...state.seeds, createUserSeedFromCatalog(action.payload)] };
     case 'ADD_CUSTOM_SEED':
-      return { ...state, seeds: [...state.seeds, createUserSeedFromCustom(action.payload)] };
+      return { ...state, seeds: [...state.seeds, action.payload] };
     case 'DELETE_SEED_BY_CATALOG_ID':
       return { ...state, seeds: state.seeds.filter((s) => s.catalog_seed_id !== action.payload) };
     case 'DELETE_SEED_BY_CUSTOM_ID':
@@ -113,32 +113,7 @@ export function UserSeedsProvider({ children }: UserSeedsProviderProps) {
     [profile?.id, state.seeds],
   );
 
-  const addCustomSeed = useCallback(
-    (seed: UserSeedItem) => {
-      if (isDuplicateSeed(state.seeds, seed.id)) return;
-      dispatch({ type: 'ADD_CUSTOM_SEED', payload: seed });
-    },
-    [state.seeds],
-  );
-
-  // const addCustomSeed = useCallback(
-  //   async (seed: UserSeedItem) => {
-  //     if (!profile?.id) return;
-  //     if (isDuplicateSeed(state.seeds, seed.id)) return;
-
-  //     // Add seed optimistically
-  //     dispatch({ type: 'ADD_CUSTOM_SEED', payload: seed });
-
-  //     try {
-  //       const newSeed = await addCustomSeedToUserCollection(profile.id, seed.id);
-  //       console.log('✅ Seed added to collection from custom seed:', newSeed);
-  //     } catch (error) {
-  //       dispatch({ type: 'DELETE_SEED_BY_CUSTOM_ID', payload: seed.id });
-  //       console.error('Error adding custom seed to collection:', error instanceof Error ? error.message : 'Unknown error');
-  //     }
-  //   },
-  //   [profile?.id, state.seeds],
-  // );
+  const addCustomSeed = useCallback((seed: UserSeedItem) => dispatch({ type: 'ADD_CUSTOM_SEED', payload: seed }), [state.seeds]);
 
   const deleteSeedByCatalogId = useCallback(
     async (seed: UserSeedItem) => {

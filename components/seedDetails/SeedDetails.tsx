@@ -1,4 +1,4 @@
-import { ScrollView, Image, View, StyleSheet, Text } from 'react-native';
+import { ScrollView, View, StyleSheet, Text } from 'react-native';
 import { CatalogSeedItem, UserSeedItem, Exposure } from '../../lib/types';
 import Accordion from '../accordion/Accordion';
 import SeedQuickFacts from './SeedQuickFacts';
@@ -8,6 +8,7 @@ import { useUserSeeds } from '../../lib/contexts/UserSeedsContext';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { typography } from '../../styles/theme';
 import Heading from '../ui/Heading';
+import SeedImage from '../seeds/SeedImage';
 
 // TODO: I think description should not be in an accordion? Because some seeds have only a description and no other details (making the screen look strange)
 
@@ -60,7 +61,7 @@ export default function SeedDetails({ seed }: SeedDetailsProps) {
 
   return (
     <ScrollView style={styles.scrollStyle}>
-      <Image source={{ uri: seed.image }} style={styles.image} resizeMode="cover" />
+      <SeedImage imageUri={seed.image} size="large" />
 
       <View>
         <SeedHeader
