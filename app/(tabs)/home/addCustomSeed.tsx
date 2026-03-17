@@ -1,6 +1,6 @@
-import { ScrollView, View, Text, TextInput, StyleSheet, Platform, KeyboardAvoidingView } from 'react-native';
+import { ScrollView, View, Text, TextInput, StyleSheet } from 'react-native';
 import { useState } from 'react';
-import { SeedType, Difficulty, Exposure } from '../../../lib/types';
+import { SeedType, Difficulty, Exposure, AddCustomSeedPayload } from '../../../lib/types';
 import { SegmentedButtons, Menu, RadioButton } from 'react-native-paper';
 import Button from '../../../components/ui/buttons/Button';
 import { colors } from '../../../styles/theme';
@@ -10,7 +10,12 @@ import StartingInputAccordion from '../../../components/accordion/StartingInputA
 import GrowingInputAccordion from '../../../components/accordion/GrowingInputAccordion';
 import HarvestInputAccordion from '../../../components/accordion/HarvestInputAccordion';
 import CompanionPlantingInputAccordion from '../../../components/accordion/CompanionPlantingInputAccordion';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
+import { pickAndUploadImage } from '../../../lib/utils/userSeedImageUtils';
+import { useAuth } from '../../../lib/contexts/AuthContext';
+import { useCustomSeed } from '../../../lib/contexts/CustomSeedContext';
+import SeedImagePreview from '../../../components/userSeeds/SeedImagePreview';
+import { useUserSeeds } from '../../../lib/contexts/UserSeedsContext';
 
 // TODO: Add image upload
 // TODO: if the category (plant) is not selected from the menu (is a different type of plant than in database), then show the input fields for planting actions: start indoors (seasons and months), direct sow (seasons and months), transplant (seasons and months)
@@ -87,15 +92,22 @@ const EXPOSURE = ['Full sun', 'Full sun to part shade', 'Part shade'];
 const DETAILS = ['Description', 'Timing', 'Starting', 'Growing', 'Harvest', 'Companion Planting'];
 
 export default function AddCustomSeedScreen() {
-  const [seedName, setSeedName] = useState('');
+  const { profile } = useAuth();
+  const customSeed = useCustomSeed();
+  const { addCustomSeed } = useUserSeeds();
+
+  ////
+  const { image, setImage } = useCustomSeed();
+
+  // const [seedName, setSeedName] = useState('');
   const [seedType, setSeedType] = useState<SeedType>('Vegetable');
   const [plantMenuVisible, setPlantMenuVisible] = useState(false);
   const [plant, setPlant] = useState('');
-  const [beanType, setBeanType] = useState<'Broad' | 'Bush' | 'Pole'>('Broad');
-  const [latin, setLatin] = useState('');
-  const [difficulty, setDifficulty] = useState<Difficulty>('Easy');
-  const [exposure, setExposure] = useState<Exposure>('Full sun');
-  const [maturesInDays, setMaturesInDays] = useState('');
+  // const [beanType, setBeanType] = useState<'Broad' | 'Bush' | 'Pole'>('Broad');
+  // const [latin, setLatin] = useState('');
+  // const [difficulty, setDifficulty] = useState<Difficulty>('Easy');
+  // const [exposure, setExposure] = useState<Exposure>('Full sun');
+  // const [maturesInDays, setMaturesInDays] = useState('');
 
   const openMenu = () => setPlantMenuVisible(true);
   const closeMenu = () => setPlantMenuVisible(false);
@@ -106,8 +118,23 @@ export default function AddCustomSeedScreen() {
     setPlant(text);
   };
 
-  const handleAddSeed = () => {
+  const handleAddPhoto = async () => {
+    console.log('add photo');
+    if (!profile?.id) return;
+    const path = await pickAndUploadImage(profile.id);
+    console.log('path', path);
+    if (path) setImage(path);
+  };
+
+  const handleAddSeed = async () => {
     console.log('add seed');
+    try {
+      const newCustomSeed = await customSeed.saveCustomSeed();
+      console.log('newCustomSeed', newCustomSeed);
+      addCustomSeed(newCustomSeed);
+    } catch (error) {
+      console.error('Error adding seed:', error);
+    }
   };
 
   const PlantMenu: React.ReactNode = (
@@ -115,7 +142,6 @@ export default function AddCustomSeedScreen() {
   );
 
   return (
-    // <KeyboardAvoidingView behavior={'padding'} style={{ flex: 1 }} keyboardVerticalOffset={100}>
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.scrollContent}
@@ -126,15 +152,21 @@ export default function AddCustomSeedScreen() {
         <Text>Add Custom Seed Screen</Text>
 
         <View>
+          <Text>Add Photo</Text>
+          <SeedImagePreview path={image} />
+          <Button text="Add Photo" onPress={handleAddPhoto} size="small" />
+        </View>
+
+        <View>
           <Text>Seed Name</Text>
-          <TextInput placeholder="Seed Name" value={seedName} onChangeText={setSeedName} style={styles.input} />
+          <TextInput placeholder="Seed Name" value={customSeed.name} onChangeText={customSeed.setName} style={styles.input} />
         </View>
 
         <View>
           <Text>Seed Type</Text>
           <SegmentedButtons
-            value={seedType}
-            onValueChange={setSeedType}
+            value={customSeed.type}
+            onValueChange={customSeed.setType}
             buttons={[
               { value: 'Vegetable', label: 'Veggie' },
               { value: 'Flower', label: 'Flower' },
@@ -147,18 +179,19 @@ export default function AddCustomSeedScreen() {
         <View>
           <Text>Plant</Text>
           <Menu visible={plantMenuVisible} onDismiss={closeMenu} anchor={PlantMenu} anchorPosition="bottom">
-            {seedType === 'Vegetable' && VEGETABLES.map((p) => <Menu.Item key={p} title={p} onPress={() => setPlant(p)} />)}
-            {seedType === 'Flower' && FLOWERS.map((p) => <Menu.Item key={p} title={p} onPress={() => setPlant(p)} />)}
-            {seedType === 'Fruit' && FRUITS.map((p) => <Menu.Item key={p} title={p} onPress={() => setPlant(p)} />)}
-            {seedType === 'Herb' && HERBS.map((p) => <Menu.Item key={p} title={p} onPress={() => setPlant(p)} />)}
+            {customSeed.type === 'Vegetable' &&
+              VEGETABLES.map((p) => <Menu.Item key={p} title={p} onPress={() => customSeed.setCategory(p)} />)}
+            {customSeed.type === 'Flower' && FLOWERS.map((p) => <Menu.Item key={p} title={p} onPress={() => customSeed.setCategory(p)} />)}
+            {customSeed.type === 'Fruit' && FRUITS.map((p) => <Menu.Item key={p} title={p} onPress={() => customSeed.setCategory(p)} />)}
+            {customSeed.type === 'Herb' && HERBS.map((p) => <Menu.Item key={p} title={p} onPress={() => customSeed.setCategory(p)} />)}
           </Menu>
         </View>
 
         <View>
           <Text>Bean Type</Text>
           <SegmentedButtons
-            value={beanType}
-            onValueChange={setBeanType}
+            value={customSeed.beanType || ''}
+            onValueChange={(value) => customSeed.setBeanType(value as 'Broad' | 'Bush' | 'Pole' | null)}
             buttons={[
               { value: 'Broad', label: 'Broad' },
               { value: 'Bush', label: 'Bush' },
@@ -169,18 +202,23 @@ export default function AddCustomSeedScreen() {
 
         <View>
           <Text>Latin</Text>
-          <TextInput placeholder="Latin" value={latin} onChangeText={setLatin} style={styles.input} />
+          <TextInput
+            placeholder="Latin"
+            value={customSeed.latin || ''}
+            onChangeText={(text) => customSeed.setLatin(text || null)}
+            style={styles.input}
+          />
         </View>
 
         <View>
           <Text>Difficulty</Text>
-          <RadioButton.Group value={difficulty} onValueChange={(value) => setDifficulty(value as Difficulty)}>
+          <RadioButton.Group value={customSeed.difficulty || ''} onValueChange={(value) => customSeed.setDifficulty(value as Difficulty)}>
             {DIFFICULTY.map((d) => (
               <RadioButton.Item
                 key={d}
                 label={d}
                 value={d as Difficulty}
-                style={{ backgroundColor: d === difficulty ? colors.lightGray : colors.white }}
+                style={{ backgroundColor: d === customSeed.difficulty ? colors.lightGray : colors.white }}
               />
             ))}
           </RadioButton.Group>
@@ -188,13 +226,13 @@ export default function AddCustomSeedScreen() {
 
         <View>
           <Text>Exposure</Text>
-          <RadioButton.Group value={exposure} onValueChange={(value) => setExposure(value as Exposure)}>
+          <RadioButton.Group value={customSeed.exposure || ''} onValueChange={(value) => customSeed.setExposure(value as Exposure)}>
             {EXPOSURE.map((e) => (
               <RadioButton.Item
                 key={e}
                 label={e}
                 value={e as Exposure}
-                style={{ backgroundColor: e === exposure ? colors.lightGray : colors.white }}
+                style={{ backgroundColor: e === customSeed.exposure ? colors.lightGray : colors.white }}
               />
             ))}
           </RadioButton.Group>
@@ -204,8 +242,8 @@ export default function AddCustomSeedScreen() {
           <Text>Matures In Days</Text>
           <TextInput
             placeholder="Matures In Days"
-            value={maturesInDays}
-            onChangeText={setMaturesInDays}
+            value={customSeed.maturesInDays?.toString() || ''}
+            onChangeText={(text) => customSeed.setMaturesInDays(text ? Number.parseInt(text) : null)}
             inputMode="numeric"
             style={styles.input}
           />
@@ -226,7 +264,6 @@ export default function AddCustomSeedScreen() {
         </View>
       </View>
     </ScrollView>
-    // </KeyboardAvoidingView>
   );
 }
 

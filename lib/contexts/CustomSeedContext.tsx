@@ -1,6 +1,9 @@
 import { createContext, useReducer, useCallback, useMemo, useContext } from 'react';
 import { useAuth } from './AuthContext';
-import { SeedType, Difficulty, Exposure, Planting } from '../types';
+import { SeedType, Difficulty, Exposure, Planting, AddCustomSeedPayload, CatalogSeedItem, UserSeedItem, Profile } from '../types';
+import { insertCustomSeed, addCustomSeedToUserCollection, fetchPlantingActions } from '../queries';
+import { createUserSeedFromCustom } from '../utils/userSeedUtils';
+import { getCategoryPlantingActions } from '../utils/plantActionUtils';
 
 // ---- TYPES ----
 export type CustomSeedAction =
@@ -20,7 +23,8 @@ export type CustomSeedAction =
   | { type: 'SET_HARVEST'; payload: string | null }
   | { type: 'SET_COMPANION_PLANTING'; payload: string | null }
   | { type: 'SET_IMAGE'; payload: string | null }
-  | { type: 'SET_PLANTING'; payload: Planting[] | null };
+  | { type: 'SET_PLANTING'; payload: Planting[] | null }
+  | { type: 'SAVE_CUSTOM_SEED'; payload: AddCustomSeedPayload };
 
 // ---- INITIAL STATE SETUP ----
 type CustomSeedState = {
@@ -124,6 +128,7 @@ type CustomSeedContextValue = CustomSeedState & {
   setCompanionPlanting: (companionPlanting: string | null) => void;
   setImage: (image: string | null) => void;
   setPlanting: (planting: Planting[] | null) => void;
+  saveCustomSeed: () => Promise<UserSeedItem>;
 };
 
 const CustomSeedContext = createContext<CustomSeedContextValue | null>(null);
@@ -134,7 +139,7 @@ type CustomSeedProviderProps = { readonly children: React.ReactNode };
 export function CustomSeedProvider({ children }: CustomSeedProviderProps) {
   const [state, dispatch] = useReducer(customSeedReducer, initialState);
 
-  const profile = useAuth();
+  const { profile } = useAuth();
 
   const setName = useCallback((name: string) => dispatch({ type: 'SET_NAME', payload: name }), []);
 
@@ -186,6 +191,62 @@ export function CustomSeedProvider({ children }: CustomSeedProviderProps) {
 
   const setPlanting = useCallback((planting: Planting[] | null) => dispatch({ type: 'SET_PLANTING', payload: planting }), []);
 
+  const saveCustomSeed = useCallback(async (): Promise<UserSeedItem> => {
+    if (!profile?.id) throw new Error('Profile ID is required');
+
+    const payload: AddCustomSeedPayload = {
+      name: state.name.trim(),
+      type: state.type,
+      category: state.category.trim(),
+      beanType: state.beanType,
+      latin: state.latin || null,
+      difficulty: state.difficulty || null,
+      exposure: state.exposure || null,
+      maturesInDays: state.maturesInDays || null,
+      maturesUnderDays: state.maturesUnderDays || null,
+      description: state.description || null,
+      timing: state.timing || null,
+      starting: state.starting || null,
+      growing: state.growing || null,
+      harvest: state.harvest || null,
+      companionPlanting: state.companionPlanting || null,
+      image: state.image || null,
+    };
+
+    if (!payload.name || !payload.category) throw new Error('Name and category are required');
+
+    const { id } = await insertCustomSeed(profile.id, payload);
+
+    await addCustomSeedToUserCollection(profile.id, id);
+
+    const plantingAction = await fetchPlantingActions();
+    const planting = getCategoryPlantingActions(payload.category, plantingAction);
+
+    const newCustomSeed: CatalogSeedItem = {
+      id,
+      name: payload.name,
+      sku: '',
+      type: payload.type,
+      bean_type: payload.beanType || null,
+      category: payload.category,
+      latin: payload.latin || null,
+      difficulty: payload.difficulty || null,
+      exposure: payload.exposure || null,
+      matures_in_days: payload.maturesInDays || null,
+      matures_under_days: payload.maturesUnderDays || null,
+      description: payload.description || null,
+      timing: payload.timing || null,
+      starting: payload.starting || null,
+      growing: payload.growing || null,
+      harvest: payload.harvest || null,
+      companion_planting: payload.companionPlanting || null,
+      image: payload.image || '',
+      planting: planting ?? [],
+    };
+
+    return createUserSeedFromCustom(newCustomSeed);
+  }, [profile?.id, state]);
+
   const value = useMemo(
     () => ({
       ...state,
@@ -206,6 +267,7 @@ export function CustomSeedProvider({ children }: CustomSeedProviderProps) {
       setCompanionPlanting,
       setImage,
       setPlanting,
+      saveCustomSeed,
     }),
     [
       state,
@@ -226,6 +288,7 @@ export function CustomSeedProvider({ children }: CustomSeedProviderProps) {
       setCompanionPlanting,
       setImage,
       setPlanting,
+      saveCustomSeed,
     ],
   );
 

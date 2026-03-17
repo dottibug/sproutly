@@ -71,3 +71,24 @@ export type UserFilterPreferences = {
   order: Filter[];
   openByDefault: Filter[];
 };
+
+// ---- USER SEED TYPES ----
+export type AddCustomSeedPayload = {
+  name: string;
+  type: SeedType;
+  category: string;
+  beanType: 'Broad' | 'Bush' | 'Pole' | null;
+  latin: string | null;
+  difficulty: Difficulty | null;
+  exposure: Exposure | null;
+  maturesInDays: number | null;
+  maturesUnderDays: number | null;
+  description: string | null;
+  timing: string | null;
+  starting: string | null;
+  growing: string | null;
+  harvest: string | null;
+  companionPlanting: string | null;
+  image: string | null;
+  // planting: Planting[] | null;
+};

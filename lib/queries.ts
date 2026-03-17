@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
 import { Profile } from './contexts/AuthContext';
-import { UserSeedItem, CatalogSeedItem, PlantingActionRow, UserFilterPreferences, Filter } from './types';
+import { UserSeedItem, CatalogSeedItem, PlantingActionRow, UserFilterPreferences, Filter, AddCustomSeedPayload } from './types';
 import { getCategoryPlantingActions } from './utils/plantActionUtils';
 
 // ---- USER SEED COLLECTION QUERIES ----
@@ -108,4 +108,34 @@ export async function updateUserFilterPrefs(profileId: string, userFilterPrefs: 
 
   if (error) throw error;
   return userFilterPrefs;
+}
+
+// ---- CUSTOM SEED QUERIES ----
+export async function insertCustomSeed(userId: string, payload: AddCustomSeedPayload): Promise<{ id: string }> {
+  const { data, error } = await supabase
+    .from('custom_seeds')
+    .insert({
+      user_id: userId,
+      name: payload.name,
+      type: payload.type,
+      category: payload.category,
+      bean_type: payload.beanType,
+      latin: payload.latin || null,
+      difficulty: payload.difficulty || null,
+      exposure: payload.exposure || null,
+      matures_in_days: payload.maturesInDays || null,
+      matures_under_days: payload.maturesUnderDays || null,
+      description: payload.description || null,
+      timing: payload.timing || null,
+      starting: payload.starting || null,
+      growing: payload.growing || null,
+      harvest: payload.harvest || null,
+      companion_planting: payload.companionPlanting || null,
+      image: payload.image || null,
+    })
+    .select('id')
+    .single();
+
+  if (error) throw error;
+  return { id: data.id };
 }

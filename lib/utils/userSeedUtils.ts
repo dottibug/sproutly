@@ -2,6 +2,7 @@ import { Profile } from '../contexts/AuthContext';
 import { UserSeedItem, CatalogSeedItem, Planting } from '../types';
 import { fetchUserSeedsWithoutPlantingActions, fetchPlantingActions } from '../queries';
 import { getCategoryPlantingActions } from './plantActionUtils';
+import { getSignedSeedImageUrl } from './userSeedImageUtils';
 
 export async function getUserSeedCollection(profile: Profile): Promise<UserSeedItem[]> {
   if (!profile?.id) return [];
@@ -17,7 +18,20 @@ export async function getUserSeedCollection(profile: Profile): Promise<UserSeedI
     return createUserSeedFromDatabase(row, planting);
   });
 
-  return collection;
+  // Get the signed URL for any custom seed images (required for access to private Supabase storage buckets; tokens expire after 1 hour)
+  const collectionWithSignedImages = await Promise.all(
+    collection.map(async (seed): Promise<UserSeedItem> => {
+      const isCustomSeed = seed.custom_seed_id !== null;
+      const imageIsPath = seed.image && !seed.image.startsWith('http');
+      if (isCustomSeed && imageIsPath) {
+        const signedUrl = await getSignedSeedImageUrl(seed.image);
+        return { ...seed, image: signedUrl ?? '' };
+      }
+      return seed;
+    }),
+  );
+
+  return collectionWithSignedImages;
 }
 
 export function isDuplicateSeed(seeds: UserSeedItem[], catalogSeedId: string | null): boolean {

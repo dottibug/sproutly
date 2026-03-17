@@ -61,7 +61,7 @@ type UserSeedsContextValue = {
   loading: boolean;
   error: string | null;
   addSeedFromCatalog: (seed: CatalogSeedItem) => Promise<void>;
-  addCustomSeed: (seed: UserSeedItem) => Promise<void>;
+  addCustomSeed: (seed: UserSeedItem) => void;
   deleteSeedByCatalogId: (seed: UserSeedItem) => Promise<void>;
   deleteSeedByCustomId: (seed: UserSeedItem) => Promise<void>;
 };
@@ -114,23 +114,31 @@ export function UserSeedsProvider({ children }: UserSeedsProviderProps) {
   );
 
   const addCustomSeed = useCallback(
-    async (seed: UserSeedItem) => {
-      if (!profile?.id) return;
+    (seed: UserSeedItem) => {
       if (isDuplicateSeed(state.seeds, seed.id)) return;
-
-      // Add seed optimistically
       dispatch({ type: 'ADD_CUSTOM_SEED', payload: seed });
-
-      try {
-        const newSeed = await addCustomSeedToUserCollection(profile.id, seed.id);
-        console.log('✅ Seed added to collection from custom seed:', newSeed);
-      } catch (error) {
-        dispatch({ type: 'DELETE_SEED_BY_CUSTOM_ID', payload: seed.id });
-        console.error('Error adding custom seed to collection:', error instanceof Error ? error.message : 'Unknown error');
-      }
     },
-    [profile?.id, state.seeds],
+    [state.seeds],
   );
+
+  // const addCustomSeed = useCallback(
+  //   async (seed: UserSeedItem) => {
+  //     if (!profile?.id) return;
+  //     if (isDuplicateSeed(state.seeds, seed.id)) return;
+
+  //     // Add seed optimistically
+  //     dispatch({ type: 'ADD_CUSTOM_SEED', payload: seed });
+
+  //     try {
+  //       const newSeed = await addCustomSeedToUserCollection(profile.id, seed.id);
+  //       console.log('✅ Seed added to collection from custom seed:', newSeed);
+  //     } catch (error) {
+  //       dispatch({ type: 'DELETE_SEED_BY_CUSTOM_ID', payload: seed.id });
+  //       console.error('Error adding custom seed to collection:', error instanceof Error ? error.message : 'Unknown error');
+  //     }
+  //   },
+  //   [profile?.id, state.seeds],
+  // );
 
   const deleteSeedByCatalogId = useCallback(
     async (seed: UserSeedItem) => {
