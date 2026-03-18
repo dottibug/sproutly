@@ -1,8 +1,15 @@
 import { createContext, useReducer, useCallback, useMemo, useEffect, useContext } from 'react';
 import { useAuth, Profile } from './AuthContext';
-import { UserSeedItem, CatalogSeedItem } from '../types';
+import { UserSeedItem, CatalogSeedItem, PreviewImage, CustomSeedPayload } from '../types';
 import { getUserSeedCollection, createUserSeedFromCatalog, createUserSeedFromCustom, isDuplicateSeed } from '../utils/userSeedUtils';
-import { addCatalogSeedToUserCollection, addCustomSeedToUserCollection, deleteByCatalogId, deleteByCustomId } from '../queries';
+import { uploadImage, getSignedSeedImageUrl } from '../utils/userSeedImageUtils';
+import {
+  addCatalogSeedToUserCollection,
+  addCustomSeedToUserCollection,
+  deleteByCatalogId,
+  deleteByCustomId,
+  insertCustomSeed,
+} from '../queries';
 
 // TODO: Handle errors
 
@@ -61,7 +68,8 @@ type UserSeedsContextValue = {
   loading: boolean;
   error: string | null;
   addSeedFromCatalog: (seed: CatalogSeedItem) => Promise<void>;
-  addCustomSeed: (seed: UserSeedItem) => void;
+  addCustomSeed: (preview: PreviewImage, payload: CustomSeedPayload) => Promise<void>;
+  // addCustomSeed: (seed: UserSeedItem) => void;
   deleteSeedByCatalogId: (seed: UserSeedItem) => Promise<void>;
   deleteSeedByCustomId: (seed: UserSeedItem) => Promise<void>;
 };
@@ -113,7 +121,32 @@ export function UserSeedsProvider({ children }: UserSeedsProviderProps) {
     [profile?.id, state.seeds],
   );
 
-  const addCustomSeed = useCallback((seed: UserSeedItem) => dispatch({ type: 'ADD_CUSTOM_SEED', payload: seed }), [state.seeds]);
+  // const addCustomSeed = useCallback(
+  //   (seed: UserSeedItem) => dispatch({ type: 'ADD_CUSTOM_SEED', payload: seed }),
+  //   [state.seeds],
+  // );
+
+  const addCustomSeed = useCallback(
+    async (preview: PreviewImage | null, payload: CustomSeedPayload) => {
+      if (!profile?.id) return;
+
+      // Upload preview image to storage bucket
+      const imagePath = preview ? await uploadImage(profile.id, preview.mimeType, preview.base64) : null;
+
+      // Insert custom seed into database (custom_seeds and user_seed_collection tables)
+      const payloadWithImagePath = imagePath ? { ...payload, image: imagePath } : payload;
+      const newCustomSeed = await insertCustomSeed(profile.id, payloadWithImagePath);
+
+      // Get signed URL for the imagePath
+      const imageIsPath = newCustomSeed.image && !newCustomSeed.image.startsWith('http');
+      const signedUrl = imageIsPath ? await getSignedSeedImageUrl(newCustomSeed.image) : null;
+      const customSeedWithSignedImage = signedUrl ? { ...newCustomSeed, image: signedUrl } : newCustomSeed;
+
+      // Add custom seed to state
+      dispatch({ type: 'ADD_CUSTOM_SEED', payload: customSeedWithSignedImage });
+    },
+    [profile?.id],
+  );
 
   const deleteSeedByCatalogId = useCallback(
     async (seed: UserSeedItem) => {

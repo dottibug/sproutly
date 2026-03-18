@@ -1,8 +1,8 @@
 import { Profile } from '../contexts/AuthContext';
-import { UserSeedItem, CatalogSeedItem, Planting } from '../types';
+import { UserSeedItem, CatalogSeedItem, Planting, PreviewImage } from '../types';
 import { fetchUserSeedsWithoutPlantingActions, fetchPlantingActions } from '../queries';
 import { getCategoryPlantingActions } from './plantActionUtils';
-import { getSignedSeedImageUrl } from './userSeedImageUtils';
+import { getSignedSeedImageUrl, uploadImage } from './userSeedImageUtils';
 
 export async function getUserSeedCollection(profile: Profile): Promise<UserSeedItem[]> {
   if (!profile?.id) return [];

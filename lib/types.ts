@@ -60,6 +60,27 @@ export type UserSeedItem = CatalogSeedItem & {
   notes: string | null;
 };
 
+// ---- CUSTOM SEED TYPES ----
+export type CustomSeedItem = {
+  id: string;
+  name: string;
+  type: SeedType;
+  bean_type: string | null;
+  category: string;
+  latin: string | null;
+  difficulty: string | null;
+  exposure: string | null;
+  matures_in_days: number | null;
+  matures_under_days: number | null;
+  description: string | null;
+  timing: string | null;
+  starting: string | null;
+  growing: string | null;
+  harvest: string | null;
+  companion_planting: string | null;
+  image: string;
+};
+
 // ---- FILTER TYPES ----
 export type Filter = 'plantType' | 'starting' | 'exposure' | 'season' | 'month' | 'readyToHarvest' | 'difficulty';
 
@@ -73,7 +94,7 @@ export type UserFilterPreferences = {
 };
 
 // ---- CUSTOM SEED TYPES ----
-export type AddCustomSeedPayload = {
+export type CustomSeedPayload = {
   name: string;
   type: SeedType;
   category: string;

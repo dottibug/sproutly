@@ -4,11 +4,10 @@ import { useState } from 'react';
 import Button from '../../../components/ui/buttons/Button';
 import { colors } from '../../../styles/theme';
 
-import { uploadImage, getSignedSeedImageUrl } from '../../../lib/utils/userSeedImageUtils';
 import { useAuth } from '../../../lib/contexts/AuthContext';
 import { useCustomSeed } from '../../../lib/contexts/CustomSeedContext';
 import { useUserSeeds } from '../../../lib/contexts/UserSeedsContext';
-import { PreviewImage } from '../../../lib/types';
+import { CustomSeedItem, PreviewImage } from '../../../lib/types';
 import ImagePicker from '../../../components/customSeeds/ImagePicker';
 import SeedNameInput from '../../../components/customSeeds/SeedNameInput';
 import Heading from '../../../components/ui/Heading';
@@ -25,8 +24,8 @@ import StartingInput from '../../../components/customSeeds/StartingInput';
 import GrowingInput from '../../../components/customSeeds/GrowingInput';
 import HarvestInput from '../../../components/customSeeds/HarvestInput';
 import CompanionPlantingInput from '../../../components/customSeeds/CompanionPlantingInput';
+import { createCustomSeedPayload } from '../../../lib/utils/customSeedUtils';
 
-// TODO: Refactor for clarity/organization and make component shorter and more readable
 // TODO: image picker should only upload to database on pressing save button
 // TODO: Fix the plant menu functionality
 // TODO: if the category (plant) is not selected from the menu (is a different type of plant than in database), then show the input fields for planting actions: start indoors (seasons and months), direct sow (seasons and months), transplant (seasons and months)
@@ -37,34 +36,19 @@ import CompanionPlantingInput from '../../../components/customSeeds/CompanionPla
 
 export default function AddCustomSeedScreen() {
   const { profile } = useAuth();
-  const { saveCustomSeed } = useCustomSeed();
+  const customSeed = useCustomSeed();
+  const { resetCustomSeed } = customSeed;
   const { addCustomSeed } = useUserSeeds();
-
   const [preview, setPreview] = useState<PreviewImage | null>(null);
 
   // TODO handle no preview image case -- use a placeholder image from a public bucket instead (i.e. don't require users to upload an image)
 
-  // TODO: rename some of these helpers to be clearer about what they are doing; possibly roll into a single helper function so this screen is more readable
   const handleAddSeed = async () => {
     if (!profile?.id) return;
     if (!preview) return;
-
-    try {
-      // Upload the preview image to supabase storage bucket
-      const imagePath = await uploadImage(profile.id, preview.mimeType, preview.base64);
-
-      // Add the custom seed to the database using the context state
-      const newCustomSeed = await saveCustomSeed(imagePath ?? null);
-
-      // Get signed URL for the image if it's a path
-      const imageIsPath = newCustomSeed.image && !newCustomSeed.image.startsWith('http');
-      const signedUrl = imageIsPath ? await getSignedSeedImageUrl(newCustomSeed.image) : null;
-      const customSeedWithSignedImage = signedUrl ? { ...newCustomSeed, image: signedUrl } : newCustomSeed;
-
-      addCustomSeed(customSeedWithSignedImage);
-    } catch (error) {
-      console.error('Error adding seed:', error);
-    }
+    const payload = createCustomSeedPayload(customSeed as unknown as CustomSeedItem);
+    await addCustomSeed(preview, payload);
+    resetCustomSeed();
   };
 
   return (

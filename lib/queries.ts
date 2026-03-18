@@ -1,6 +1,15 @@
 import { supabase } from './supabase';
 import { Profile } from './contexts/AuthContext';
-import { UserSeedItem, CatalogSeedItem, PlantingActionRow, UserFilterPreferences, Filter, AddCustomSeedPayload } from './types';
+// import { useCustomSeed } from './contexts/CustomSeedContext';
+import {
+  UserSeedItem,
+  CatalogSeedItem,
+  PlantingActionRow,
+  UserFilterPreferences,
+  Filter,
+  CustomSeedItem,
+  CustomSeedPayload,
+} from './types';
 import { getCategoryPlantingActions } from './utils/plantActionUtils';
 
 // ---- USER SEED COLLECTION QUERIES ----
@@ -111,7 +120,38 @@ export async function updateUserFilterPrefs(profileId: string, userFilterPrefs: 
 }
 
 // ---- CUSTOM SEED QUERIES ----
-export async function insertToCustomSeedTable(userId: string, payload: AddCustomSeedPayload): Promise<{ id: string }> {
+export async function insertCustomSeed(userId: string, payload: CustomSeedPayload): Promise<UserSeedItem> {
+  const customSeed = await insertToCustomSeedTable(userId, payload);
+  const userSeedId = await insertCustomSeedToUserCollection(userId, customSeed.id);
+
+  return {
+    id: userSeedId,
+    catalog_seed_id: null,
+    custom_seed_id: customSeed.id,
+    name: customSeed.name,
+    sku: '',
+    type: customSeed.type,
+    bean_type: customSeed.bean_type,
+    category: customSeed.category,
+    latin: customSeed.latin,
+    difficulty: customSeed.difficulty,
+    exposure: customSeed.exposure,
+    matures_in_days: customSeed.matures_in_days,
+    matures_under_days: customSeed.matures_under_days,
+    description: customSeed.description,
+    timing: customSeed.timing,
+    starting: customSeed.starting,
+    growing: customSeed.growing,
+    harvest: customSeed.harvest,
+    companion_planting: customSeed.companion_planting,
+    image: customSeed.image,
+    planting: [],
+    notes: null,
+  };
+}
+
+// Insert custom seed into custom_seeds tableReturns custom seed id on success.
+export async function insertToCustomSeedTable(userId: string, payload: CustomSeedPayload): Promise<CustomSeedItem> {
   const { data, error } = await supabase
     .from('custom_seeds')
     .insert({
@@ -120,22 +160,40 @@ export async function insertToCustomSeedTable(userId: string, payload: AddCustom
       type: payload.type,
       category: payload.category,
       bean_type: payload.beanType,
-      latin: payload.latin || null,
-      difficulty: payload.difficulty || null,
-      exposure: payload.exposure || null,
-      matures_in_days: payload.maturesInDays || null,
-      matures_under_days: payload.maturesUnderDays || null,
-      description: payload.description || null,
-      timing: payload.timing || null,
-      starting: payload.starting || null,
-      growing: payload.growing || null,
-      harvest: payload.harvest || null,
-      companion_planting: payload.companionPlanting || null,
-      image: payload.image || null,
+      latin: payload.latin,
+      difficulty: payload.difficulty,
+      exposure: payload.exposure,
+      matures_in_days: payload.maturesInDays,
+      matures_under_days: payload.maturesUnderDays,
+      description: payload.description,
+      timing: payload.timing,
+      starting: payload.starting,
+      growing: payload.growing,
+      harvest: payload.harvest,
+      companion_planting: payload.companionPlanting,
+      image: payload.image,
     })
-    .select('id')
+    .select(
+      'id, name, type, bean_type, category, latin, difficulty, exposure, matures_in_days, matures_under_days, description, timing, starting, growing, harvest, companion_planting, image',
+    )
     .single();
 
   if (error) throw error;
-  return { id: data.id };
+  return data as unknown as CustomSeedItem;
+}
+
+// Insert custom seed into user_seed_collection table
+export async function insertCustomSeedToUserCollection(userId: string, customSeedId: string): Promise<string> {
+  const { data, error } = await supabase
+    .from('user_seed_collection')
+    .insert({
+      user_id: userId,
+      catalog_seed_id: null,
+      custom_seed_id: customSeedId,
+      notes: null,
+    })
+    .select('id')
+    .single();
+  if (error) throw error;
+  return data.id as string;
 }
