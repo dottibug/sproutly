@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSeedCatalog } from '../../../lib/contexts/SeedCatalogContext';
 import Loading from '../../../components/ui/Loading';
 import ScreenMessage from '../../../components/ui/ScreenMessage';
-import Tabs from '../../../components/seeds/Tabs';
+import ListTabs from '../../../components/seeds/ListTabs';
 import UserSeeds from '../../../components/userSeeds/UserSeeds';
 import BrowseSeeds from '../../../components/seedCatalog/BrowseSeeds';
 import { colors } from '../../../styles/theme';
@@ -34,7 +34,7 @@ export default function HomeScreen() {
   // Renders the user seeds or browse seeds screen based on the active tab
   return (
     <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: colors.white }}>
-      <Tabs activeTab={activeTab} onTabPress={handleTabPress} />
+      <ListTabs activeTab={activeTab} onTabPress={handleTabPress} />
       <UserSeeds activeTab={activeTab} onGoToBrowse={handleGoToBrowse} />
       <BrowseSeeds activeTab={activeTab} />
     </SafeAreaView>

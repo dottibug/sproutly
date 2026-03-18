@@ -1,17 +1,19 @@
 import { Pressable, Text, StyleSheet } from 'react-native';
 import { colors } from '../../styles/theme';
 
-const MY_SEEDS = 'mySeeds';
-const BROWSE = 'browse';
-
-type TabProps = {
+type SeedTabProps = {
   readonly label: string;
-  readonly onPress: () => void;
   readonly activeTab: string;
+  readonly onPress: () => void;
 };
 
-export default function Tab({ label, onPress, activeTab }: TabProps) {
-  const isActive = (label === 'My Seeds' && activeTab === MY_SEEDS) || (label === 'Browse' && activeTab === BROWSE);
+export default function SeedTab({ label, activeTab, onPress }: SeedTabProps) {
+  const isActive =
+    (label === 'Seed' && activeTab === 'seed') ||
+    (label === 'Notes' && activeTab === 'notes') ||
+    (label === 'Photos' && activeTab === 'photos') ||
+    (label === 'Reminders' && activeTab === 'reminders') ||
+    (label === 'History' && activeTab === 'history');
 
   const borderBottomWidth = isActive ? 3 : 0;
 
