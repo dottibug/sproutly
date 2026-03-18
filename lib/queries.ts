@@ -50,8 +50,8 @@ export async function deleteByCatalogId(userId: string, catalogSeedId: string): 
   if (error) throw error;
 }
 
-export async function deleteByCustomId(userId: string, customSeedId: string): Promise<void> {
-  const { error } = await supabase.from('user_seed_collection').delete().eq('user_id', userId).eq('custom_seed_id', customSeedId);
+export async function deleteByCustomId(customSeedId: string): Promise<void> {
+  const { error } = await supabase.from('custom_seeds').delete().eq('id', customSeedId);
   if (error) throw error;
 }
 

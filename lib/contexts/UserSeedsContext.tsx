@@ -175,7 +175,7 @@ export function UserSeedsProvider({ children }: UserSeedsProviderProps) {
 
       // Update database
       try {
-        await deleteByCustomId(profile.id, seed.custom_seed_id as string);
+        await deleteByCustomId(seed.custom_seed_id as string);
         console.log('✅ Seed removed from collection by custom ID:');
       } catch (error) {
         dispatch({ type: 'ADD_CUSTOM_SEED', payload: seed });
