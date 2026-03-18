@@ -2,8 +2,8 @@ import { View } from 'react-native';
 import { RadioButton } from 'react-native-paper';
 import { appStyles, colors } from '../../styles/theme';
 import Heading from '../ui/Heading';
-import { useCustomSeed } from '../../lib/contexts/CustomSeedContext';
-import { Exposure, EXPOSURE } from '../../lib/types';
+import { useCustomSeed } from '../../context/CustomSeedContext';
+import { Exposure, EXPOSURE } from '../../utils/types';
 
 export default function ExposureSelector() {
   const { exposure, setExposure } = useCustomSeed();

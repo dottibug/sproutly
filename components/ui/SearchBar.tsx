@@ -1,7 +1,6 @@
-import { View, StyleSheet, TextInput } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import { colors } from '../../styles/theme';
-import { useRef, useEffect } from 'react';
 
 // TODO: stlying
 type SearchBarProps = {
@@ -11,7 +10,7 @@ type SearchBarProps = {
   readonly autofocus?: boolean;
 };
 
-// Renders a search bar with a heading and text input. Must pass in the search query and a function to update the search query as props.
+// Search bar component with a placeholder and a search query input. Must pass in the placeholder text, the search query, and a function to update the search query. Can be autofocused.
 export default function SearchBar({ placeholder, searchQuery, handleSearchQuery, autofocus = false }: SearchBarProps) {
   return (
     <View style={styles.searchBarContainer}>

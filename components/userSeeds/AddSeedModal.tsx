@@ -3,13 +3,16 @@ import { router } from 'expo-router';
 import Button from '../ui/buttons/Button';
 import { appStyles } from '../../styles/theme';
 
+// TODO: Styling
+// TODO: going to the browse tab is working, but the screen loads slow
+
 type AddSeedModalProps = {
   readonly visible: boolean;
   readonly onRequestClose: () => void;
   readonly onGoToBrowse: () => void;
 };
 
-// TODO: going to the browse tab is working, but the screen loads slow
+// Modal for adding a new seed to the user's collection
 export default function AddSeedModal({ visible, onRequestClose, onGoToBrowse }: AddSeedModalProps) {
   const handleAddCatalogSeed = () => {
     onRequestClose();

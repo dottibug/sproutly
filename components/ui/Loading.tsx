@@ -8,6 +8,7 @@ type LoadingProps = {
   readonly message: string;
 };
 
+// Loading component with a message
 export default function Loading({ message }: LoadingProps) {
   return (
     <SafeAreaView>

@@ -1,5 +1,5 @@
 import { View, TextInput } from 'react-native';
-import { useCustomSeed } from '../../lib/contexts/CustomSeedContext';
+import { useCustomSeed } from '../../context/CustomSeedContext';
 import { appStyles } from '../../styles/theme';
 import Heading from '../ui/Heading';
 

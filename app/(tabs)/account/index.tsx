@@ -1,11 +1,10 @@
 import { Text, View, StyleSheet, Pressable, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState, useCallback } from 'react';
 import { useRouter } from 'expo-router';
-import { useAuth } from '../../../lib/contexts/AuthContext';
-import { useFilters } from '../../../lib/contexts/FiltersContext';
-import { FILTERS } from '../../../lib/utils/filterUtils';
-import { Filter } from '../../../lib/types';
+import { useAuth } from '../../../context/AuthContext';
+import { useFilters } from '../../../context/FiltersContext';
+import { FILTERS } from '../../../utils/filterUtils';
+import { Filter } from '../../../utils/types';
 import CustomFilterOrderModal from '../../../components/filters/CustomFilterOrderModal';
 import Toggle from '../../../components/ui/Toggle';
 import Button from '../../../components/ui/buttons/Button';

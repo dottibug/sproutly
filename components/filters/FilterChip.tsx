@@ -1,7 +1,7 @@
 import { Pressable, Text, StyleSheet } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useFilters } from '../../lib/contexts/FiltersContext';
-import { Filter } from '../../lib/types';
+import { useFilters } from '../../context/FiltersContext';
+import { Filter } from '../../utils/types';
 import { colors } from '../../styles/theme';
 
 type FilterChipProps = {

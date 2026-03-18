@@ -2,6 +2,9 @@ import { ActivityIndicator, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '../../styles/theme';
 
+// TODO: Styling
+
+// Loading screen for the app
 export default function AppLoadingScreen() {
   return (
     <SafeAreaView style={styles.container}>

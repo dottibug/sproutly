@@ -1,11 +1,12 @@
 import { Text, StyleSheet } from 'react-native';
 import { colors } from '../../styles/theme';
 
-type EmptyListProps = {
+type ScreenMessageProps = {
   readonly message: string;
 };
 
-export default function ScreenMessage({ message }: EmptyListProps) {
+// Message displayed when a list is empty or an error occurs
+export default function ScreenMessage({ message }: ScreenMessageProps) {
   return <Text style={styles.screenMessageText}>{message}</Text>;
 }
 

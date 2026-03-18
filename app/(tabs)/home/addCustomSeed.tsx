@@ -4,10 +4,10 @@ import { useState } from 'react';
 import Button from '../../../components/ui/buttons/Button';
 import { colors } from '../../../styles/theme';
 
-import { useAuth } from '../../../lib/contexts/AuthContext';
-import { useCustomSeed } from '../../../lib/contexts/CustomSeedContext';
-import { useUserSeeds } from '../../../lib/contexts/UserSeedsContext';
-import { CustomSeedItem, PreviewImage } from '../../../lib/types';
+import { useAuth } from '../../../context/AuthContext';
+import { useCustomSeed } from '../../../context/CustomSeedContext';
+import { useUserSeeds } from '../../../context/UserSeedsContext';
+import { CustomSeedItem, PreviewImage } from '../../../utils/types';
 import ImagePicker from '../../../components/customSeeds/ImagePicker';
 import SeedNameInput from '../../../components/customSeeds/SeedNameInput';
 import Heading from '../../../components/ui/Heading';
@@ -24,7 +24,7 @@ import StartingInput from '../../../components/customSeeds/StartingInput';
 import GrowingInput from '../../../components/customSeeds/GrowingInput';
 import HarvestInput from '../../../components/customSeeds/HarvestInput';
 import CompanionPlantingInput from '../../../components/customSeeds/CompanionPlantingInput';
-import { createCustomSeedPayload } from '../../../lib/utils/customSeedUtils';
+import { createCustomSeedPayload } from '../../../utils/customSeedUtils';
 
 // TODO: image picker should only upload to database on pressing save button
 // TODO: Fix the plant menu functionality

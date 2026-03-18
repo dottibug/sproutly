@@ -1,9 +1,9 @@
 import { useLocalSearchParams } from 'expo-router';
-import { useSeedCatalog } from '../../../lib/contexts/SeedCatalogContext';
-import { useUserSeeds } from '../../../lib/contexts/UserSeedsContext';
-import { CatalogSeedItem, UserSeedItem } from '../../../lib/types';
-import BrowseSeedDetails from '../../../components/seedDetails/BrowseSeedDetails';
-import UserSeeds from '../../../components/seedDetails/UserSeeds';
+import { useSeedCatalog } from '../../../context/SeedCatalogContext';
+import { useUserSeeds } from '../../../context/UserSeedsContext';
+import { BrowseSeedItem, UserSeedItem } from '../../../utils/types';
+import BrowseSeed from '../../../components/browseSeeds/BrowseSeed';
+import UserSeed from '../../../components/userSeeds/UserSeed';
 
 // Catalog seed details screen
 export default function SeedDetailsScreen() {
@@ -12,22 +12,20 @@ export default function SeedDetailsScreen() {
   const { seeds: userSeeds } = useUserSeeds();
   const { seeds: catalogSeeds } = useSeedCatalog();
 
-  const seeds = tab === 'mySeeds' ? userSeeds : catalogSeeds;
+  const seeds = tab === 'My Seeds' ? userSeeds : catalogSeeds;
 
   const userSeed = seeds.find((s) => {
     if (source === 'catalog') return (s as UserSeedItem).catalog_seed_id === id;
     if (source === 'custom') return (s as UserSeedItem).custom_seed_id === id;
   });
 
-  const catalogSeed = seeds.find((s) => (s as CatalogSeedItem).id === id);
-
-  const seed = tab === 'mySeeds' ? userSeed : catalogSeed;
+  const catalogSeed = seeds.find((s) => (s as BrowseSeedItem).id === id);
+  const seed = tab === 'My Seeds' ? userSeed : catalogSeed;
 
   return (
     <>
-      {seed && tab === 'browse' && <BrowseSeedDetails seed={seed} />}
-
-      {seed && tab === 'mySeeds' && <UserSeeds seed={seed as UserSeedItem} />}
+      {seed && tab === 'Browse' && <BrowseSeed seed={seed} />}
+      {seed && tab === 'My Seeds' && <UserSeed seed={seed as UserSeedItem} />}
     </>
   );
 }

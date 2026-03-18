@@ -9,6 +9,7 @@ type BadgeProps = {
   readonly width: any;
 };
 
+// Badge component that applies styles based on type prop.
 export default function Badge({ type, text, color, width = '100%' }: BadgeProps) {
   const badgeStyleMap = {
     card: styles.badgeStyleCard,

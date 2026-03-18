@@ -1,41 +1,31 @@
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useSeedCatalog } from '../../../lib/contexts/SeedCatalogContext';
+import { useSeedCatalog } from '../../../context/SeedCatalogContext';
 import Loading from '../../../components/ui/Loading';
 import ScreenMessage from '../../../components/ui/ScreenMessage';
-import ListTabs from '../../../components/seeds/ListTabs';
 import UserSeeds from '../../../components/userSeeds/UserSeeds';
-import BrowseSeeds from '../../../components/seedCatalog/BrowseSeeds';
+import BrowseSeeds from '../../../components/browseSeeds/BrowseSeeds';
 import { colors } from '../../../styles/theme';
+import Tabs from '../../../components/ui/Tabs';
+import { ListTab, LIST_TABS } from '../../../utils/types';
 
 // Seed Catalog screen
 // TODO: top/bottom scroll buttons to quick scroll to the top/bottom of the list
 
 const LOAD_MESSAGE = 'Loading…';
-const MY_SEEDS = 'mySeeds';
-const BROWSE = 'browse';
-
-type ActiveTab = 'mySeeds' | 'browse';
 
 export default function HomeScreen() {
-  // Context
   const { loading, error } = useSeedCatalog();
-
-  // State
-  const [activeTab, setActiveTab] = useState<ActiveTab>(MY_SEEDS);
-
-  const handleTabPress = () => setActiveTab((prev) => (prev === MY_SEEDS ? BROWSE : MY_SEEDS));
-
-  const handleGoToBrowse = () => setActiveTab(BROWSE);
-
+  const [activeTab, setActiveTab] = useState<ListTab>('My Seeds');
+  const handleTabPress = (tab: ListTab) => setActiveTab(tab);
   if (loading) return <Loading message={LOAD_MESSAGE} />;
   if (error) return <ScreenMessage message={error} />;
 
-  // Renders the user seeds or browse seeds screen based on the active tab
+  // Render the seed list (user collection or browse) based on the active tab
   return (
     <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: colors.white }}>
-      <ListTabs activeTab={activeTab} onTabPress={handleTabPress} />
-      <UserSeeds activeTab={activeTab} onGoToBrowse={handleGoToBrowse} />
+      <Tabs tabs={LIST_TABS} activeTab={activeTab} onTabPress={(tab: string) => handleTabPress(tab as ListTab)} />
+      <UserSeeds activeTab={activeTab} onGoToBrowse={() => handleTabPress('Browse')} />
       <BrowseSeeds activeTab={activeTab} />
     </SafeAreaView>
   );

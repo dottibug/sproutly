@@ -1,10 +1,10 @@
 import { View, StyleSheet, ScrollView, Text } from 'react-native';
 import { useState } from 'react';
-import { useUserSeeds } from '../../lib/contexts/UserSeedsContext';
-import { useFilters } from '../../lib/contexts/FiltersContext';
-import { applyFilters, getNumberOfSelectedFilters } from '../../lib/utils/filterUtils';
-import { searchSeeds } from '../../lib/utils/searchUtils';
-import { UserSeedItem } from '../../lib/types';
+import { useUserSeeds } from '../../context/UserSeedsContext';
+import { useFilters } from '../../context/FiltersContext';
+import { applyFilters, getNumberOfSelectedFilters } from '../../utils/filterUtils';
+import { searchSeeds } from '../../utils/searchUtils';
+import { ListTab, UserSeedItem } from '../../utils/types';
 import UserSeedList from './UserSeedList';
 import Loading from '../ui/Loading';
 import ScreenMessage from '../ui/ScreenMessage';
@@ -20,10 +20,11 @@ const EMPTY_SEEDS_LIST = 'Your collection is empty. Add seeds to get started.';
 const NO_RESULTS_MESSAGE = 'No seeds match your filters or search';
 
 type UserSeedsProps = {
-  readonly activeTab: 'mySeeds' | 'browse';
+  readonly activeTab: ListTab;
   readonly onGoToBrowse: () => void;
 };
 
+// UserSeeds component displays the user's seed collection and a floating action button to add a new seed
 export default function UserSeeds({ activeTab, onGoToBrowse }: UserSeedsProps) {
   // State
   const [openFilterMenu, setOpenFilterMenu] = useState(false);
@@ -56,11 +57,14 @@ export default function UserSeeds({ activeTab, onGoToBrowse }: UserSeedsProps) {
   };
 
   return (
-    <View style={[styles.userSeedsContainer, { display: activeTab === 'mySeeds' ? 'flex' : 'none' }]}>
+    <View style={[styles.userSeedsContainer, { display: activeTab === 'My Seeds' ? 'flex' : 'none' }]}>
       <ScrollView style={styles.userSeedsContainer}>
         <Filters open={openFilterMenu} setOpen={setOpenFilterMenu} />
+
         {showFilterChips && <FilterChips />}
+
         <SearchBar placeholder="Search seeds..." searchQuery={searchQuery} handleSearchQuery={handleSearchQuery} />
+
         <View style={styles.userSeedsContent}>
           {!emptySeedsList && <Text style={styles.deleteHint}>Long press to delete a seed</Text>}
           <View style={appStyles.resultsList}>

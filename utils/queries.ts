@@ -1,0 +1,190 @@
+import { supabase } from './supabase';
+import { Profile } from '../context/AuthContext';
+import { UserSeedItem, BrowseSeedItem, PlantingActionRow, UserFilterPreferences, Filter, CustomSeedItem, CustomSeedPayload } from './types';
+import { getCategoryPlantingActions } from './plantActionUtils';
+
+// ---- USER SEED COLLECTION QUERIES ----
+export async function fetchUserSeedsWithoutPlantingActions(profile: Profile): Promise<UserSeedItem[]> {
+  const { data, error } = await supabase
+    .from('user_seed_collection')
+    .select(
+      `id,catalog_seed_id,custom_seed_id,notes,
+          seed_catalog (id, name, sku, type, bean_type, category, latin, difficulty, exposure, matures_in_days, matures_under_days, description, timing, starting, growing, harvest, companion_planting, image),
+          custom_seeds (id, name, type, bean_type, category, latin, difficulty, exposure, matures_in_days, matures_under_days, description, timing, starting, growing, harvest, companion_planting, image)`,
+    )
+    .eq('user_id', profile?.id);
+
+  if (error) throw error;
+  return (data ?? []) as unknown as UserSeedItem[];
+}
+
+export async function addCatalogSeedToUserCollection(userId: string, catalogSeedId: string): Promise<UserSeedItem> {
+  const { data, error } = await supabase.from('user_seed_collection').insert({
+    user_id: userId,
+    catalog_seed_id: catalogSeedId,
+  });
+  if (error) throw error;
+  return data as unknown as UserSeedItem;
+}
+
+export async function addCustomSeedToUserCollection(userId: string, customSeedId: string): Promise<UserSeedItem> {
+  const { data, error } = await supabase.from('user_seed_collection').insert({
+    user_id: userId,
+    custom_seed_id: customSeedId,
+  });
+  if (error) throw error;
+  return data as unknown as UserSeedItem;
+}
+
+export async function deleteByCatalogId(userId: string, catalogSeedId: string): Promise<void> {
+  const { error } = await supabase.from('user_seed_collection').delete().eq('user_id', userId).eq('catalog_seed_id', catalogSeedId);
+  if (error) throw error;
+}
+
+export async function deleteByCustomId(customSeedId: string): Promise<void> {
+  const { error } = await supabase.from('custom_seeds').delete().eq('id', customSeedId);
+  if (error) throw error;
+}
+
+// ---- CATALOG QUERIES ----
+// Fetch the seed catalog from the database (alphabetical order by name)
+export async function fetchSeedCatalog(): Promise<BrowseSeedItem[]> {
+  const [catalogData, plantingData] = await Promise.all([
+    supabase
+      .from('seed_catalog')
+      .select(
+        'id, name, sku, type, bean_type, category, latin, difficulty, exposure, matures_in_days, matures_under_days, description, timing, starting, growing, harvest, companion_planting, image',
+      )
+      .order('name', { ascending: true }),
+    fetchPlantingActions(),
+  ]);
+
+  if (catalogData.error) throw catalogData.error;
+
+  // https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
+  const catalog = (catalogData.data ?? []) as Omit<BrowseSeedItem, 'planting'>[];
+
+  return catalog.map((seed) => {
+    return {
+      ...seed,
+      planting: getCategoryPlantingActions(seed.category, plantingData, seed.bean_type),
+    };
+  });
+}
+
+// ---- PLANTING ACTION QUERIES ----
+export async function fetchPlantingActions(): Promise<PlantingActionRow[]> {
+  const { data, error } = await supabase.from('planting_actions').select('plant, variant, action, seasons, months');
+  if (error) throw error;
+  return (data ?? []) as PlantingActionRow[];
+}
+
+// ---- FILTER QUERIES ----
+const FILTERS: Filter[] = ['plantType', 'starting', 'exposure', 'season', 'month', 'readyToHarvest', 'difficulty'];
+
+const DEFAULT_OPEN: Filter[] = ['plantType', 'starting'];
+
+export async function fetchUserFilterPrefs(profileId: string): Promise<UserFilterPreferences> {
+  const { data, error } = await supabase.from('profiles').select('filter_order, filter_expanded_by_default').eq('id', profileId).single();
+
+  if (error) throw error;
+
+  return {
+    order: (data.filter_order as Filter[]) ?? FILTERS,
+    openByDefault: (data.filter_expanded_by_default as Filter[]) ?? DEFAULT_OPEN,
+  };
+}
+
+export async function updateUserFilterPrefs(profileId: string, userFilterPrefs: UserFilterPreferences): Promise<UserFilterPreferences> {
+  const { order, openByDefault } = userFilterPrefs;
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .update({
+      filter_order: order,
+      filter_expanded_by_default: openByDefault,
+    })
+    .eq('id', profileId);
+
+  if (error) throw error;
+  return userFilterPrefs;
+}
+
+// ---- CUSTOM SEED QUERIES ----
+export async function insertCustomSeed(userId: string, payload: CustomSeedPayload): Promise<UserSeedItem> {
+  const customSeed = await insertToCustomSeedTable(userId, payload);
+  const userSeedId = await insertCustomSeedToUserCollection(userId, customSeed.id);
+
+  return {
+    id: userSeedId,
+    catalog_seed_id: null,
+    custom_seed_id: customSeed.id,
+    name: customSeed.name,
+    sku: '',
+    type: customSeed.type,
+    bean_type: customSeed.bean_type,
+    category: customSeed.category,
+    latin: customSeed.latin,
+    difficulty: customSeed.difficulty,
+    exposure: customSeed.exposure,
+    matures_in_days: customSeed.matures_in_days,
+    matures_under_days: customSeed.matures_under_days,
+    description: customSeed.description,
+    timing: customSeed.timing,
+    starting: customSeed.starting,
+    growing: customSeed.growing,
+    harvest: customSeed.harvest,
+    companion_planting: customSeed.companion_planting,
+    image: customSeed.image,
+    planting: [],
+    notes: null,
+  };
+}
+
+// Insert custom seed into custom_seeds tableReturns custom seed id on success.
+export async function insertToCustomSeedTable(userId: string, payload: CustomSeedPayload): Promise<CustomSeedItem> {
+  const { data, error } = await supabase
+    .from('custom_seeds')
+    .insert({
+      user_id: userId,
+      name: payload.name,
+      type: payload.type,
+      category: payload.category,
+      bean_type: payload.beanType,
+      latin: payload.latin,
+      difficulty: payload.difficulty,
+      exposure: payload.exposure,
+      matures_in_days: payload.maturesInDays,
+      matures_under_days: payload.maturesUnderDays,
+      description: payload.description,
+      timing: payload.timing,
+      starting: payload.starting,
+      growing: payload.growing,
+      harvest: payload.harvest,
+      companion_planting: payload.companionPlanting,
+      image: payload.image,
+    })
+    .select(
+      'id, name, type, bean_type, category, latin, difficulty, exposure, matures_in_days, matures_under_days, description, timing, starting, growing, harvest, companion_planting, image',
+    )
+    .single();
+
+  if (error) throw error;
+  return data as unknown as CustomSeedItem;
+}
+
+// Insert custom seed into user_seed_collection table
+export async function insertCustomSeedToUserCollection(userId: string, customSeedId: string): Promise<string> {
+  const { data, error } = await supabase
+    .from('user_seed_collection')
+    .insert({
+      user_id: userId,
+      catalog_seed_id: null,
+      custom_seed_id: customSeedId,
+      notes: null,
+    })
+    .select('id')
+    .single();
+  if (error) throw error;
+  return data.id as string;
+}

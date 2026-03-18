@@ -9,6 +9,7 @@ type HeadingProps = {
   readonly uppercase?: boolean;
 };
 
+// Heading component that applies styles based on size and color props. Can be uppercase.
 export default function Heading({ children, color = 'primary', size = 'medium', marginVertical = 0, uppercase = false }: HeadingProps) {
   const headingStyle = () => {
     let headingStyles = [];

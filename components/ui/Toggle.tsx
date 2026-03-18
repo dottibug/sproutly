@@ -1,5 +1,5 @@
 import { Switch } from 'react-native-paper';
-import { Filter } from '../../lib/types';
+import { Filter } from '../../utils/types';
 
 type ToggleProps = {
   readonly filter: Filter;
@@ -7,6 +7,7 @@ type ToggleProps = {
   readonly onToggle: (filter: Filter) => void;
 };
 
+// Toggle component
 export default function Toggle({ filter, value, onToggle }: ToggleProps) {
   return <Switch value={value} onValueChange={() => onToggle(filter)} />;
 }

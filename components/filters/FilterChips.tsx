@@ -1,6 +1,6 @@
 import { View, Pressable, Text, StyleSheet } from 'react-native';
-import { useFilters } from '../../lib/contexts/FiltersContext';
-import { FILTERS } from '../../lib/utils/filterUtils';
+import { useFilters } from '../../context/FiltersContext';
+import { FILTERS } from '../../utils/filterUtils';
 import FilterChip from './FilterChip';
 import { colors } from '../../styles/theme';
 

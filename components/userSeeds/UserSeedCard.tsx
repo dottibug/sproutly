@@ -1,18 +1,19 @@
 import { useState } from 'react';
 import { Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useUserSeeds } from '../../lib/contexts/UserSeedsContext';
-import { UserSeedItem } from '../../lib/types';
-import SeedCard from '../ui/seedCard/SeedCard';
-import SeedCardAction from '../ui/seedCard/SeedCardAction';
+import { useUserSeeds } from '../../context/UserSeedsContext';
+import { UserSeedItem } from '../../utils/types';
+import SeedCard from '../seeds/seedCard/SeedCard';
+import SeedCardAction from '../seeds/seedCard/SeedCardAction';
 
 type UserSeedCardProps = {
   readonly seed: UserSeedItem;
 };
 
 // TODO: Show a snackbar message when a seed is successfully deleted?
-
 // TODO enable basic and detailed versions (user preferences setting probably)
+
+// UserSeedCard component displays a single seed in the user's collection
 export default function UserSeedCard({ seed }: UserSeedCardProps) {
   // State
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -23,14 +24,13 @@ export default function UserSeedCard({ seed }: UserSeedCardProps) {
   // Press handler to navigate to the seed details screen
   const handlePress = () => {
     const seedId = seed.custom_seed_id ? seed.custom_seed_id : seed.catalog_seed_id;
-
     const source = seed.custom_seed_id ? 'custom' : 'catalog';
 
     router.push({
       pathname: `/home/${seedId}`,
       params: {
         source: source,
-        tab: 'mySeeds',
+        tab: 'My Seeds',
       },
     });
   };

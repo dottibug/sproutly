@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { AppProviders } from '../lib/contexts/AppProviders';
-import { AuthProvider } from '../lib/contexts/AuthContext';
+import { AppProviders } from '../context/AppProviders';
+import { AuthProvider } from '../context/AuthContext';
 
 // Root layout that wraps the whole app
 export default function RootLayout() {

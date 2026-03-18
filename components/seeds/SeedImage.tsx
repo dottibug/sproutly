@@ -7,6 +7,7 @@ type SeedImageProps = {
   readonly size: 'small' | 'large';
 };
 
+// SeedImage component displays the image of a seed
 export default function SeedImage({ imageUri, size }: SeedImageProps) {
   return (
     <Image

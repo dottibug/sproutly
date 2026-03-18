@@ -1,7 +1,7 @@
 import { View } from 'react-native';
 import { SegmentedButtons } from 'react-native-paper';
-import { useCustomSeed } from '../../lib/contexts/CustomSeedContext';
-import { SeedType } from '../../lib/types';
+import { useCustomSeed } from '../../context/CustomSeedContext';
+import { SeedType } from '../../utils/types';
 import { appStyles } from '../../styles/theme';
 import Heading from '../ui/Heading';
 

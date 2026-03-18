@@ -7,6 +7,7 @@ type ScreenContainerProps = {
   readonly fullScreen?: boolean;
 };
 
+// Container for the main screen of the app
 export default function ScreenContainer({ children, fullScreen = false }: ScreenContainerProps) {
   return (
     <Fragment>

@@ -1,9 +1,9 @@
 import { View, Image, StyleSheet, Pressable, Text } from 'react-native';
-import { pickImage } from '../../lib/utils/userSeedImageUtils';
+import { pickImage } from '../../utils/userSeedImageUtils';
 import { appStyles, colors } from '../../styles/theme';
 import Heading from '../ui/Heading';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import { PreviewImage } from '../../lib/types';
+import { PreviewImage } from '../../utils/types';
 
 // TODO: if image picked, button should say "Edit photo" to either change the photo or remove it
 
