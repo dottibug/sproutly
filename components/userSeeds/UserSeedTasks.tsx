@@ -10,6 +10,7 @@ import StartTaskModal from './StartTaskModal';
 import Accordion from '../ui/Accordion';
 import { FAB as PaperFAB } from 'react-native-paper';
 
+// TODO: implement timeline functionality
 // TODO: Add a clear all tasks button
 // TODO: styling
 
