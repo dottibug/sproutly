@@ -5,14 +5,15 @@ type TabsProps = {
   readonly tabs: string[];
   readonly activeTab: string;
   readonly onTabPress: (tab: string) => void;
+  readonly badgeCounts?: Record<string, number>;
 };
 
 // Horizontal list of tabs used for the user collection and browse seed lists
-export default function Tabs({ tabs, activeTab, onTabPress }: TabsProps) {
+export default function Tabs({ tabs, activeTab, onTabPress, badgeCounts }: TabsProps) {
   return (
     <View style={styles.tabs}>
       {tabs.map((tab) => (
-        <Tab key={tab} label={tab} active={activeTab === tab} onPress={() => onTabPress(tab)} />
+        <Tab key={tab} label={tab} active={activeTab === tab} onPress={() => onTabPress(tab)} badgeCount={badgeCounts?.[tab]} />
       ))}
     </View>
   );

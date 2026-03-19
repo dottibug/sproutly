@@ -1,13 +1,15 @@
 import { UserSeedItem, UserSeedTab, USER_SEED_TABS } from '../../utils/types';
 import { StyleSheet } from 'react-native';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import UserSeedDetails from './UserSeedDetails';
 import UserSeedNotes from './UserSeedNotes';
 import UserSeedPhotos from './UserSeedPhotos';
-import UserSeedReminders from './UserSeedReminders';
-import UserSeedHistory from './UserSeedHistory';
 import Tabs from '../ui/Tabs';
+import { getPendingTodayCount } from '../../utils/taskUtils';
+import UserSeedTasks from './UserSeedTasks';
+
+// TODO: change badge color of tasks
 
 type UserSeedProps = {
   readonly seed: UserSeedItem;
@@ -17,18 +19,19 @@ type UserSeedProps = {
 export default function UserSeed({ seed }: UserSeedProps) {
   const [activeTab, setActiveTab] = useState<UserSeedTab>('Seed');
 
+  const tasksTodayCount = useMemo(() => getPendingTodayCount(seed.tasks ?? []), [seed.tasks]);
+
   const handleTabPress = (tab: string) => {
     setActiveTab(tab as UserSeedTab);
   };
 
   return (
     <>
-      <Tabs tabs={USER_SEED_TABS} activeTab={activeTab} onTabPress={handleTabPress} />
+      <Tabs tabs={USER_SEED_TABS} activeTab={activeTab} onTabPress={handleTabPress} badgeCounts={{ Tasks: tasksTodayCount }} />
       <UserSeedDetails seed={seed} activeTab={activeTab} />
       <UserSeedNotes activeTab={activeTab} seed={seed} />
       <UserSeedPhotos activeTab={activeTab} seed={seed} />
-      <UserSeedReminders activeTab={activeTab} />
-      <UserSeedHistory activeTab={activeTab} />
+      <UserSeedTasks activeTab={activeTab} seed={seed} />
     </>
   );
 }

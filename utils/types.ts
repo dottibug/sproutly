@@ -74,10 +74,28 @@ export type UserSeedItem = BrowseSeedItem & {
   custom_seed_id: string | null;
   notes: UserSeedNote[];
   photos: UserSeedPhoto[];
+  tasks: UserSeedTask[];
 };
 
 export type ListTab = 'My Seeds' | 'Browse';
-export type UserSeedTab = 'Seed' | 'Notes' | 'Photos' | 'Reminders' | 'History';
+export type UserSeedTab = 'Seed' | 'Notes' | 'Photos' | 'Tasks';
+
+export type TaskType = 'sow' | 'transplant' | 'fertilize' | 'harvest';
+export type TaskStatus = 'pending' | 'completed' | 'skipped';
+
+export type UserSeedTask = {
+  id: string;
+  userCollectionId: string;
+  userId: string;
+  taskType: TaskType;
+  title: string | null;
+  notes: string | null;
+  status: TaskStatus;
+  localNotificationId: string | null;
+  date: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
 // ---- CUSTOM SEED TYPES ----
 export type CustomSeedItem = {
@@ -141,7 +159,7 @@ export type PreviewImage = {
 
 // ---- CONSTANTS ----
 export const LIST_TABS = ['My Seeds', 'Browse'];
-export const USER_SEED_TABS = ['Seed', 'Notes', 'Photos', 'Reminders', 'History'];
+export const USER_SEED_TABS = ['Seed', 'Notes', 'Photos', 'Tasks'];
 export const DIFFICULTY = ['Easy', 'Standard', 'Intermediate', 'Advanced', 'Expert'];
 export const EXPOSURE = ['Full sun', 'Full sun to part shade', 'Part shade'];
 export const DETAILS = ['Description', 'Timing', 'Starting', 'Growing', 'Harvest', 'Companion Planting'];

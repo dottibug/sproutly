@@ -5,11 +5,13 @@ import {
   fetchPlantingActions,
   fetchUserSeedNotesByCollectionId,
   fetchUserSeedPhotosByCollectionId,
+  fetchUserSeedTasksByCollectionId,
 } from './queries';
 import { getCategoryPlantingActions } from './plantActionUtils';
 import { getSignedSeedImageUrl } from './userSeedImageUtils';
 import { organizeNotesByCollectionId } from './noteUtils';
 import { organizePhotosByCollectionId } from './photoUtils';
+import { organizeTasksByCollectionId } from './taskUtils';
 
 export async function getUserSeedCollection(profile: Profile): Promise<UserSeedItem[]> {
   if (!profile?.id) return [];
@@ -26,12 +28,14 @@ export async function getUserSeedCollection(profile: Profile): Promise<UserSeedI
   });
 
   const collectionIds = collection.map((seed) => seed.id);
-  const [notes, photos] = await Promise.all([
+  const [notes, photos, tasks] = await Promise.all([
     fetchUserSeedNotesByCollectionId(collectionIds),
     fetchUserSeedPhotosByCollectionId(collectionIds),
+    fetchUserSeedTasksByCollectionId(collectionIds),
   ]);
   const notesByCollectionId = organizeNotesByCollectionId(notes, collectionIds);
   const photosByCollectionId = organizePhotosByCollectionId(photos);
+  const tasksByCollectionId = organizeTasksByCollectionId(tasks);
 
   // Add signed URLs and notes to the collection
   const fullCollection = await Promise.all(
@@ -53,11 +57,11 @@ export async function getUserSeedCollection(profile: Profile): Promise<UserSeedI
       // Get the signed URL for any custom seed images
       if (isCustomSeed && imageIsPath) {
         const signedUrl = await getSignedSeedImageUrl(seed.image);
-        return signedUrl ? { ...seed, image: signedUrl, notes } : seed;
+        return signedUrl ? { ...seed, image: signedUrl, notes, photos: signedPhotos, tasks: tasksByCollectionId[seed.id] ?? [] } : seed;
       }
 
       // Add notes to the seed (if any)
-      return { ...seed, notes, photos: signedPhotos };
+      return { ...seed, notes, photos: signedPhotos, tasks: tasksByCollectionId[seed.id] ?? [] };
     }),
   );
   return fullCollection;
@@ -96,6 +100,7 @@ export function createUserSeedFromDatabase(row: any, planting: Planting[]): User
     image: source.image,
     planting: planting,
     photos: [],
+    tasks: [],
   };
   return newSeed;
 }
@@ -126,6 +131,7 @@ export function createUserSeedFromCatalog(seed: BrowseSeedItem) {
     planting: seed.planting ?? [],
     notes: [],
     photos: [],
+    tasks: [],
   };
 
   return newSeed;
@@ -157,6 +163,7 @@ export function createUserSeedFromCustom(seed: BrowseSeedItem) {
     planting: seed.planting ?? [],
     notes: [],
     photos: [],
+    tasks: [],
   };
 
   return newSeed;

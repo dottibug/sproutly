@@ -8,9 +8,6 @@ import { colors } from '../../styles/theme';
 // https://docs.expo.dev/router/advanced/tabs/#tab-bar-options
 
 // TODO: change tabBarActiveTintColor
-const MY_SEEDS = 'mySeeds';
-const BROWSE = 'browse';
-type ActiveTab = 'mySeeds' | 'browse';
 
 // Tabs layout for the app
 export default function TabsLayout() {
@@ -41,13 +38,13 @@ export default function TabsLayout() {
         }}
       />
 
-      {/* Reminders Tab */}
+      {/* Gallery Tab */}
       <Tabs.Screen
-        name="reminders"
+        name="gallery"
         options={{
-          title: 'Reminders',
-          tabBarLabel: 'Reminders',
-          tabBarIcon: ({ color }) => <Ionicons name="alarm" size={28} color={color} />,
+          title: 'Gallery',
+          tabBarLabel: 'Gallery',
+          tabBarIcon: ({ color }) => <FontAwesome6 name="images" size={26} color={color} />,
         }}
       />
 

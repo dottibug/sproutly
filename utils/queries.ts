@@ -10,6 +10,9 @@ import {
   CustomSeedPayload,
   UserSeedNote,
   UserSeedPhoto,
+  UserSeedTask,
+  TaskType,
+  TaskStatus,
 } from './types';
 import { getCategoryPlantingActions } from './plantActionUtils';
 
@@ -151,6 +154,7 @@ export async function insertCustomSeed(userId: string, payload: CustomSeedPayloa
     planting: [],
     notes: [],
     photos: [],
+    tasks: [],
   };
 }
 
@@ -333,5 +337,93 @@ export async function insertUserSeedPhoto(userId: string, collectionId: string, 
 // Delete a photo row from user_seed_photos table
 export async function deleteUserSeedPhoto(userId: string, photoId: string): Promise<void> {
   const { error } = await supabase.from('user_seed_photos').delete().eq('id', photoId).eq('user_id', userId);
+  if (error) throw error;
+}
+
+// Fetch reminders associated with the seeds in a user's collection
+export async function fetchUserSeedTasksByCollectionId(collectionIds: string[]): Promise<UserSeedTask[]> {
+  if (collectionIds.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from('user_seed_tasks')
+    .select('id, user_seed_collection_id, user_id, task_type, title, date, notes, status, local_notification_id, created_at, updated_at')
+    .in('user_seed_collection_id', collectionIds)
+    .order('date', { ascending: true });
+
+  if (error) throw error;
+
+  return (
+    data?.map((r) => ({
+      id: r.id,
+      userCollectionId: r.user_seed_collection_id,
+      userId: r.user_id,
+      taskType: r.task_type,
+      title: r.title,
+      date: r.date,
+      notes: r.notes,
+      status: r.status,
+      localNotificationId: r.local_notification_id,
+      createdAt: r.created_at,
+      updatedAt: r.updated_at,
+    })) ?? []
+  );
+}
+
+// Insert a new reminder into the user_seed_reminders table
+export async function insertUserSeedTask(
+  userId: string,
+  collectionId: string,
+  taskType: TaskType,
+  date: string,
+  title: string | null,
+  notes: string | null,
+  localNotificationId: string | null,
+): Promise<UserSeedTask> {
+  const { data, error } = await supabase
+    .from('user_seed_tasks')
+    .insert({
+      user_id: userId,
+      user_seed_collection_id: collectionId,
+      task_type: taskType,
+      date: date,
+      title,
+      notes,
+      status: 'pending',
+      local_notification_id: localNotificationId,
+    })
+    .select('id, user_seed_collection_id, user_id, task_type, title, date, notes, status, local_notification_id, created_at, updated_at')
+    .single();
+
+  if (error) throw error;
+
+  return {
+    id: data.id,
+    userCollectionId: data.user_seed_collection_id,
+    userId: data.user_id,
+    taskType: data.task_type,
+    title: data.title,
+    date: data.date,
+    notes: data.notes,
+    status: data.status,
+    localNotificationId: data.local_notification_id,
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
+  };
+}
+
+// Update a task's status in the user_seed_tasks table
+export async function updateUserSeedTask(userId: string, taskId: string, status: TaskStatus): Promise<void> {
+  const { error } = await supabase
+    .from('user_seed_tasks')
+    .update({ status: status, updated_at: new Date().toISOString() })
+    .eq('id', taskId)
+    .eq('user_id', userId);
+
+  if (error) throw error;
+}
+
+// Delete a task from the user_seed_tasks table
+export async function deleteUserSeedTask(userId: string, taskId: string): Promise<void> {
+  const { error } = await supabase.from('user_seed_tasks').delete().eq('id', taskId).eq('user_id', userId);
   if (error) throw error;
 }

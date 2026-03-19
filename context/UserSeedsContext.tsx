@@ -1,6 +1,16 @@
 import { createContext, useReducer, useCallback, useMemo, useEffect, useContext } from 'react';
 import { useAuth, Profile } from './AuthContext';
-import { UserSeedItem, BrowseSeedItem, PreviewImage, CustomSeedPayload, UserSeedNote, UserSeedPhoto } from '../utils/types';
+import {
+  UserSeedItem,
+  BrowseSeedItem,
+  PreviewImage,
+  CustomSeedPayload,
+  UserSeedNote,
+  UserSeedPhoto,
+  UserSeedTask,
+  TaskType,
+  TaskStatus,
+} from '../utils/types';
 import { getUserSeedCollection, createUserSeedFromCatalog, isDuplicateSeed } from '../utils/userSeedUtils';
 import { pickImage, uploadImage, getSignedSeedImageUrl, deleteSeedImage } from '../utils/userSeedImageUtils';
 import {
@@ -13,7 +23,12 @@ import {
   deleteUserSeedNote,
   insertUserSeedPhoto,
   deleteUserSeedPhoto,
+  insertUserSeedTask,
+  updateUserSeedTask,
+  deleteUserSeedTask,
 } from '../utils/queries';
+
+import { scheduleDailyTaskSummaryIfNeeded } from '../utils/taskUtils';
 
 // TODO: Handle errors
 // TODO: Refactor, with helper functions for optimistic updates
@@ -38,7 +53,12 @@ type UserSeedsAction =
   | { type: 'ADD_PHOTO_TO_SEED'; payload: { collectionId: string; photo: UserSeedPhoto } }
   | { type: 'REPLACE_PHOTO_IN_SEED'; payload: { collectionId: string; tempId: string; photo: UserSeedPhoto } }
   | { type: 'DELETE_PHOTO_FROM_SEED'; payload: { photoId: string } }
-  | { type: 'RESTORE_PHOTO_TO_SEED'; payload: { collectionId: string; photo: UserSeedPhoto } };
+  | { type: 'RESTORE_PHOTO_TO_SEED'; payload: { collectionId: string; photo: UserSeedPhoto } }
+  | { type: 'ADD_TASK_TO_SEED'; payload: { collectionId: string; task: UserSeedTask } }
+  | { type: 'REPLACE_TASK_IN_SEED'; payload: { collectionId: string; tempId: string; task: UserSeedTask } }
+  | { type: 'DELETE_TASK_FROM_SEED'; payload: { taskId: string } }
+  | { type: 'RESTORE_TASK_TO_SEED'; payload: { collectionId: string; task: UserSeedTask } }
+  | { type: 'TOGGLE_TASK_STATUS'; payload: { taskId: string; status: TaskStatus } };
 
 // ---- INITIAL STATE SETUP ----
 type UserSeedsState = {
@@ -169,6 +189,65 @@ function userSeedsReducer(state: UserSeedsState, action: UserSeedsAction): UserS
           return { ...s, photos: [action.payload.photo, ...currentPhotos] };
         }),
       };
+    case 'ADD_TASK_TO_SEED':
+      return {
+        ...state,
+        seeds: state.seeds.map((s) => {
+          if (s.id !== action.payload.collectionId) return s;
+          const currentTasks = s.tasks ?? [];
+          return {
+            ...s,
+            tasks: [...currentTasks, action.payload.task].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()),
+          };
+        }),
+      };
+
+    case 'REPLACE_TASK_IN_SEED':
+      return {
+        ...state,
+        seeds: state.seeds.map((s) => {
+          if (s.id !== action.payload.collectionId) return s;
+          return {
+            ...s,
+            tasks: (s.tasks ?? [])
+              .map((t) => (t.id === action.payload.tempId ? action.payload.task : t))
+              .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()),
+          };
+        }),
+      };
+
+    case 'DELETE_TASK_FROM_SEED':
+      return {
+        ...state,
+        seeds: state.seeds.map((s) => ({
+          ...s,
+          tasks: (s.tasks ?? []).filter((t) => t.id !== action.payload.taskId),
+        })),
+      };
+
+    case 'RESTORE_TASK_TO_SEED':
+      return {
+        ...state,
+        seeds: state.seeds.map((s) => {
+          if (s.id !== action.payload.collectionId) return s;
+          const currentTasks = s.tasks ?? [];
+          return {
+            ...s,
+            tasks: [...currentTasks, action.payload.task].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()),
+          };
+        }),
+      };
+
+    case 'TOGGLE_TASK_STATUS':
+      return {
+        ...state,
+        seeds: state.seeds.map((s) => ({
+          ...s,
+          tasks: (s.tasks ?? []).map((t) =>
+            t.id === action.payload.taskId ? { ...t, status: action.payload.status, updatedAt: new Date().toISOString() } : t,
+          ),
+        })),
+      };
     default:
       return state;
   }
@@ -189,6 +268,12 @@ type UserSeedsContextValue = {
   deleteNoteFromSeed: (noteId: string) => Promise<void>;
   addPhotoToSeed: (collectionId: string) => Promise<void>;
   deletePhotoFromSeed: (photoId: string, imagePathOrUrl: string) => Promise<void>;
+  addTaskToSeed: (
+    collectionId: string,
+    payload: { taskType: TaskType; date: string; title: string | null; notes: string | null; status: TaskStatus },
+  ) => Promise<void>;
+  toggleTaskDone: (taskId: string, status: TaskStatus) => Promise<void>;
+  deleteTaskFromSeed: (taskId: string) => Promise<void>;
 };
 
 const UserSeedsContext = createContext<UserSeedsContextValue | null>(null);
@@ -218,6 +303,22 @@ export function UserSeedsProvider({ children }: UserSeedsProviderProps) {
     if (!profile?.id) return;
     loadUserSeeds();
   }, [profile?.id, loadUserSeeds]);
+
+  useEffect(() => {
+    if (!profile?.id) return;
+    const pendingTodayCount = state.seeds.reduce((acc, seed) => {
+      const seedPendingToday = (seed.tasks ?? []).filter((t) => {
+        if (t.status === 'completed') return false;
+        const date = new Date(t.createdAt);
+        const now = new Date();
+        return date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth() && date.getDate() === now.getDate();
+      }).length;
+      return acc + seedPendingToday;
+    }, 0);
+    scheduleDailyTaskSummaryIfNeeded(pendingTodayCount).catch((err) => {
+      console.error('Failed to schedule daily task summary:', err);
+    });
+  }, [profile?.id, state.seeds]);
 
   const addSeedFromCatalog = useCallback(
     async (browseSeed: BrowseSeedItem) => {
@@ -444,6 +545,95 @@ export function UserSeedsProvider({ children }: UserSeedsProviderProps) {
     [profile?.id, state.seeds],
   );
 
+  const addTaskToSeed = useCallback(
+    async (collectionId: string, payload: { taskType: TaskType; date: string; title: string | null; notes: string | null }) => {
+      if (!profile?.id) return;
+
+      const taskDate = new Date(payload.date);
+      if (Number.isNaN(taskDate.getTime())) return;
+
+      const now = new Date().toISOString();
+      const tempId = `temp-task-${now}`;
+
+      const title = payload.title?.trim() || `${payload.taskType[0].toUpperCase()}${payload.taskType.slice(1)} task`;
+      const notes = payload.notes?.trim() || null;
+
+      const optimisticTask: UserSeedTask = {
+        id: tempId,
+        userCollectionId: collectionId,
+        userId: profile.id,
+        taskType: payload.taskType,
+        title,
+        date: taskDate.toISOString(),
+        notes,
+        status: 'pending',
+        localNotificationId: null, // no per-task local notification
+        createdAt: now,
+        updatedAt: now,
+      };
+
+      dispatch({ type: 'ADD_TASK_TO_SEED', payload: { collectionId, task: optimisticTask } });
+
+      try {
+        const inserted = await insertUserSeedTask(profile.id, collectionId, payload.taskType, taskDate.toISOString(), title, notes, null);
+
+        dispatch({
+          type: 'REPLACE_TASK_IN_SEED',
+          payload: { collectionId, tempId, task: inserted },
+        });
+      } catch (error) {
+        dispatch({ type: 'DELETE_TASK_FROM_SEED', payload: { taskId: tempId } });
+        console.error('Error adding reminder:', error instanceof Error ? error.message : 'Unknown error');
+      }
+    },
+    [profile?.id],
+  );
+
+  const toggleTaskDone = useCallback(
+    async (taskId: string, status: TaskStatus) => {
+      if (!profile?.id) return;
+      if (taskId.startsWith('temp-task-')) return;
+
+      dispatch({ type: 'TOGGLE_TASK_STATUS', payload: { taskId, status } });
+
+      try {
+        await updateUserSeedTask(profile.id, taskId, status);
+      } catch (error) {
+        dispatch({ type: 'TOGGLE_TASK_STATUS', payload: { taskId, status } });
+        console.error('Error toggling task status:', error instanceof Error ? error.message : 'Unknown error');
+      }
+    },
+    [profile?.id],
+  );
+
+  const deleteTaskFromSeed = useCallback(
+    async (taskId: string) => {
+      if (!profile?.id) return;
+
+      const taskToDelete =
+        state.seeds
+          .flatMap((seed) => (seed.tasks ?? []).map((task) => ({ seedId: seed.id, task })))
+          .find((entry) => entry.task.id === taskId) ?? null;
+
+      if (!taskToDelete) return;
+
+      dispatch({ type: 'DELETE_TASK_FROM_SEED', payload: { taskId } });
+
+      try {
+        if (!taskId.startsWith('temp-task-')) {
+          await deleteUserSeedTask(profile.id, taskId);
+        }
+      } catch (error) {
+        dispatch({
+          type: 'RESTORE_TASK_TO_SEED',
+          payload: { collectionId: taskToDelete.seedId, task: taskToDelete.task },
+        });
+        console.error('Error deleting reminder:', error instanceof Error ? error.message : 'Unknown error');
+      }
+    },
+    [profile?.id, state.seeds],
+  );
+
   const value = useMemo(
     () => ({
       seeds: state.seeds,
@@ -458,6 +648,9 @@ export function UserSeedsProvider({ children }: UserSeedsProviderProps) {
       deleteNoteFromSeed,
       addPhotoToSeed,
       deletePhotoFromSeed,
+      addTaskToSeed,
+      toggleTaskDone,
+      deleteTaskFromSeed,
     }),
     [
       state.seeds,
@@ -472,6 +665,9 @@ export function UserSeedsProvider({ children }: UserSeedsProviderProps) {
       deleteNoteFromSeed,
       addPhotoToSeed,
       deletePhotoFromSeed,
+      addTaskToSeed,
+      toggleTaskDone,
+      deleteTaskFromSeed,
     ],
   );
 
