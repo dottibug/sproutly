@@ -1,8 +1,9 @@
 import { Profile } from '../context/AuthContext';
-import { UserSeedItem, BrowseSeedItem, Planting } from './types';
-import { fetchUserSeedsWithoutPlantingActions, fetchPlantingActions } from './queries';
+import { UserSeedItem, BrowseSeedItem, Planting, UserSeedNote } from './types';
+import { fetchUserSeedsWithoutPlantingActions, fetchPlantingActions, fetchUserSeedNotesByCollectionId } from './queries';
 import { getCategoryPlantingActions } from './plantActionUtils';
 import { getSignedSeedImageUrl } from './userSeedImageUtils';
+import { organizeNotesByCollectionId } from './noteUtils';
 
 export async function getUserSeedCollection(profile: Profile): Promise<UserSeedItem[]> {
   if (!profile?.id) return [];
@@ -18,20 +19,29 @@ export async function getUserSeedCollection(profile: Profile): Promise<UserSeedI
     return createUserSeedFromDatabase(row, planting);
   });
 
-  // Get the signed URL for any custom seed images (required for access to private Supabase storage buckets; tokens expire after 1 hour)
-  const collectionWithSignedImages = await Promise.all(
+  const collectionIds = collection.map((seed) => seed.id);
+  const notes = await fetchUserSeedNotesByCollectionId(collectionIds);
+
+  const notesByCollectionId = organizeNotesByCollectionId(notes, collectionIds);
+
+  // Add signed URLs and notes to the collection
+  const fullCollection = await Promise.all(
     collection.map(async (seed): Promise<UserSeedItem> => {
       const isCustomSeed = seed.custom_seed_id !== null;
       const imageIsPath = seed.image && !seed.image.startsWith('http');
+      const notes = notesByCollectionId[seed.id] ?? [];
+
+      // Get the signed URL for any custom seed images
       if (isCustomSeed && imageIsPath) {
         const signedUrl = await getSignedSeedImageUrl(seed.image);
-        return signedUrl ? { ...seed, image: signedUrl } : seed;
+        return signedUrl ? { ...seed, image: signedUrl, notes } : seed;
       }
-      return seed;
+
+      // Add notes to the seed (if any)
+      return { ...seed, notes };
     }),
   );
-
-  return collectionWithSignedImages;
+  return fullCollection;
 }
 
 export function isDuplicateSeed(seeds: UserSeedItem[], catalogSeedId: string | null): boolean {
@@ -94,7 +104,7 @@ export function createUserSeedFromCatalog(seed: BrowseSeedItem) {
     companion_planting: seed.companion_planting,
     image: seed.image,
     planting: seed.planting ?? [],
-    notes: null,
+    notes: [],
   };
 
   return newSeed;
@@ -124,7 +134,7 @@ export function createUserSeedFromCustom(seed: BrowseSeedItem) {
     companion_planting: seed.companion_planting,
     image: seed.image,
     planting: seed.planting ?? [],
-    notes: null,
+    notes: [],
   };
 
   return newSeed;

@@ -77,6 +77,7 @@ export const appStyles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
+    width: '80%',
   },
   customSeedInputSection: {
     gap: 8,

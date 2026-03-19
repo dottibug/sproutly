@@ -1,11 +1,20 @@
 import { createContext, useReducer, useCallback, useMemo, useEffect, useContext } from 'react';
 import { useAuth, Profile } from './AuthContext';
-import { UserSeedItem, BrowseSeedItem, PreviewImage, CustomSeedPayload } from '../utils/types';
+import { UserSeedItem, BrowseSeedItem, PreviewImage, CustomSeedPayload, UserSeedNote } from '../utils/types';
 import { getUserSeedCollection, createUserSeedFromCatalog, isDuplicateSeed } from '../utils/userSeedUtils';
 import { uploadImage, getSignedSeedImageUrl } from '../utils/userSeedImageUtils';
-import { addCatalogSeedToUserCollection, deleteByCatalogId, deleteByCustomId, insertCustomSeed } from '../utils/queries';
+import {
+  addCatalogSeedToUserCollection,
+  deleteByCatalogId,
+  deleteByCustomId,
+  insertCustomSeed,
+  insertUserSeedNote,
+  updateUserSeedNote,
+  deleteUserSeedNote,
+} from '../utils/queries';
 
 // TODO: Handle errors
+// TODO: Refactor, with helper functions for optimistic updates
 
 // UserSeedsContext.tsx follows the React context & reducer pattern to manage state for the user's seeds.
 // Prefer this pattern to avoid deep prop drilling in React components.
@@ -19,7 +28,11 @@ type UserSeedsAction =
   | { type: 'ADD_SEED_FROM_CATALOG'; payload: BrowseSeedItem }
   | { type: 'ADD_CUSTOM_SEED'; payload: UserSeedItem }
   | { type: 'DELETE_SEED_BY_CATALOG_ID'; payload: UserSeedItem['catalog_seed_id'] }
-  | { type: 'DELETE_SEED_BY_CUSTOM_ID'; payload: UserSeedItem['custom_seed_id'] };
+  | { type: 'DELETE_SEED_BY_CUSTOM_ID'; payload: UserSeedItem['custom_seed_id'] }
+  | { type: 'ADD_NOTE_TO_SEED'; payload: { collectionId: string; userId: string; note: string; title: string | null; tempId: string } }
+  | { type: 'REPLACE_NOTE_IN_SEED'; payload: { collectionId: string; tempId: string; note: UserSeedNote } }
+  | { type: 'UPDATE_NOTE_IN_SEED'; payload: { noteId: string; title: string | null; note: string } }
+  | { type: 'DELETE_NOTE_FROM_SEED'; payload: { noteId: string } };
 
 // ---- INITIAL STATE SETUP ----
 type UserSeedsState = {
@@ -51,6 +64,65 @@ function userSeedsReducer(state: UserSeedsState, action: UserSeedsAction): UserS
       return { ...state, seeds: state.seeds.filter((s) => s.catalog_seed_id !== action.payload) };
     case 'DELETE_SEED_BY_CUSTOM_ID':
       return { ...state, seeds: state.seeds.filter((s) => s.custom_seed_id !== action.payload) };
+    case 'ADD_NOTE_TO_SEED':
+      return {
+        ...state,
+        seeds: state.seeds.map((s: UserSeedItem) => {
+          if (s.id !== action.payload.collectionId) return s;
+
+          const currentNotes = s.notes ?? [];
+          const now = new Date().toISOString();
+
+          const newNote: UserSeedNote = {
+            id: action.payload.tempId,
+            userCollectionId: action.payload.collectionId,
+            userId: action.payload.userId,
+            title: action.payload.title,
+            note: action.payload.note,
+            createdAt: now,
+            updatedAt: now,
+          };
+
+          return { ...s, notes: [...currentNotes, newNote] };
+        }),
+      };
+    case 'UPDATE_NOTE_IN_SEED':
+      return {
+        ...state,
+        seeds: state.seeds.map((s: UserSeedItem) => ({
+          ...s,
+          notes: s.notes?.map((n) => {
+            if (n.id !== action.payload.noteId) return n;
+            const now = new Date().toISOString();
+            return {
+              ...n,
+              title: action.payload.title,
+              note: action.payload.note,
+              updatedAt: now,
+            };
+          }),
+        })),
+      };
+    case 'REPLACE_NOTE_IN_SEED':
+      return {
+        ...state,
+        seeds: state.seeds.map((s: UserSeedItem) => {
+          if (s.id !== action.payload.collectionId) return s;
+
+          return {
+            ...s,
+            notes: s.notes?.map((n) => (n.id === action.payload.tempId ? action.payload.note : n)),
+          };
+        }),
+      };
+    case 'DELETE_NOTE_FROM_SEED':
+      return {
+        ...state,
+        seeds: state.seeds.map((s: UserSeedItem) => ({
+          ...s,
+          notes: s.notes?.filter((n) => n.id !== action.payload.noteId),
+        })),
+      };
     default:
       return state;
   }
@@ -66,6 +138,9 @@ type UserSeedsContextValue = {
   // addCustomSeed: (seed: UserSeedItem) => void;
   deleteSeedByCatalogId: (seed: UserSeedItem) => Promise<void>;
   deleteSeedByCustomId: (seed: UserSeedItem) => Promise<void>;
+  addNoteToSeed: (collectionId: string, title: string | null, note: string) => Promise<void>;
+  updateNoteInSeed: (noteId: string, title: string | null, note: string) => Promise<void>;
+  deleteNoteFromSeed: (noteId: string) => Promise<void>;
 };
 
 const UserSeedsContext = createContext<UserSeedsContextValue | null>(null);
@@ -114,11 +189,6 @@ export function UserSeedsProvider({ children }: UserSeedsProviderProps) {
     },
     [profile?.id, state.seeds],
   );
-
-  // const addCustomSeed = useCallback(
-  //   (seed: UserSeedItem) => dispatch({ type: 'ADD_CUSTOM_SEED', payload: seed }),
-  //   [state.seeds],
-  // );
 
   const addCustomSeed = useCallback(
     async (preview: PreviewImage | null, payload: CustomSeedPayload) => {
@@ -179,6 +249,74 @@ export function UserSeedsProvider({ children }: UserSeedsProviderProps) {
     [profile?.id, state.seeds],
   );
 
+  const addNoteToSeed = useCallback(
+    async (collectionId: string, title: string | null, note: string) => {
+      if (!profile?.id) return;
+
+      const titleTrim = title?.trim() ?? null;
+      const noteTrim = note.trim();
+      if (!noteTrim) return;
+
+      // Optimistically add note to state
+      const now = new Date().toISOString();
+      const tempId = `temp-${now}`;
+
+      dispatch({ type: 'ADD_NOTE_TO_SEED', payload: { collectionId, userId: profile.id, title: titleTrim, note: noteTrim, tempId } });
+
+      // Insert note into database
+      try {
+        const newNote = await insertUserSeedNote(profile.id, collectionId, titleTrim, noteTrim);
+        dispatch({ type: 'REPLACE_NOTE_IN_SEED', payload: { collectionId, tempId, note: newNote } });
+        console.log('✅ Note added to seed:', collectionId);
+      } catch (error) {
+        console.error('Error adding note to seed:', error instanceof Error ? error.message : 'Unknown error');
+      }
+    },
+    [profile?.id],
+  );
+
+  const updateNoteInSeed = useCallback(
+    async (noteId: string, title: string | null, note: string) => {
+      if (!profile?.id) return;
+      if (noteId.startsWith('temp-')) return;
+
+      const titleTrim = title?.trim() ?? null;
+      const noteTrim = note.trim();
+      if (!noteTrim) return;
+
+      // Optimistically update note in state
+      dispatch({ type: 'UPDATE_NOTE_IN_SEED', payload: { noteId, title: titleTrim, note: noteTrim } });
+
+      // Update note in database
+      try {
+        await updateUserSeedNote(profile.id, noteId, titleTrim, noteTrim);
+        console.log('✅ Note updated in seed:', noteId);
+      } catch (error) {
+        console.error('Error updating note in seed:', error);
+      }
+    },
+    [profile?.id],
+  );
+
+  const deleteNoteFromSeed = useCallback(
+    async (noteId: string) => {
+      if (!profile?.id) return;
+      if (noteId.startsWith('temp-')) return;
+
+      // Optimistically delete note in state
+      dispatch({ type: 'DELETE_NOTE_FROM_SEED', payload: { noteId } });
+
+      // Delete note from database
+      try {
+        await deleteUserSeedNote(profile.id, noteId);
+        console.log('✅ Note deleted from seed:', noteId);
+      } catch (error) {
+        console.error('Error deleting note from seed:', error instanceof Error ? error.message : 'Unknown error');
+      }
+    },
+    [profile?.id],
+  );
+
   const value = useMemo(
     () => ({
       seeds: state.seeds,
@@ -188,6 +326,9 @@ export function UserSeedsProvider({ children }: UserSeedsProviderProps) {
       addCustomSeed,
       deleteSeedByCatalogId,
       deleteSeedByCustomId,
+      addNoteToSeed,
+      updateNoteInSeed,
+      deleteNoteFromSeed,
     }),
     [
       state.seeds,
@@ -197,7 +338,9 @@ export function UserSeedsProvider({ children }: UserSeedsProviderProps) {
       addCustomSeed,
       deleteSeedByCatalogId,
       deleteSeedByCustomId,
-      loadUserSeeds,
+      addNoteToSeed,
+      updateNoteInSeed,
+      deleteNoteFromSeed,
     ],
   );
 

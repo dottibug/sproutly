@@ -41,7 +41,7 @@ export default function Button({
   size = 'medium',
   variant = 'solid',
   icon = null,
-  width = '100%',
+  width = 'auto',
 }: ButtonProps) {
   const hasIcon = icon !== null;
 

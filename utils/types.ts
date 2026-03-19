@@ -54,7 +54,7 @@ export type BrowseSeedItem = {
 export type UserSeedItem = BrowseSeedItem & {
   catalog_seed_id: string | null;
   custom_seed_id: string | null;
-  notes: string | null;
+  notes: UserSeedNote[];
 };
 
 export type UserSeedTab = 'Seed' | 'Notes' | 'Photos' | 'Reminders' | 'History';
@@ -121,8 +121,18 @@ export type PreviewImage = {
   base64: string | null | undefined;
 };
 
-// ---- CONSTANTS ----
+// ---- NOTE TYPES ----
+export type UserSeedNote = {
+  id: string;
+  userCollectionId: string;
+  userId: string;
+  title: string | null;
+  note: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
 
+// ---- CONSTANTS ----
 export const LIST_TABS = ['My Seeds', 'Browse'];
 export const USER_SEED_TABS = ['Seed', 'Notes', 'Photos', 'Reminders', 'History'];
 export const DIFFICULTY = ['Easy', 'Standard', 'Intermediate', 'Advanced', 'Expert'];

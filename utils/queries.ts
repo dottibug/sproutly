@@ -1,6 +1,15 @@
 import { supabase } from './supabase';
 import { Profile } from '../context/AuthContext';
-import { UserSeedItem, BrowseSeedItem, PlantingActionRow, UserFilterPreferences, Filter, CustomSeedItem, CustomSeedPayload } from './types';
+import {
+  UserSeedItem,
+  BrowseSeedItem,
+  PlantingActionRow,
+  UserFilterPreferences,
+  Filter,
+  CustomSeedItem,
+  CustomSeedPayload,
+  UserSeedNote,
+} from './types';
 import { getCategoryPlantingActions } from './plantActionUtils';
 
 // ---- USER SEED COLLECTION QUERIES ----
@@ -137,7 +146,7 @@ export async function insertCustomSeed(userId: string, payload: CustomSeedPayloa
     companion_planting: customSeed.companion_planting,
     image: customSeed.image,
     planting: [],
-    notes: null,
+    notes: [],
   };
 }
 
@@ -187,4 +196,86 @@ export async function insertCustomSeedToUserCollection(userId: string, customSee
     .single();
   if (error) throw error;
   return data.id as string;
+}
+
+// Fetch notes associated with the seeds in a user's collection
+export async function fetchUserSeedNotesByCollectionId(collectionIds: string[]): Promise<UserSeedNote[]> {
+  if (collectionIds.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from('user_seed_notes')
+    .select('id, user_seed_collection_id, user_id, title, note, created_at, updated_at')
+    .in('user_seed_collection_id', collectionIds)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+
+  const notes = data?.map((note) => ({
+    id: note.id,
+    userCollectionId: note.user_seed_collection_id,
+    userId: note.user_id,
+    title: note.title,
+    note: note.note,
+    createdAt: note.created_at,
+    updatedAt: note.updated_at,
+  }));
+
+  return notes ?? [];
+}
+
+// Insert a new note into the user_seed_notes table
+export async function insertUserSeedNote(userId: string, collectionId: string, title: string | null, note: string): Promise<UserSeedNote> {
+  const titleTrim = title?.trim();
+  const noteTrim = note.trim();
+
+  if (!noteTrim) throw new Error('Note cannot be empty');
+
+  const { data, error } = await supabase
+    .from('user_seed_notes')
+    .insert({
+      user_id: userId,
+      user_seed_collection_id: collectionId,
+      title: titleTrim,
+      note: noteTrim,
+    })
+    .select('id, user_seed_collection_id, user_id, title, note, created_at, updated_at')
+    .single();
+
+  if (error) throw error;
+
+  return {
+    id: data.id,
+    userCollectionId: data.user_seed_collection_id,
+    userId: data.user_id,
+    title: data.title,
+    note: data.note,
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
+  };
+}
+
+// Update a note in the user_seed_notes table
+export async function updateUserSeedNote(userId: string, noteId: string, title: string | null, note: string): Promise<void> {
+  const titleTrim = title?.trim();
+  const noteTrim = note.trim();
+
+  if (!noteTrim) throw new Error('Note cannot be empty');
+
+  const { error } = await supabase
+    .from('user_seed_notes')
+    .update({
+      title: titleTrim,
+      note: noteTrim,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', noteId)
+    .eq('user_id', userId);
+
+  if (error) throw error;
+}
+
+// Delete a note from the user_seed_notes table
+export async function deleteUserSeedNote(userId: string, noteId: string): Promise<void> {
+  const { error } = await supabase.from('user_seed_notes').delete().eq('id', noteId).eq('user_id', userId);
+  if (error) throw error;
 }
