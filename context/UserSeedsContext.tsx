@@ -1,8 +1,8 @@
 import { createContext, useReducer, useCallback, useMemo, useEffect, useContext } from 'react';
 import { useAuth, Profile } from './AuthContext';
-import { UserSeedItem, BrowseSeedItem, PreviewImage, CustomSeedPayload, UserSeedNote } from '../utils/types';
+import { UserSeedItem, BrowseSeedItem, PreviewImage, CustomSeedPayload, UserSeedNote, UserSeedPhoto } from '../utils/types';
 import { getUserSeedCollection, createUserSeedFromCatalog, isDuplicateSeed } from '../utils/userSeedUtils';
-import { uploadImage, getSignedSeedImageUrl } from '../utils/userSeedImageUtils';
+import { pickImage, uploadImage, getSignedSeedImageUrl, deleteSeedImage } from '../utils/userSeedImageUtils';
 import {
   addCatalogSeedToUserCollection,
   deleteByCatalogId,
@@ -11,6 +11,8 @@ import {
   insertUserSeedNote,
   updateUserSeedNote,
   deleteUserSeedNote,
+  insertUserSeedPhoto,
+  deleteUserSeedPhoto,
 } from '../utils/queries';
 
 // TODO: Handle errors
@@ -32,7 +34,11 @@ type UserSeedsAction =
   | { type: 'ADD_NOTE_TO_SEED'; payload: { collectionId: string; userId: string; note: string; title: string | null; tempId: string } }
   | { type: 'REPLACE_NOTE_IN_SEED'; payload: { collectionId: string; tempId: string; note: UserSeedNote } }
   | { type: 'UPDATE_NOTE_IN_SEED'; payload: { noteId: string; title: string | null; note: string } }
-  | { type: 'DELETE_NOTE_FROM_SEED'; payload: { noteId: string } };
+  | { type: 'DELETE_NOTE_FROM_SEED'; payload: { noteId: string } }
+  | { type: 'ADD_PHOTO_TO_SEED'; payload: { collectionId: string; photo: UserSeedPhoto } }
+  | { type: 'REPLACE_PHOTO_IN_SEED'; payload: { collectionId: string; tempId: string; photo: UserSeedPhoto } }
+  | { type: 'DELETE_PHOTO_FROM_SEED'; payload: { photoId: string } }
+  | { type: 'RESTORE_PHOTO_TO_SEED'; payload: { collectionId: string; photo: UserSeedPhoto } };
 
 // ---- INITIAL STATE SETUP ----
 type UserSeedsState = {
@@ -123,6 +129,46 @@ function userSeedsReducer(state: UserSeedsState, action: UserSeedsAction): UserS
           notes: s.notes?.filter((n) => n.id !== action.payload.noteId),
         })),
       };
+    case 'ADD_PHOTO_TO_SEED':
+      return {
+        ...state,
+        seeds: state.seeds.map((s) => {
+          if (s.id !== action.payload.collectionId) return s;
+          const currentPhotos = s.photos ?? [];
+          return { ...s, photos: [action.payload.photo, ...currentPhotos] };
+        }),
+      };
+
+    case 'REPLACE_PHOTO_IN_SEED':
+      return {
+        ...state,
+        seeds: state.seeds.map((s) => {
+          if (s.id !== action.payload.collectionId) return s;
+          return {
+            ...s,
+            photos: (s.photos ?? []).map((p) => (p.id === action.payload.tempId ? action.payload.photo : p)),
+          };
+        }),
+      };
+
+    case 'DELETE_PHOTO_FROM_SEED':
+      return {
+        ...state,
+        seeds: state.seeds.map((s) => ({
+          ...s,
+          photos: (s.photos ?? []).filter((p) => p.id !== action.payload.photoId),
+        })),
+      };
+
+    case 'RESTORE_PHOTO_TO_SEED':
+      return {
+        ...state,
+        seeds: state.seeds.map((s) => {
+          if (s.id !== action.payload.collectionId) return s;
+          const currentPhotos = s.photos ?? [];
+          return { ...s, photos: [action.payload.photo, ...currentPhotos] };
+        }),
+      };
     default:
       return state;
   }
@@ -141,6 +187,8 @@ type UserSeedsContextValue = {
   addNoteToSeed: (collectionId: string, title: string | null, note: string) => Promise<void>;
   updateNoteInSeed: (noteId: string, title: string | null, note: string) => Promise<void>;
   deleteNoteFromSeed: (noteId: string) => Promise<void>;
+  addPhotoToSeed: (collectionId: string) => Promise<void>;
+  deletePhotoFromSeed: (photoId: string, imagePathOrUrl: string) => Promise<void>;
 };
 
 const UserSeedsContext = createContext<UserSeedsContextValue | null>(null);
@@ -317,6 +365,85 @@ export function UserSeedsProvider({ children }: UserSeedsProviderProps) {
     [profile?.id],
   );
 
+  const addPhotoToSeed = useCallback(
+    async (collectionId: string) => {
+      if (!profile?.id) return;
+
+      const picked = await pickImage();
+      if (!picked) return;
+
+      const now = new Date().toISOString();
+      const tempId = `temp-photo-${now}`;
+
+      const optimisticPhoto: UserSeedPhoto = {
+        id: tempId,
+        userCollectionId: collectionId,
+        userId: profile.id,
+        imageUrl: picked.uri, // local preview immediately
+        createdAt: now,
+      };
+
+      dispatch({ type: 'ADD_PHOTO_TO_SEED', payload: { collectionId, photo: optimisticPhoto } });
+
+      try {
+        const imagePath = await uploadImage(profile.id, picked.mimeType, picked.base64);
+        if (!imagePath) throw new Error('Failed to upload photo');
+
+        const insertedPhoto = await insertUserSeedPhoto(profile.id, collectionId, imagePath);
+        const signedUrl = await getSignedSeedImageUrl(insertedPhoto.imageUrl);
+
+        dispatch({
+          type: 'REPLACE_PHOTO_IN_SEED',
+          payload: {
+            collectionId,
+            tempId,
+            photo: { ...insertedPhoto, imageUrl: signedUrl ?? insertedPhoto.imageUrl },
+          },
+        });
+      } catch (error) {
+        dispatch({ type: 'DELETE_PHOTO_FROM_SEED', payload: { photoId: tempId } });
+        console.error('Error adding photo to seed:', error instanceof Error ? error.message : 'Unknown error');
+      }
+    },
+    [profile?.id],
+  );
+
+  const deletePhotoFromSeed = useCallback(
+    async (photoId: string, imagePathOrUrl: string) => {
+      if (!profile?.id) return;
+
+      const photoToDelete =
+        state.seeds
+          .flatMap((seed) => (seed.photos ?? []).map((photo) => ({ seedId: seed.id, photo })))
+          .find((entry) => entry.photo.id === photoId) ?? null;
+
+      if (!photoToDelete) return;
+
+      dispatch({ type: 'DELETE_PHOTO_FROM_SEED', payload: { photoId } });
+
+      try {
+        if (!photoId.startsWith('temp-photo-')) {
+          await deleteUserSeedPhoto(profile.id, photoId);
+        }
+
+        const storagePath = imagePathOrUrl.includes('/storage/v1/object/sign/')
+          ? decodeURIComponent(imagePathOrUrl.split('/object/sign/')[1]?.split('?')[0] ?? '')
+          : imagePathOrUrl;
+
+        if (storagePath && !storagePath.startsWith('http')) {
+          await deleteSeedImage(storagePath);
+        }
+      } catch (error) {
+        dispatch({
+          type: 'RESTORE_PHOTO_TO_SEED',
+          payload: { collectionId: photoToDelete.seedId, photo: photoToDelete.photo },
+        });
+        console.error('Error deleting photo from seed:', error instanceof Error ? error.message : 'Unknown error');
+      }
+    },
+    [profile?.id, state.seeds],
+  );
+
   const value = useMemo(
     () => ({
       seeds: state.seeds,
@@ -329,6 +456,8 @@ export function UserSeedsProvider({ children }: UserSeedsProviderProps) {
       addNoteToSeed,
       updateNoteInSeed,
       deleteNoteFromSeed,
+      addPhotoToSeed,
+      deletePhotoFromSeed,
     }),
     [
       state.seeds,
@@ -341,6 +470,8 @@ export function UserSeedsProvider({ children }: UserSeedsProviderProps) {
       addNoteToSeed,
       updateNoteInSeed,
       deleteNoteFromSeed,
+      addPhotoToSeed,
+      deletePhotoFromSeed,
     ],
   );
 

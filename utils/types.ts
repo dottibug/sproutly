@@ -51,15 +51,33 @@ export type BrowseSeedItem = {
 };
 
 // ---- USER SEED TYPES ----
+export type UserSeedNote = {
+  id: string;
+  userCollectionId: string;
+  userId: string;
+  title: string | null;
+  note: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type UserSeedPhoto = {
+  id: string;
+  userCollectionId: string;
+  userId: string;
+  imageUrl: string; // signed URL (storage path in DB)
+  createdAt: string;
+};
+
 export type UserSeedItem = BrowseSeedItem & {
   catalog_seed_id: string | null;
   custom_seed_id: string | null;
   notes: UserSeedNote[];
+  photos: UserSeedPhoto[];
 };
 
-export type UserSeedTab = 'Seed' | 'Notes' | 'Photos' | 'Reminders' | 'History';
-
 export type ListTab = 'My Seeds' | 'Browse';
+export type UserSeedTab = 'Seed' | 'Notes' | 'Photos' | 'Reminders' | 'History';
 
 // ---- CUSTOM SEED TYPES ----
 export type CustomSeedItem = {
@@ -119,17 +137,6 @@ export type PreviewImage = {
   uri: string;
   mimeType: string | undefined;
   base64: string | null | undefined;
-};
-
-// ---- NOTE TYPES ----
-export type UserSeedNote = {
-  id: string;
-  userCollectionId: string;
-  userId: string;
-  title: string | null;
-  note: string | null;
-  createdAt: string;
-  updatedAt: string;
 };
 
 // ---- CONSTANTS ----

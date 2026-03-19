@@ -26,7 +26,7 @@ export default function UserSeed({ seed }: UserSeedProps) {
       <Tabs tabs={USER_SEED_TABS} activeTab={activeTab} onTabPress={handleTabPress} />
       <UserSeedDetails seed={seed} activeTab={activeTab} />
       <UserSeedNotes activeTab={activeTab} seed={seed} />
-      <UserSeedPhotos activeTab={activeTab} />
+      <UserSeedPhotos activeTab={activeTab} seed={seed} />
       <UserSeedReminders activeTab={activeTab} />
       <UserSeedHistory activeTab={activeTab} />
     </>

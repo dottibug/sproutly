@@ -1,9 +1,15 @@
 import { Profile } from '../context/AuthContext';
 import { UserSeedItem, BrowseSeedItem, Planting, UserSeedNote } from './types';
-import { fetchUserSeedsWithoutPlantingActions, fetchPlantingActions, fetchUserSeedNotesByCollectionId } from './queries';
+import {
+  fetchUserSeedsWithoutPlantingActions,
+  fetchPlantingActions,
+  fetchUserSeedNotesByCollectionId,
+  fetchUserSeedPhotosByCollectionId,
+} from './queries';
 import { getCategoryPlantingActions } from './plantActionUtils';
 import { getSignedSeedImageUrl } from './userSeedImageUtils';
 import { organizeNotesByCollectionId } from './noteUtils';
+import { organizePhotosByCollectionId } from './photoUtils';
 
 export async function getUserSeedCollection(profile: Profile): Promise<UserSeedItem[]> {
   if (!profile?.id) return [];
@@ -20,16 +26,29 @@ export async function getUserSeedCollection(profile: Profile): Promise<UserSeedI
   });
 
   const collectionIds = collection.map((seed) => seed.id);
-  const notes = await fetchUserSeedNotesByCollectionId(collectionIds);
-
+  const [notes, photos] = await Promise.all([
+    fetchUserSeedNotesByCollectionId(collectionIds),
+    fetchUserSeedPhotosByCollectionId(collectionIds),
+  ]);
   const notesByCollectionId = organizeNotesByCollectionId(notes, collectionIds);
+  const photosByCollectionId = organizePhotosByCollectionId(photos);
 
   // Add signed URLs and notes to the collection
   const fullCollection = await Promise.all(
     collection.map(async (seed): Promise<UserSeedItem> => {
       const isCustomSeed = seed.custom_seed_id !== null;
       const imageIsPath = seed.image && !seed.image.startsWith('http');
+
       const notes = notesByCollectionId[seed.id] ?? [];
+      const photos = photosByCollectionId[seed.id] ?? [];
+
+      const signedPhotos = await Promise.all(
+        photos.map(async (photo) => {
+          const photoPath = photo.imageUrl;
+          const photoSignedUrl = photoPath && !photoPath.startsWith('http') ? await getSignedSeedImageUrl(photoPath) : photoPath;
+          return { ...photo, imageUrl: photoSignedUrl ?? photoPath };
+        }),
+      );
 
       // Get the signed URL for any custom seed images
       if (isCustomSeed && imageIsPath) {
@@ -38,7 +57,7 @@ export async function getUserSeedCollection(profile: Profile): Promise<UserSeedI
       }
 
       // Add notes to the seed (if any)
-      return { ...seed, notes };
+      return { ...seed, notes, photos: signedPhotos };
     }),
   );
   return fullCollection;
@@ -76,6 +95,7 @@ export function createUserSeedFromDatabase(row: any, planting: Planting[]): User
     companion_planting: source.companion_planting,
     image: source.image,
     planting: planting,
+    photos: [],
   };
   return newSeed;
 }
@@ -105,6 +125,7 @@ export function createUserSeedFromCatalog(seed: BrowseSeedItem) {
     image: seed.image,
     planting: seed.planting ?? [],
     notes: [],
+    photos: [],
   };
 
   return newSeed;
@@ -135,6 +156,7 @@ export function createUserSeedFromCustom(seed: BrowseSeedItem) {
     image: seed.image,
     planting: seed.planting ?? [],
     notes: [],
+    photos: [],
   };
 
   return newSeed;

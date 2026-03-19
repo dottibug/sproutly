@@ -67,44 +67,6 @@ export async function uploadImage(userId: string, mimeType: string | undefined, 
   return path;
 }
 
-// Pick an image from the device and upload to supabase storage bucket. Returns the path of the uploaded image (or null if error)
-// export async function pickAndUploadImage(userId: string): Promise<string | null> {
-//   const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-//   console.log('🔥 status', status);
-//   if (status !== 'granted') return null;
-
-//   const result = await ImagePicker.launchImageLibraryAsync({
-//     mediaTypes: ['images'],
-//     allowsEditing: true,
-//     aspect: [1, 1],
-//     quality: 1,
-//     base64: true,
-//   });
-
-//   console.log('🔥 result', result);
-
-//   if (result.canceled) return null;
-//   const asset = result.assets[0];
-//   const base64 = asset.base64;
-//   if (!base64) return null;
-
-//   const extension = asset.mimeType?.split('/')[1];
-//   const uniqueId = Date.now().toString();
-//   const path = `${userId}/${uniqueId}.${extension}`;
-
-//   // Upload the image to the Supabase storage bucket
-//   const { error } = await supabase.storage.from(USER_BUCKET).upload(path, decode(base64), {
-//     contentType: `image/${extension}`,
-//     upsert: false,
-//   });
-
-//   if (error) {
-//     console.error('Error uploading image to Supabase storage:', error);
-//     return null;
-//   }
-//   return path;
-// }
-
 // Get a signed URL for a seed image (required for access to private Supabase storage buckets; tokens expire after 1 hour)
 export async function getSignedSeedImageUrl(path: string | null | undefined): Promise<string | null> {
   if (!path) return null;
@@ -121,4 +83,10 @@ export async function getSignedSeedImageUrl(path: string | null | undefined): Pr
     return null;
   }
   return data.signedUrl;
+}
+
+// Delete a seed image from supabase storage bucket
+export async function deleteSeedImage(path: string): Promise<void> {
+  const { error } = await supabase.storage.from(USER_BUCKET).remove([path]);
+  if (error) throw error;
 }

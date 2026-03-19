@@ -9,8 +9,11 @@ import {
   CustomSeedItem,
   CustomSeedPayload,
   UserSeedNote,
+  UserSeedPhoto,
 } from './types';
 import { getCategoryPlantingActions } from './plantActionUtils';
+
+// TODO: Refactor (break into small query files for each table)
 
 // ---- USER SEED COLLECTION QUERIES ----
 export async function fetchUserSeedsWithoutPlantingActions(profile: Profile): Promise<UserSeedItem[]> {
@@ -147,6 +150,7 @@ export async function insertCustomSeed(userId: string, payload: CustomSeedPayloa
     image: customSeed.image,
     planting: [],
     notes: [],
+    photos: [],
   };
 }
 
@@ -277,5 +281,57 @@ export async function updateUserSeedNote(userId: string, noteId: string, title: 
 // Delete a note from the user_seed_notes table
 export async function deleteUserSeedNote(userId: string, noteId: string): Promise<void> {
   const { error } = await supabase.from('user_seed_notes').delete().eq('id', noteId).eq('user_id', userId);
+  if (error) throw error;
+}
+
+// Fetch photos associated with the seeds in a user's collection
+export async function fetchUserSeedPhotosByCollectionId(collectionIds: string[]): Promise<UserSeedPhoto[]> {
+  if (collectionIds.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from('user_seed_photos')
+    .select('id, user_seed_collection_id, user_id, image_url, created_at')
+    .in('user_seed_collection_id', collectionIds)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+
+  const photos = data?.map((photo) => ({
+    id: photo.id,
+    userCollectionId: photo.user_seed_collection_id,
+    userId: photo.user_id,
+    imageUrl: photo.image_url, // still storage path here
+    createdAt: photo.created_at,
+  }));
+
+  return photos ?? [];
+}
+
+// Insert a new photo into the user_seed_photos table
+export async function insertUserSeedPhoto(userId: string, collectionId: string, imagePath: string): Promise<UserSeedPhoto> {
+  const { data, error } = await supabase
+    .from('user_seed_photos')
+    .insert({
+      user_id: userId,
+      user_seed_collection_id: collectionId,
+      image_url: imagePath,
+    })
+    .select('id, user_seed_collection_id, user_id, image_url, created_at')
+    .single();
+
+  if (error) throw error;
+
+  return {
+    id: data.id,
+    userCollectionId: data.user_seed_collection_id,
+    userId: data.user_id,
+    imageUrl: data.image_url, // still path here
+    createdAt: data.created_at,
+  };
+}
+
+// Delete a photo row from user_seed_photos table
+export async function deleteUserSeedPhoto(userId: string, photoId: string): Promise<void> {
+  const { error } = await supabase.from('user_seed_photos').delete().eq('id', photoId).eq('user_id', userId);
   if (error) throw error;
 }
