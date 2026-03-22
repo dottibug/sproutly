@@ -1,5 +1,6 @@
 import { View, Text, Pressable } from 'react-native';
-import { UserSeedItem, UserSeedTab } from '../../utils/types';
+import { UserSeedTab } from '../../state/app/appTypes';
+import { UserSeed } from '../../state/userSeeds/types/seedTypes';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useState } from 'react';
 import StartNoteModal from './notes/StartNoteModal';
@@ -9,7 +10,7 @@ import Note from './notes/Note';
 
 type UserSeedNotesProps = {
   readonly activeTab: UserSeedTab;
-  readonly seed: UserSeedItem;
+  readonly seed: UserSeed;
 };
 
 const NO_NOTES = 'No notes found. Add a note to get started.';
@@ -40,7 +41,7 @@ export default function UserSeedNotes({ activeTab, seed }: UserSeedNotesProps) {
       </Pressable>
 
       {showStartNoteModal && (
-        <StartNoteModal visible={showStartNoteModal} onRequestClose={() => setShowStartNoteModal(false)} collectionId={seed.id} />
+        <StartNoteModal visible={showStartNoteModal} onRequestClose={() => setShowStartNoteModal(false)} userSeedId={seed.id} />
       )}
     </View>
   );

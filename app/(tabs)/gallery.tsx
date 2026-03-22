@@ -2,13 +2,15 @@ import { useState, useMemo, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, Pressable, Image, Dimensions, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { useUserSeeds } from '../../context/UserSeedsContext';
-import { UserSeedItem, UserSeedPhoto } from '../../utils/types';
+import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
+import { UserSeed } from '../../state/userSeeds/types/seedTypes';
+import { UserSeedPhoto } from '../../state/userSeeds/types/photoTypes';
 import Loading from '../../components/ui/Loading';
 import ScreenMessage from '../../components/ui/ScreenMessage';
 import { colors, appStyles } from '../../styles/theme';
 import Button from '../../components/ui/buttons/Button';
 
+// TODO: REFACTOR for clarity
 // TODO: style the modal with a close button in the corner, as expected.
 // TODO: get rid of the background or adjust height on the modal so it's not as tall?
 
@@ -23,10 +25,10 @@ const MODAL_IMAGE_MAX_H = SCREEN_H * 0.62;
 type GalleryCell = {
   key: string;
   photo: UserSeedPhoto;
-  seed: UserSeedItem;
+  seed: UserSeed;
 };
 
-function flattenPhotos(seeds: UserSeedItem[]): GalleryCell[] {
+function flattenPhotos(seeds: UserSeed[]): GalleryCell[] {
   const out: GalleryCell[] = [];
   for (const seed of seeds) {
     for (const photo of seed.photos ?? []) {
@@ -48,19 +50,16 @@ function formatPhotoDate(iso: string): string {
 
 export default function GalleryScreen() {
   const router = useRouter();
-  const { seeds, loading, error } = useUserSeeds();
+  const { seeds, loading, error } = useUserSeed();
   const [selected, setSelected] = useState<GalleryCell | null>(null);
 
-  const cells = useMemo(() => flattenPhotos(seeds as UserSeedItem[]), [seeds]);
+  const cells = useMemo(() => flattenPhotos(seeds as UserSeed[]), [seeds]);
 
-  const seedStillInCollection = useCallback(
-    (collectionId: string) => (seeds as UserSeedItem[]).some((s) => s.id === collectionId),
-    [seeds],
-  );
+  const seedStillInCollection = useCallback((collectionId: string) => (seeds as UserSeed[]).some((s) => s.id === collectionId), [seeds]);
 
-  const openSeed = (seed: UserSeedItem) => {
-    const seedId = seed.custom_seed_id ? seed.custom_seed_id : seed.catalog_seed_id;
-    const source = seed.custom_seed_id ? 'custom' : 'catalog';
+  const openSeed = (seed: UserSeed) => {
+    const seedId = seed.customSeedId ? seed.customSeedId : seed.catalogSeedId;
+    const source = seed.customSeedId ? 'custom' : 'catalog';
     router.push({
       pathname: `/home/${seedId}`,
       params: { source, tab: 'My Seeds' },
@@ -87,7 +86,7 @@ export default function GalleryScreen() {
           contentContainerStyle={styles.list}
           renderItem={({ item }) => (
             <Pressable style={styles.tile} onPress={() => setSelected(item)}>
-              <Image source={{ uri: item.photo.imageUrl }} style={styles.thumb} resizeMode="cover" />
+              <Image source={{ uri: item.photo.imageUri }} style={styles.thumb} resizeMode="cover" />
             </Pressable>
           )}
         />
@@ -98,7 +97,7 @@ export default function GalleryScreen() {
           <Pressable style={styles.modalCard} onPress={(e) => e.stopPropagation()}>
             {selected && (
               <>
-                <Image source={{ uri: selected.photo.imageUrl }} style={styles.modalImage} resizeMode="contain" />
+                <Image source={{ uri: selected.photo.imageUri }} style={styles.modalImage} resizeMode="contain" />
                 <Text style={styles.modalSeedName}>{selected.seed.name}</Text>
                 <Text style={styles.modalDate}>Added {formatPhotoDate(selected.photo.createdAt)}</Text>
 

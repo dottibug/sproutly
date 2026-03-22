@@ -1,31 +1,33 @@
 import { useLocalSearchParams } from 'expo-router';
-import { useSeedCatalog } from '../../../context/SeedCatalogContext';
-import { useUserSeeds } from '../../../context/UserSeedsContext';
-import { BrowseSeedItem, UserSeedItem } from '../../../utils/types';
-import BrowseSeed from '../../../components/browseSeeds/BrowseSeed';
-import UserSeed from '../../../components/userSeeds/UserSeed';
+import { useBrowseSeed } from '../../../state/browseSeeds/BrowseSeedContext';
+import { useUserSeed } from '../../../state/userSeeds/UserSeedsContext';
+import { BrowseSeed } from '../../../state/browseSeeds/browseTypes';
+import { UserSeed } from '../../../state/userSeeds/types/seedTypes';
 
-// Catalog seed details screen
+import BrowseSeedScreen from '../../../components/browseSeeds/BrowseSeedScreen';
+import UserSeedScreen from '../../../components/userSeeds/UserSeedScreen';
+
+// SeedDetailsScreen display the details of a single see – either one being browsed from the catalog or one in the user's own seed collection
 export default function SeedDetailsScreen() {
   const { id, tab, source } = useLocalSearchParams();
 
-  const { seeds: userSeeds } = useUserSeeds();
-  const { seeds: catalogSeeds } = useSeedCatalog();
+  const { seeds: userSeeds } = useUserSeed();
+  const { seeds: catalogSeeds } = useBrowseSeed();
 
   const seeds = tab === 'My Seeds' ? userSeeds : catalogSeeds;
 
   const userSeed = seeds.find((s) => {
-    if (source === 'catalog') return (s as UserSeedItem).catalog_seed_id === id;
-    if (source === 'custom') return (s as UserSeedItem).custom_seed_id === id;
+    if (source === 'catalog') return (s as UserSeed).catalogSeedId === id;
+    if (source === 'custom') return (s as UserSeed).customSeedId === id;
   });
 
-  const catalogSeed = seeds.find((s) => (s as BrowseSeedItem).id === id);
+  const catalogSeed = seeds.find((s) => (s as BrowseSeed).id === id);
   const seed = tab === 'My Seeds' ? userSeed : catalogSeed;
 
   return (
     <>
-      {seed && tab === 'Browse' && <BrowseSeed seed={seed} />}
-      {seed && tab === 'My Seeds' && <UserSeed seed={seed as UserSeedItem} />}
+      {seed && tab === 'Browse' && <BrowseSeedScreen seed={seed} />}
+      {seed && tab === 'My Seeds' && <UserSeedScreen seed={seed as UserSeed} />}
     </>
   );
 }

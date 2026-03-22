@@ -1,7 +1,7 @@
 import { View, StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
-import { useFilters } from '../../context/FiltersContext';
-import { FILTER_MAP, FILTER_OPTIONS } from '../../utils/filterUtils';
+import { useFilters } from '../../state/filters/FiltersContext';
+import { FILTER_MAP, FILTER_OPTIONS } from '../../state/filters/filterTypes';
 import FilterCategory from './FilterCategory';
 import { colors } from '../../styles/theme';
 

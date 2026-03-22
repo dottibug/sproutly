@@ -1,12 +1,13 @@
 import { View, StyleSheet, Pressable } from 'react-native';
-import { BrowseSeedItem, UserSeedItem } from '../../../utils/types';
+import { BrowseSeed } from '../../../state/browseSeeds/browseTypes';
+import { UserSeed } from '../../../state/userSeeds/types/seedTypes';
 import SeedCardInfo from './SeedCardInfo';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import SeedImage from '../../seeds/SeedImage';
 
 type SeedCardProps = {
   readonly cardType: 'user' | 'browse';
-  readonly seed: UserSeedItem | BrowseSeedItem;
+  readonly seed: UserSeed | BrowseSeed;
   readonly onPress: () => void;
   readonly inUserCollection?: boolean;
 };
@@ -26,7 +27,7 @@ export default function SeedCard({ cardType, seed, onPress, inUserCollection = f
           seedId={seed.id}
           name={seed.name}
           category={seed.category}
-          beanType={seed.bean_type}
+          beanType={seed.beanType}
           seedType={seed.type}
           cardType={cardType}
           inUserCollection={inUserCollection}

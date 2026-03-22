@@ -1,10 +1,10 @@
 import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
-import { UserSeedNote } from '../../../utils/types';
+import { UserSeedNote } from '../../../state/userSeeds/types/noteTypes';
 import { colors } from '../../../styles/theme';
 import Heading from '../../ui/Heading';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { useUserSeeds } from '../../../context/UserSeedsContext';
+import { useUserSeed } from '../../../state/userSeeds/UserSeedsContext';
 import { useState } from 'react';
 import EditNoteModal from '../EditNoteModal';
 
@@ -15,7 +15,7 @@ type NoteProps = {
 };
 
 export default function Note({ note }: NoteProps) {
-  const { deleteNoteFromSeed } = useUserSeeds();
+  const { deleteNote } = useUserSeed();
   const [editing, setEditing] = useState(false);
 
   const handleEditNote = () => setEditing(true);
@@ -23,7 +23,7 @@ export default function Note({ note }: NoteProps) {
   const handleDeleteNote = () => {
     Alert.alert('Delete note?', 'This cannot be undone.', [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: () => deleteNoteFromSeed(note.id) },
+      { text: 'Delete', style: 'destructive', onPress: () => deleteNote(note.id) },
     ]);
   };
 

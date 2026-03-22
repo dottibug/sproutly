@@ -3,26 +3,26 @@ import { appStyles } from '../../../styles/theme';
 import Heading from '../../ui/Heading';
 import { useState } from 'react';
 import Button from '../../ui/buttons/Button';
-import { useUserSeeds } from '../../../context/UserSeedsContext';
+import { useUserSeed } from '../../../state/userSeeds/UserSeedsContext';
 
 // TODO: Proper close button on modal in the corner
 
 type StartNoteModalProps = {
   readonly visible: boolean;
   readonly onRequestClose: () => void;
-  readonly collectionId: string;
+  readonly userSeedId: string;
 };
 
-export default function StartNoteModal({ visible, onRequestClose, collectionId }: StartNoteModalProps) {
+export default function StartNoteModal({ visible, onRequestClose, userSeedId }: StartNoteModalProps) {
   const [title, setTitle] = useState('');
   const [note, setNote] = useState('');
-  const { addNoteToSeed } = useUserSeeds();
+  const { addNote } = useUserSeed();
 
   const handleSaveNote = async () => {
     console.log('save note');
 
     try {
-      await addNoteToSeed(collectionId, title, note);
+      await addNote({ userSeedId, title: title || null, note });
       onRequestClose();
     } catch (error) {
       console.error('Error adding note to seed:', error instanceof Error ? error.message : 'Unknown error');

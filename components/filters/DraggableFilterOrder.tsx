@@ -1,7 +1,6 @@
 import { Text, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useState, useEffect } from 'react';
-import { Filter } from '../../utils/types';
-import { FILTER_MAP } from '../../utils/filterUtils';
+import { Filter, FILTER_MAP } from '../../state/filters/filterTypes';
 import DragList, { DragListRenderItemInfo } from 'react-native-draglist';
 import { colors } from '../../styles/theme';
 

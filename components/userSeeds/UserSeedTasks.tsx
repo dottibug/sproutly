@@ -1,14 +1,14 @@
 import { View, Text, Alert, Pressable, StyleSheet } from 'react-native';
-import { UserSeedItem, UserSeedTask, UserSeedTab } from '../../utils/types';
-import { buildTimelineFromCompletedTasks, formatDateOnly, splitTasksForAgenda } from '../../utils/taskUtils';
-import { useUserSeeds } from '../../context/UserSeedsContext';
+import { UserSeedTab } from '../../state/app/appTypes';
+import { UserSeedTask } from '../../state/userSeeds/types/taskTypes';
+import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
 import { useState, useMemo } from 'react';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/build/MaterialCommunityIcons';
 import { colors } from '../../styles/theme';
 import StartTaskModal from './StartTaskModal';
 import Accordion from '../ui/Accordion';
 import { FAB as PaperFAB } from 'react-native-paper';
+import { UserSeed } from '../../state/userSeeds/types/seedTypes';
 
 // TODO: implement timeline functionality
 // TODO: Add a clear all tasks button
@@ -16,7 +16,7 @@ import { FAB as PaperFAB } from 'react-native-paper';
 
 type UserSeedTasksProps = {
   readonly activeTab: UserSeedTab;
-  readonly seed: UserSeedItem;
+  readonly seed: UserSeed;
 };
 
 const NO_TASKS = 'No tasks yet. Add one to stay on schedule.';
@@ -50,7 +50,7 @@ function TaskSection({ tasks, onToggleStatus, onDelete }: TaskSectionProps) {
             </View>
           </View>
           <Text style={styles.meta}>Type: {task.taskType}</Text>
-          <Text style={styles.meta}>Date: {formatDateOnly(task.date)}</Text>
+          <Text style={styles.meta}>Date: {task.date}</Text>
           {task.notes ? <Text style={styles.notes}>{task.notes}</Text> : null}
         </View>
       ))}
@@ -59,54 +59,24 @@ function TaskSection({ tasks, onToggleStatus, onDelete }: TaskSectionProps) {
 }
 
 export default function UserSeedTasks({ activeTab, seed }: UserSeedTasksProps) {
-  const { toggleTaskDone, deleteTaskFromSeed } = useUserSeeds();
+  const { toggleTaskStatus, deleteTask } = useUserSeed();
   const [showStartTaskModal, setShowStartTaskModal] = useState(false);
-
-  const { today, upcoming, completed } = useMemo(() => splitTasksForAgenda(seed.tasks ?? []), [seed.tasks]);
-  const timeline = useMemo(() => buildTimelineFromCompletedTasks(seed.tasks ?? []), [seed.tasks]);
-  const hasAnyTasks = (seed.tasks ?? []).length > 0;
 
   const handleDeleteTask = (task: UserSeedTask) => {
     Alert.alert('Delete task?', 'This cannot be undone.', [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: () => deleteTaskFromSeed(task.id) },
+      { text: 'Delete', style: 'destructive', onPress: () => deleteTask(task.id) },
     ]);
   };
   const handleToggleStatus = (task: UserSeedTask) => {
-    toggleTaskDone(task.id, task.status === 'completed' ? 'skipped' : 'completed');
+    toggleTaskStatus(task, task.status === 'completed' ? 'skipped' : 'completed');
   };
 
   return (
     <View style={[styles.screen, { display: activeTab === 'Tasks' ? 'flex' : 'none' }]}>
       <View style={styles.scrollArea}>
-        {!hasAnyTasks && <Text style={{ marginVertical: 16, textAlign: 'center' }}>{NO_TASKS}</Text>}
-        <Accordion title={`Tasks (${today.length + upcoming.length + completed.length})`} openByDefault>
-          <View style={{ gap: 14 }}>
-            <Text style={styles.sectionTitle}>Pending Today ({today.length})</Text>
-            <TaskSection tasks={today} onToggleStatus={handleToggleStatus} onDelete={handleDeleteTask} />
-            <Text style={styles.sectionTitle}>Upcoming ({upcoming.length})</Text>
-            <TaskSection tasks={upcoming} onToggleStatus={handleToggleStatus} onDelete={handleDeleteTask} />
-            <Text style={styles.sectionTitle}>Completed ({completed.length})</Text>
-            <TaskSection tasks={completed} onToggleStatus={handleToggleStatus} onDelete={handleDeleteTask} />
-          </View>
-        </Accordion>
-        <Accordion title={`Timeline (${timeline.length})`}>
-          {timeline.length === 0 ? (
-            <Text style={{ marginVertical: 16, textAlign: 'center' }}>No timeline events yet.</Text>
-          ) : (
-            <View style={{ gap: 10 }}>
-              {timeline.map((entry) => (
-                <View key={entry.id} style={styles.card}>
-                  <View style={styles.row}>
-                    <Text style={styles.meta}>{formatDateOnly(entry.dateIso)}</Text>
-                  </View>
-                  <Text style={styles.title}>{entry.title}</Text>
-                  {entry.subtitle ? <Text style={styles.notes}>{entry.subtitle}</Text> : null}
-                </View>
-              ))}
-            </View>
-          )}
-        </Accordion>
+        {seed.tasks.length === 0 && <Text style={{ marginVertical: 16, textAlign: 'center' }}>{NO_TASKS}</Text>}
+        <Text>Tasks Here...</Text>
       </View>
       <PaperFAB
         icon="plus"
@@ -115,7 +85,7 @@ export default function UserSeedTasks({ activeTab, seed }: UserSeedTasksProps) {
         onPress={() => setShowStartTaskModal(true)}
       />
       {showStartTaskModal && (
-        <StartTaskModal visible={showStartTaskModal} onRequestClose={() => setShowStartTaskModal(false)} collectionId={seed.id} />
+        <StartTaskModal visible={showStartTaskModal} onRequestClose={() => setShowStartTaskModal(false)} userSeedId={seed.id} />
       )}
     </View>
   );

@@ -1,6 +1,6 @@
 import { View, StyleSheet } from 'react-native';
 import Heading from '../ui/Heading';
-import { SeedType, Exposure } from '../../utils/types';
+import { SeedType, Exposure } from '../../state/userSeeds/types/seedInfoTypes';
 import SeedSKU from './SeedSku';
 import SeedBadges from './SeedBadges';
 

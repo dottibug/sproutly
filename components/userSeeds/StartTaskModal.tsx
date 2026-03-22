@@ -4,8 +4,8 @@ import { Modal, View, TextInput, Pressable, Text, StyleSheet, Platform } from 'r
 import { appStyles, colors } from '../../styles/theme';
 import Heading from '../ui/Heading';
 import Button from '../ui/buttons/Button';
-import { TaskType } from '../../utils/types';
-import { useUserSeeds } from '../../context/UserSeedsContext';
+import { TaskType } from '../../state/userSeeds/types/taskTypes';
+import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
 
 // TODO: Notes, photos, and tasks share a lot of the same code; refactor and organize better
 
@@ -16,7 +16,7 @@ import { useUserSeeds } from '../../context/UserSeedsContext';
 type StartTaskModalProps = {
   readonly visible: boolean;
   readonly onRequestClose: () => void;
-  readonly collectionId: string;
+  readonly userSeedId: string;
 };
 
 const TASK_TYPES: TaskType[] = ['sow', 'transplant', 'fertilize', 'harvest'];
@@ -29,8 +29,8 @@ const formatDate = (date: Date): string => {
   });
 };
 
-export default function StartTaskModal({ visible, onRequestClose, collectionId }: StartTaskModalProps) {
-  const { addTaskToSeed } = useUserSeeds();
+export default function StartTaskModal({ visible, onRequestClose, userSeedId }: StartTaskModalProps) {
+  const { addTask } = useUserSeed();
 
   const defaultDate = useMemo(() => {
     const d = new Date();
@@ -47,15 +47,7 @@ export default function StartTaskModal({ visible, onRequestClose, collectionId }
   const handleSaveTask = async () => {
     const payloadDate = new Date(taskDate);
     payloadDate.setHours(12, 0, 0, 0); // noon
-
-    await addTaskToSeed(collectionId, {
-      taskType,
-      date: payloadDate.toISOString(),
-      title: title.trim() || null,
-      notes: notes.trim() || null,
-      status: 'pending',
-    });
-
+    await addTask({ userSeedId, taskType, date: payloadDate.toISOString(), title: title.trim() || null, notes: notes.trim() });
     onRequestClose();
   };
 

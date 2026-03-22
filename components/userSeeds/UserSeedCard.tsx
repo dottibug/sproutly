@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useUserSeeds } from '../../context/UserSeedsContext';
-import { UserSeedItem } from '../../utils/types';
+import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
+import { UserSeed } from '../../state/userSeeds/types/seedTypes';
 import SeedCard from '../seeds/seedCard/SeedCard';
 import SeedCardAction from '../seeds/seedCard/SeedCardAction';
 
 type UserSeedCardProps = {
-  readonly seed: UserSeedItem;
+  readonly seed: UserSeed;
 };
 
 // TODO: Show a snackbar message when a seed is successfully deleted?
@@ -18,13 +18,13 @@ export default function UserSeedCard({ seed }: UserSeedCardProps) {
   // State
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
-  const { deleteSeedByCatalogId } = useUserSeeds();
+  const { deleteByCatalogId } = useUserSeed();
   const router = useRouter();
 
   // Press handler to navigate to the seed details screen
   const handlePress = () => {
-    const seedId = seed.custom_seed_id ? seed.custom_seed_id : seed.catalog_seed_id;
-    const source = seed.custom_seed_id ? 'custom' : 'catalog';
+    const seedId = seed.customSeedId ? seed.customSeedId : seed.catalogSeedId;
+    const source = seed.customSeedId ? 'custom' : 'catalog';
 
     router.push({
       pathname: `/home/${seedId}`,
@@ -43,7 +43,7 @@ export default function UserSeedCard({ seed }: UserSeedCardProps) {
 
   // Delete the seed from the database
   const handleDelete = () => {
-    deleteSeedByCatalogId(seed);
+    deleteByCatalogId(seed);
     setShowDeleteConfirmation(false);
   };
 

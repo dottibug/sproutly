@@ -1,5 +1,5 @@
-import { UserSeedNote } from '../../utils/types';
-import { useUserSeeds } from '../../context/UserSeedsContext';
+import { UserSeedNote } from '../../state/userSeeds/types/noteTypes';
+import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
 import { useEffect, useState } from 'react';
 import { Modal, TextInput, View } from 'react-native';
 import { appStyles } from '../../styles/theme';
@@ -13,7 +13,7 @@ type EditNoteModalProps = {
 };
 
 export default function EditNoteModal({ visible, onRequestClose, note }: EditNoteModalProps) {
-  const { updateNoteInSeed } = useUserSeeds();
+  const { updateNote } = useUserSeed();
 
   const [title, setTitle] = useState<string>('');
   const [noteText, setNoteText] = useState<string>('');
@@ -27,7 +27,7 @@ export default function EditNoteModal({ visible, onRequestClose, note }: EditNot
   const handleSave = async () => {
     console.log('editing note:', { id: note.id, noteUserId: note.userId, title, noteText });
 
-    await updateNoteInSeed(note.id, title, noteText);
+    await updateNote({ ...note, title: title || null, note: noteText });
     onRequestClose();
   };
 

@@ -1,7 +1,6 @@
 import { View } from 'react-native';
 import { SegmentedButtons } from 'react-native-paper';
-import { useCustomSeed } from '../../context/CustomSeedContext';
-import { SeedType } from '../../utils/types';
+import { useCustomSeed } from '../../state/customSeeds/CustomSeedContext';
 import { appStyles } from '../../styles/theme';
 import Heading from '../ui/Heading';
 
@@ -13,7 +12,7 @@ export default function SeedTypeSelector() {
       <Heading size="xsmall">Seed Type</Heading>
       <SegmentedButtons
         value={type}
-        onValueChange={(value) => setType(value as SeedType)}
+        onValueChange={(value) => setType(value)}
         buttons={[
           { value: 'Vegetable', label: 'Veggie' },
           { value: 'Flower', label: 'Flower' },

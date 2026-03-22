@@ -1,5 +1,5 @@
 import { View, StyleSheet } from 'react-native';
-import { SeedType, Exposure } from '../../utils/types';
+import { SeedType, Exposure } from '../../state/userSeeds/types/seedInfoTypes';
 import Badge from '../ui/Badge';
 import { colors, seedTypeColorMap } from '../../styles/theme';
 

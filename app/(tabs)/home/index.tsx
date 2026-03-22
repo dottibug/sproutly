@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useSeedCatalog } from '../../../context/SeedCatalogContext';
 import Loading from '../../../components/ui/Loading';
 import ScreenMessage from '../../../components/ui/ScreenMessage';
 import UserSeeds from '../../../components/userSeeds/UserSeeds';
 import BrowseSeeds from '../../../components/browseSeeds/BrowseSeeds';
 import { colors } from '../../../styles/theme';
 import Tabs from '../../../components/ui/Tabs';
-import { ListTab, LIST_TABS } from '../../../utils/types';
+import { ListTab, LIST_TABS } from '../../../state/app/appTypes';
+import { useBrowseSeed } from '../../../state/browseSeeds/BrowseSeedContext';
 
 // Seed Catalog screen
 // TODO: top/bottom scroll buttons to quick scroll to the top/bottom of the list
@@ -15,7 +15,7 @@ import { ListTab, LIST_TABS } from '../../../utils/types';
 const LOAD_MESSAGE = 'Loading…';
 
 export default function HomeScreen() {
-  const { loading, error } = useSeedCatalog();
+  const { loading, error } = useBrowseSeed();
   const [activeTab, setActiveTab] = useState<ListTab>('My Seeds');
   const handleTabPress = (tab: ListTab) => setActiveTab(tab);
   if (loading) return <Loading message={LOAD_MESSAGE} />;

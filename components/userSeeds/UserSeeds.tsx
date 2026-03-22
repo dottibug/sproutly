@@ -1,10 +1,10 @@
 import { View, StyleSheet, ScrollView, Text } from 'react-native';
 import { useState } from 'react';
-import { useUserSeeds } from '../../context/UserSeedsContext';
-import { useFilters } from '../../context/FiltersContext';
-import { applyFilters, getNumberOfSelectedFilters } from '../../utils/filterUtils';
-import { searchSeeds } from '../../utils/searchUtils';
-import { ListTab, UserSeedItem } from '../../utils/types';
+import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
+import { useFilters } from '../../state/filters/FiltersContext';
+import { applyFilters, getNumberOfSelectedFilters } from '../../state/filters/filterUtils';
+import { searchSeeds } from '../../state/app/appUtils';
+import { ListTab } from '../../state/app/appTypes';
 import UserSeedList from './UserSeedList';
 import Loading from '../ui/Loading';
 import ScreenMessage from '../ui/ScreenMessage';
@@ -14,6 +14,7 @@ import SearchBar from '../ui/SearchBar';
 import { colors, appStyles } from '../../styles/theme';
 import { FAB as PaperFAB } from 'react-native-paper';
 import AddSeedModal from './AddSeedModal';
+import { UserSeed } from '../../state/userSeeds/types/seedTypes';
 
 const LOAD_MESSAGE = 'Loading your seeds…';
 const EMPTY_SEEDS_LIST = 'Your collection is empty. Add seeds to get started.';
@@ -32,7 +33,7 @@ export default function UserSeeds({ activeTab, onGoToBrowse }: UserSeedsProps) {
   const [addSeedModalVisible, setAddSeedModalVisible] = useState(false);
 
   // Context
-  const { seeds, loading, error } = useUserSeeds();
+  const { seeds, loading, error } = useUserSeed();
   const { selected } = useFilters();
   const userCollectionSize = seeds.length;
 
@@ -69,7 +70,7 @@ export default function UserSeeds({ activeTab, onGoToBrowse }: UserSeedsProps) {
           {!emptySeedsList && <Text style={styles.deleteHint}>Long press to delete a seed</Text>}
           <View style={appStyles.resultsList}>
             {emptySeedsList && <ScreenMessage message={userCollectionSize > 0 ? NO_RESULTS_MESSAGE : EMPTY_SEEDS_LIST} />}
-            <UserSeedList seeds={displayedSeeds as UserSeedItem[]} />
+            <UserSeedList seeds={displayedSeeds as UserSeed[]} />
           </View>
         </View>
       </ScrollView>

@@ -1,7 +1,0 @@
-export const AUTH_FAKE_EMAIL_DOMAIN = 'sproutly.com';
-
-export function getAuthEmail(username: string): string {
-  return `${username.trim().toLowerCase()}@${AUTH_FAKE_EMAIL_DOMAIN}`;
-}
-
-export const UNIVERSAL_PIN = '123456';

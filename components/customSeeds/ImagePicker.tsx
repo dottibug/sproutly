@@ -1,22 +1,22 @@
 import { View, Image, StyleSheet, Pressable, Text } from 'react-native';
-import { pickImage } from '../../utils/userSeedImageUtils';
+import { selectImage } from '../../state/userSeeds/utils/photoUtils';
 import { appStyles, colors } from '../../styles/theme';
 import Heading from '../ui/Heading';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import { PreviewImage } from '../../utils/types';
+import { ImagePreview } from '../../state/userSeeds/types/photoTypes';
 
 // TODO: if image picked, button should say "Edit photo" to either change the photo or remove it
 
 type ImagePickerProps = {
   readonly profileId: string | null;
-  readonly preview: PreviewImage | null;
-  readonly setPreview: (preview: PreviewImage) => void;
+  readonly preview: ImagePreview | null;
+  readonly setPreview: (preview: ImagePreview) => void;
 };
 
 export default function ImagePicker({ profileId, preview, setPreview }: ImagePickerProps) {
   const handleAddPhoto = async () => {
     if (!profileId) return;
-    const previewImage = await pickImage();
+    const previewImage = await selectImage();
     if (!previewImage) return;
     setPreview(previewImage);
   };

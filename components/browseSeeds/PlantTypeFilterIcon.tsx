@@ -1,9 +1,8 @@
 import { View, Image, StyleSheet } from 'react-native';
-
-export type PlantType = 'Veggie' | 'Flower' | 'Fruit' | 'Herb';
+import { PlantTypeFilter } from '../../state/filters/filterTypes';
 
 type PlantTypeFilterIconProps = {
-  readonly type: PlantType;
+  readonly type: PlantTypeFilter;
 };
 
 // Renders the filter icon for the given plant type (veggie, flower, fruit, herb). Must pass in the plant type as a prop.

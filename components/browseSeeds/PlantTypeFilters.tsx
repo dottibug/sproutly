@@ -1,15 +1,16 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native';
-import PlantTypeFilterIcon, { PlantType } from './PlantTypeFilterIcon';
+import PlantTypeFilterIcon from './PlantTypeFilterIcon';
+import { PlantTypeFilter } from '../../state/filters/filterTypes';
 import Heading from '../ui/Heading';
 import { colors } from '../../styles/theme';
 
-const PLANT_TYPES: PlantType[] = ['Veggie', 'Flower', 'Fruit', 'Herb'];
+const PLANT_TYPES: PlantTypeFilter[] = ['Veggie', 'Flower', 'Fruit', 'Herb'];
 
 const HEADING = 'Filter by Plant Type';
 
 type PlantTypeFiltersProps = {
-  readonly selectedFilters: Set<PlantType>;
-  readonly onToggleFilter: (type: PlantType) => void;
+  readonly selectedFilters: Set<PlantTypeFilter>;
+  readonly onToggleFilter: (type: PlantTypeFilter) => void;
 };
 
 // TODO: Finalize colors for selected/unselected (add those colors to the theme)

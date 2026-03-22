@@ -1,6 +1,7 @@
 import { View, Text, Alert, Pressable, StyleSheet, Image } from 'react-native';
-import { UserSeedItem, UserSeedTab } from '../../utils/types';
-import { useUserSeeds } from '../../context/UserSeedsContext';
+import { UserSeedTab } from '../../state/app/appTypes';
+import { UserSeed } from '../../state/userSeeds/types/seedTypes';
+import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/build/MaterialCommunityIcons';
 import { colors } from '../../styles/theme';
@@ -9,24 +10,24 @@ import { colors } from '../../styles/theme';
 
 type UserSeedPhotosProps = {
   readonly activeTab: UserSeedTab;
-  readonly seed: UserSeedItem;
+  readonly seed: UserSeed;
 };
 
 const NO_PHOTOS = 'No photos yet. Add one to track progress.';
 
 // UserSeedPhotos component displays the photos of a single seed in the user's collection
 export default function UserSeedPhotos({ activeTab, seed }: UserSeedPhotosProps) {
-  const { addPhotoToSeed, deletePhotoFromSeed } = useUserSeeds();
+  const { addPhoto, deletePhoto } = useUserSeed();
 
   const photos = seed.photos ?? [];
   const hasPhotos = photos.length > 0;
 
-  const handleAddPhoto = async () => await addPhotoToSeed(seed.id);
+  const handleAddPhoto = async () => await addPhoto({ userSeedId: seed.id });
 
-  const handleDeletePhoto = (photoId: string, imagePathOrUrl: string) => {
+  const handleDeletePhoto = (photoId: string) => {
     Alert.alert('Delete photo?', 'This cannot be undone.', [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: () => deletePhotoFromSeed(photoId, imagePathOrUrl) },
+      { text: 'Delete', style: 'destructive', onPress: () => deletePhoto(photoId) },
     ]);
   };
 
@@ -37,8 +38,8 @@ export default function UserSeedPhotos({ activeTab, seed }: UserSeedPhotosProps)
         <View style={styles.grid}>
           {photos.map((photo) => (
             <View key={photo.id} style={styles.tile}>
-              <Image source={{ uri: photo.imageUrl }} style={styles.image} resizeMode="cover" />
-              <Pressable style={styles.deleteButton} onPress={() => handleDeletePhoto(photo.id, photo.imageUrl)}>
+              <Image source={{ uri: photo.imageUri }} style={styles.image} resizeMode="cover" />
+              <Pressable style={styles.deleteButton} onPress={() => handleDeletePhoto(photo.id)}>
                 <MaterialCommunityIcons name="trash-can" size={20} color={colors.white} />
               </Pressable>
             </View>

@@ -4,10 +4,10 @@ import { useState } from 'react';
 import Button from '../../../components/ui/buttons/Button';
 import { colors } from '../../../styles/theme';
 
-import { useAuth } from '../../../context/AuthContext';
-import { useCustomSeed } from '../../../context/CustomSeedContext';
-import { useUserSeeds } from '../../../context/UserSeedsContext';
-import { CustomSeedItem, PreviewImage } from '../../../utils/types';
+import { useAuth } from '../../../state/app/AuthContext';
+import { useCustomSeed } from '../../../state/customSeeds/CustomSeedContext';
+import { useUserSeed } from '../../../state/userSeeds/UserSeedsContext';
+import { ImagePreview } from '../../../state/userSeeds/types/photoTypes';
 import ImagePicker from '../../../components/customSeeds/ImagePicker';
 import SeedNameInput from '../../../components/customSeeds/SeedNameInput';
 import Heading from '../../../components/ui/Heading';
@@ -24,7 +24,7 @@ import StartingInput from '../../../components/customSeeds/StartingInput';
 import GrowingInput from '../../../components/customSeeds/GrowingInput';
 import HarvestInput from '../../../components/customSeeds/HarvestInput';
 import CompanionPlantingInput from '../../../components/customSeeds/CompanionPlantingInput';
-import { createCustomSeedPayload } from '../../../utils/customSeedUtils';
+import { createCustomSeedPayload } from '../../../state/customSeeds/customSeedUtils';
 
 // TODO: image picker should only upload to database on pressing save button
 // TODO: Fix the plant menu functionality
@@ -38,15 +38,33 @@ export default function AddCustomSeedScreen() {
   const { profile } = useAuth();
   const customSeed = useCustomSeed();
   const { resetCustomSeed } = customSeed;
-  const { addCustomSeed } = useUserSeeds();
-  const [preview, setPreview] = useState<PreviewImage | null>(null);
+  const { addCustomSeed } = useUserSeed();
+  const [preview, setPreview] = useState<ImagePreview | null>(null);
 
   // TODO handle no preview image case -- use a placeholder image from a public bucket instead (i.e. don't require users to upload an image)
 
   const handleAddSeed = async () => {
     if (!profile?.id) return;
     if (!preview) return;
-    const payload = createCustomSeedPayload(customSeed as unknown as CustomSeedItem);
+    const payload = createCustomSeedPayload({
+      name: customSeed.name,
+      type: customSeed.type,
+      category: customSeed.category,
+      beanType: customSeed.beanType,
+      latin: customSeed.latin,
+      difficulty: customSeed.difficulty,
+      exposure: customSeed.exposure,
+      maturesInDays: customSeed.maturesInDays,
+      maturesUnderDays: customSeed.maturesUnderDays,
+      description: customSeed.description,
+      timing: customSeed.timing,
+      starting: customSeed.starting,
+      growing: customSeed.growing,
+      harvest: customSeed.harvest,
+      companionPlanting: customSeed.companionPlanting,
+      imagePath: customSeed.imagePath,
+      // planting: customSeed.planting, // removed temporarily
+    });
     await addCustomSeed(preview, payload);
     resetCustomSeed();
   };

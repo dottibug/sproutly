@@ -1,6 +1,6 @@
 import { View, TextInput } from 'react-native';
 import Heading from '../ui/Heading';
-import { useCustomSeed } from '../../context/CustomSeedContext';
+import { useCustomSeed } from '../../state/customSeeds/CustomSeedContext';
 import { appStyles } from '../../styles/theme';
 
 export default function SeedNameInput() {

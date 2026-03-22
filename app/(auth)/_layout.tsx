@@ -1,4 +1,4 @@
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../state/app/AuthContext';
 import { useRouter, Stack } from 'expo-router';
 import { useEffect } from 'react';
 import AppLoadingScreen from '../../components/ui/AppLoadingScreen';

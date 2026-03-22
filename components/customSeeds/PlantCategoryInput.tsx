@@ -1,8 +1,8 @@
 import { Menu } from 'react-native-paper';
 import { View, Text, TextInput } from 'react-native';
 import { useState } from 'react';
-import { useCustomSeed } from '../../context/CustomSeedContext';
-import { VEGETABLES, FLOWERS, FRUITS, HERBS } from '../../utils/types';
+import { useCustomSeed } from '../../state/customSeeds/CustomSeedContext';
+import { VEGETABLES, FLOWERS, FRUITS, HERBS } from '../../state/userSeeds/types/seedInfoTypes';
 import { appStyles } from '../../styles/theme';
 import Heading from '../ui/Heading';
 

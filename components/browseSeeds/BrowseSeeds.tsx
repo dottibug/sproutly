@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import PlantTypeFilters from './PlantTypeFilters';
-import type { PlantType } from './PlantTypeFilterIcon';
 import Heading from '../ui/Heading';
 import { appStyles } from '../../styles/theme';
 import ScreenMessage from '../ui/ScreenMessage';
 import Loading from '../ui/Loading';
-import { useSeedCatalog } from '../../context/SeedCatalogContext';
-import { filterBrowseSeeds } from '../../utils/filterUtils';
-import { searchSeeds } from '../../utils/searchUtils';
+import { useBrowseSeed } from '../../state/browseSeeds/BrowseSeedContext';
+import { filterBrowseSeeds } from '../../state/filters/filterUtils';
+import { searchSeeds } from '../../state/app/appUtils';
 import SearchBar from '../ui/SearchBar';
 import BrowseSeedList from './BrowseSeedList';
-import { ListTab } from '../../utils/types';
+import { ListTab } from '../../state/app/appTypes';
+import { PlantTypeFilter } from '../../state/filters/filterTypes';
 
 // TODO: Styling of browse seeds screen
 
@@ -24,10 +24,10 @@ type BrowseSeedsProps = {
 
 export default function BrowseSeeds({ activeTab }: BrowseSeedsProps) {
   // Context
-  const { seeds, loading, error } = useSeedCatalog();
+  const { seeds, loading, error } = useBrowseSeed();
 
   // State
-  const [selectedFilters, setSelectedFilters] = useState<Set<PlantType>>(new Set());
+  const [selectedFilters, setSelectedFilters] = useState<Set<PlantTypeFilter>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
 
   // Filter and search seeds
@@ -42,7 +42,7 @@ export default function BrowseSeeds({ activeTab }: BrowseSeedsProps) {
   };
 
   // Toggle filters on/off
-  function toggleFilter(plantType: PlantType) {
+  function toggleFilter(plantType: PlantTypeFilter) {
     setSelectedFilters((prev) => {
       const filterSet = new Set(prev);
       // Toggle filter off

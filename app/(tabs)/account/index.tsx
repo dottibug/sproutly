@@ -1,10 +1,9 @@
 import { Text, View, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { useState, useCallback } from 'react';
 import { useRouter } from 'expo-router';
-import { useAuth } from '../../../context/AuthContext';
-import { useFilters } from '../../../context/FiltersContext';
-import { FILTERS } from '../../../utils/filterUtils';
-import { Filter } from '../../../utils/types';
+import { useAuth } from '../../../state/app/AuthContext';
+import { useFilters } from '../../../state/filters/FiltersContext';
+import { FILTERS, Filter } from '../../../state/filters/filterTypes';
 import CustomFilterOrderModal from '../../../components/filters/CustomFilterOrderModal';
 import Toggle from '../../../components/ui/Toggle';
 import Button from '../../../components/ui/buttons/Button';

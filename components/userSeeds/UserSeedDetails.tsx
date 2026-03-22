@@ -6,28 +6,30 @@ import { typography } from '../../styles/theme';
 import SeedQuickFacts from '../seeds/SeedQuickFacts';
 import Accordion from '../ui/Accordion';
 import Button from '../ui/buttons/Button';
-import { Exposure, UserSeedItem, UserSeedTab } from '../../utils/types';
-import { useUserSeeds } from '../../context/UserSeedsContext';
+import { UserSeed } from '../../state/userSeeds/types/seedTypes';
+import { UserSeedTab } from '../../state/app/appTypes';
+import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
+import { Exposure } from '../../state/userSeeds/types/seedInfoTypes';
 
 const DELETE = 'Delete from Collection';
 
 type UserSeedDetailsProps = {
-  readonly seed: UserSeedItem;
+  readonly seed: UserSeed;
   readonly activeTab: UserSeedTab;
 };
 
 // UserSeedDetails component displays the details of a single seed in the user's collection
 export default function UserSeedDetails({ seed, activeTab }: UserSeedDetailsProps) {
-  const { deleteSeedByCustomId } = useUserSeeds();
+  const { deleteByCustomId } = useUserSeed();
 
   const showTiming = seed.timing !== null;
   const showStarting = seed.starting !== null;
   const showGrowing = seed.growing !== null;
   const showHarvest = seed.harvest !== null;
-  const showCompanionPlanting = seed.companion_planting !== null;
+  const showCompanionPlanting = seed.companionPlanting !== null;
 
   const handleDeleteFromCollection = () => {
-    deleteSeedByCustomId(seed);
+    deleteByCustomId(seed);
   };
 
   return (
@@ -38,7 +40,7 @@ export default function UserSeedDetails({ seed, activeTab }: UserSeedDetailsProp
         <SeedHeader
           name={seed.name}
           category={seed.category}
-          beanType={seed.bean_type}
+          beanType={seed.beanType}
           seedSKU={seed.sku}
           catalogId={seed.id}
           inUserCollection={true}
@@ -49,14 +51,14 @@ export default function UserSeedDetails({ seed, activeTab }: UserSeedDetailsProp
         <View style={styles.description}>
           <Heading size="medium">Description</Heading>
           <Text style={typography.textMedium}>{seed.description}</Text>
-          <SeedQuickFacts maturesInDays={seed.matures_in_days} difficulty={seed.difficulty} />
+          <SeedQuickFacts maturesInDays={seed.maturesInDays} difficulty={seed.difficulty} />
         </View>
 
         {showTiming && <Accordion title={'Timing'} content={seed.timing} />}
         {showStarting && <Accordion title={'Starting'} content={seed.starting} />}
         {showGrowing && <Accordion title={'Growing'} content={seed.growing} />}
         {showHarvest && <Accordion title={'Harvest'} content={seed.harvest} />}
-        {showCompanionPlanting && <Accordion title={'Companion Planting'} content={seed.companion_planting} />}
+        {showCompanionPlanting && <Accordion title={'Companion Planting'} content={seed.companionPlanting} />}
       </View>
 
       <View style={styles.buttonContainer}>

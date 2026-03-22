@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../state/app/AuthContext';
 import { useRouter } from 'expo-router';
 import { Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, Pressable } from 'react-native';
 import { colors, typography } from '../../styles/theme';

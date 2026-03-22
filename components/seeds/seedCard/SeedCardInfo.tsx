@@ -1,5 +1,5 @@
 import { View, StyleSheet } from 'react-native';
-import { SeedType } from '../../../utils/types';
+import { SeedType } from '../../../state/userSeeds/types/seedInfoTypes';
 import { router } from 'expo-router';
 import Heading from '../../ui/Heading';
 import Badge from '../../ui/Badge';

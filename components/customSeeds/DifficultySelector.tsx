@@ -1,7 +1,7 @@
 import { RadioButton } from 'react-native-paper';
-import { View, Text } from 'react-native';
-import { useCustomSeed } from '../../context/CustomSeedContext';
-import { Difficulty, DIFFICULTY } from '../../utils/types';
+import { View } from 'react-native';
+import { useCustomSeed } from '../../state/customSeeds/CustomSeedContext';
+import { Difficulty, DIFFICULTY } from '../../state/userSeeds/types/seedInfoTypes';
 import { appStyles, colors } from '../../styles/theme';
 import Heading from '../ui/Heading';
 
