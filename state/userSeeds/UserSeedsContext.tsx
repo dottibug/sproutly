@@ -10,7 +10,7 @@ import { useAuth } from '../app/AuthContext';
 import { runLoadUserSeeds, runAddSeedFromBrowse, runAddCustomSeed, runDeleteByCatalogId, runDeleteByCustomId } from './seeds/seedThunks';
 import { runAddNote, runUpdateNote, runDeleteNote } from './notes/noteThunks';
 import { runAddPhoto, runDeletePhoto } from './photos/photoThunks';
-import { runAddTask, runDeleteTask, runToggleTaskStatus, scheduleDailyTaskNotification } from './tasks/taskThunks';
+import { runAddTask, runUpdateTask, runDeleteTask, runToggleTaskStatus, scheduleDailyTaskNotification } from './tasks/taskThunks';
 import { countDailyPendingTasks } from './tasks/taskUtils';
 
 // TODO: Handle errors
@@ -127,6 +127,14 @@ export function UserSeedProvider({ children }: UserSeedProviderProps) {
     [dispatch, userId],
   );
 
+  const updateTask = useCallback(
+    async (task: UserSeedTask) => {
+      if (!userId) return;
+      await runUpdateTask(dispatch, userId, task);
+    },
+    [dispatch, userId],
+  );
+
   const deleteTask = useCallback(
     async (taskId: string) => {
       if (!userId) return;
@@ -158,6 +166,7 @@ export function UserSeedProvider({ children }: UserSeedProviderProps) {
       addPhoto,
       deletePhoto,
       addTask,
+      updateTask,
       toggleTaskStatus,
       deleteTask,
     }),
@@ -175,6 +184,7 @@ export function UserSeedProvider({ children }: UserSeedProviderProps) {
       addPhoto,
       deletePhoto,
       addTask,
+      updateTask,
       toggleTaskStatus,
       deleteTask,
     ],

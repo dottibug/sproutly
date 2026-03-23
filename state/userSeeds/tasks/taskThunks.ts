@@ -4,7 +4,7 @@ import { Dispatch } from 'react';
 import { UserSeedAction } from '../seeds/seedTypes';
 import { UserSeedTask, TaskStatus, AddTaskDraft } from './taskTypes';
 import { getTimestamp, createTempId } from '../../app/appUtils';
-import { insertTask, deleteTask, updateTask } from './taskQueries';
+import { insertTask, deleteTask, updateTaskDetails, updateTaskStatus } from './taskQueries';
 import { buildUserSeedTask, requestReminderPermissions } from './taskUtils';
 
 export async function runAddTask(dispatch: Dispatch<UserSeedAction>, userId: string, draft: AddTaskDraft) {
@@ -13,7 +13,7 @@ export async function runAddTask(dispatch: Dispatch<UserSeedAction>, userId: str
   const trimNotes = draft.notes.trim();
   if (!trimNotes) return;
 
-  const { userSeedId, taskType, date } = draft;
+  const { userSeedId, taskType, customTaskType, date } = draft;
   const taskDate = new Date(date).toISOString();
   const tempId = createTempId();
 
@@ -22,19 +22,30 @@ export async function runAddTask(dispatch: Dispatch<UserSeedAction>, userId: str
     userId,
     userSeedId,
     taskType,
+    customTaskType,
     title: trimTitle,
     notes: trimNotes,
     status: 'pending',
     date: taskDate,
     createdAt: now,
     updatedAt: now,
+    completedAt: null,
   });
 
   dispatch({ type: 'ADD_TASK', payload: { ...newTask, tempId } });
 
   try {
     // Database insert
-    const insertedTask = await insertTask(userId, userSeedId, taskType, taskDate, trimTitle, trimNotes, 'pending');
+    const insertedTask = await insertTask({
+      userId,
+      userSeedId,
+      taskType,
+      date: taskDate,
+      customTaskType,
+      title: trimTitle,
+      notes: trimNotes,
+      status: 'pending',
+    });
 
     dispatch({ type: 'SYNC_TASK_WITH_DB', payload: { ...insertedTask, tempId } });
   } catch (error) {
@@ -70,13 +81,27 @@ export async function runToggleTaskStatus(dispatch: Dispatch<UserSeedAction>, us
   dispatch({ type: 'TOGGLE_TASK_STATUS', payload });
   try {
     // Database update
-    await updateTask(userId, task.id, newStatus);
+    await updateTaskStatus(userId, task.id, newStatus);
   } catch (error) {
     dispatch({
       type: 'TOGGLE_TASK_STATUS',
       payload: { ...payload, status: prevStatus },
     });
     console.error('Error toggling task status: ', error);
+  }
+}
+
+export async function runUpdateTask(dispatch: Dispatch<UserSeedAction>, userId: string, task: UserSeedTask) {
+  // Optimistic state update
+  dispatch({ type: 'UPDATE_TASK', payload: task });
+
+  // Temp tasks don't exist in DB yet
+  if (task.id.startsWith('temp-')) return;
+
+  try {
+    await updateTaskDetails(userId, task);
+  } catch (error) {
+    console.error('Error updating task details: ', error);
   }
 }
 

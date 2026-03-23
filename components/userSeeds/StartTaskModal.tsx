@@ -1,10 +1,10 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useMemo, useState } from 'react';
-import { Modal, View, TextInput, Pressable, Text, StyleSheet, Platform } from 'react-native';
+import { useMemo, useState, useEffect } from 'react';
+import { View, TextInput, Pressable, Text, StyleSheet, Platform } from 'react-native';
 import { appStyles, colors } from '../../styles/theme';
 import Heading from '../ui/Heading';
 import Button from '../ui/buttons/AppButton';
-import { TaskType } from '../../state/userSeeds/tasks/taskTypes';
+import { TaskType, UserSeedTask } from '../../state/userSeeds/tasks/taskTypes';
 import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
 import AppModal from '../ui/AppModal';
 
@@ -19,6 +19,7 @@ type StartTaskModalProps = {
   readonly visible: boolean;
   readonly onRequestClose: () => void;
   readonly userSeedId: string;
+  readonly editingTask?: UserSeedTask | null;
 };
 
 const TASK_TYPES: TaskType[] = ['sow', 'transplant', 'fertilize', 'harvest'];
@@ -31,8 +32,8 @@ const formatDate = (date: Date): string => {
   });
 };
 
-export default function StartTaskModal({ visible, onRequestClose, userSeedId }: StartTaskModalProps) {
-  const { addTask } = useUserSeed();
+export default function StartTaskModal({ visible, onRequestClose, userSeedId, editingTask = null }: StartTaskModalProps) {
+  const { addTask, updateTask } = useUserSeed();
 
   const defaultDate = useMemo(() => {
     const d = new Date();
@@ -41,29 +42,67 @@ export default function StartTaskModal({ visible, onRequestClose, userSeedId }: 
   }, []);
 
   const [taskType, setTaskType] = useState<TaskType>('sow');
+  const [customTaskType, setCustomTaskType] = useState('');
   const [title, setTitle] = useState('');
   const [notes, setNotes] = useState('');
   const [taskDate, setTaskDate] = useState<Date>(defaultDate);
   const [showDatePicker, setShowDatePicker] = useState(false);
+
+  useEffect(() => {
+    if (!visible) return;
+
+    if (editingTask) {
+      setTaskType(editingTask.taskType);
+      setCustomTaskType(editingTask.customTaskType || '');
+      setTitle(editingTask.title || '');
+      setNotes(editingTask.notes || '');
+      setTaskDate(new Date(editingTask.date));
+      return;
+    }
+
+    setTaskType('sow');
+    setCustomTaskType('');
+    setTitle('');
+    setNotes('');
+    setTaskDate(defaultDate);
+  }, [visible, editingTask, defaultDate]);
 
   const handleSaveTask = async () => {
     const payloadDate = new Date(taskDate);
     payloadDate.setHours(12, 0, 0, 0); // noon
     const payloadTitle = title.trim() || null;
     const payloadNotes = notes.trim();
+    const payloadCustomTaskType = customTaskType.trim() || null;
 
     // TODO: Error handling to go here
 
-    // Do not await database insert
-    addTask({ userSeedId, taskType, date: payloadDate.toISOString(), title: payloadTitle, notes: payloadNotes }).catch((error) =>
-      console.error('Error adding task to seed:', error),
-    );
+    // Do not await database insert/update
+    if (editingTask) {
+      updateTask({
+        ...editingTask,
+        taskType,
+        customTaskType: payloadCustomTaskType,
+        date: payloadDate.toISOString(),
+        title: payloadTitle,
+        notes: payloadNotes,
+        updatedAt: new Date().toISOString(),
+      }).catch((error) => console.error('Error updating task:', error));
+    } else {
+      addTask({
+        userSeedId,
+        taskType,
+        customTaskType: payloadCustomTaskType,
+        date: payloadDate.toISOString(),
+        title: payloadTitle,
+        notes: payloadNotes,
+      }).catch((error) => console.error('Error adding task to seed:', error));
+    }
 
     onRequestClose();
   };
 
   return (
-    <AppModal visible={visible} onRequestClose={onRequestClose} title="New Task">
+    <AppModal visible={visible} onRequestClose={onRequestClose} title={editingTask ? 'Edit Task' : 'New Task'}>
       <View style={styles.section}>
         <Heading size="xsmall">Type</Heading>
         <View style={styles.typeRow}>
@@ -76,6 +115,16 @@ export default function StartTaskModal({ visible, onRequestClose, userSeedId }: 
             );
           })}
         </View>
+      </View>
+
+      <View style={appStyles.customSeedInputSection}>
+        <Heading size="xsmall">Custom Type (optional)</Heading>
+        <TextInput
+          placeholder="e.g. water, prune, weed"
+          value={customTaskType}
+          onChangeText={setCustomTaskType}
+          style={appStyles.customSeedInput}
+        />
       </View>
 
       <View style={appStyles.customSeedInputSection}>
@@ -115,7 +164,7 @@ export default function StartTaskModal({ visible, onRequestClose, userSeedId }: 
         />
       </View>
 
-      <Button text="Save Task" size="small" onPress={handleSaveTask} />
+      <Button text={editingTask ? 'Save Changes' : 'Save Task'} size="small" onPress={handleSaveTask} />
     </AppModal>
   );
 }

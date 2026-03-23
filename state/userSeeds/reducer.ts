@@ -4,7 +4,7 @@ import { filterByCatalogId, replaceUISeed } from './seeds/seedUtils';
 import { filterByCustomId } from '../customSeedForm/customSeedUtils';
 import { createNote, editNote, replaceUINote, deleteByNoteId } from './notes/noteUtils';
 import { createPhoto, replaceUIPhoto, deleteByPhotoId, restorePhoto } from './photos/photoUtils';
-import { createTask, deleteByTaskId, replaceUITask, restoreTask, applyTaskStatus } from './tasks/taskUtils';
+import { createTask, editTask, deleteByTaskId, replaceUITask, restoreTask, applyTaskStatus } from './tasks/taskUtils';
 
 // ---- REDUCER ----
 export function userSeedReducer(state: UserSeedState, action: UserSeedAction): UserSeedState {
@@ -64,6 +64,9 @@ export function userSeedReducer(state: UserSeedState, action: UserSeedAction): U
 
     case 'SYNC_TASK_WITH_DB':
       return { ...state, seeds: replaceUITask(state.seeds, payload) };
+
+    case 'UPDATE_TASK':
+      return { ...state, seeds: editTask(state.seeds, payload) };
 
     case 'DELETE_TASK':
       return { ...state, seeds: deleteByTaskId(state.seeds, payload) };

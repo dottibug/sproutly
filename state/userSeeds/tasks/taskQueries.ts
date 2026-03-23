@@ -2,22 +2,28 @@ import { supabase } from '../../app/supabase';
 import { UserSeedTask, TaskType, TaskStatus } from './taskTypes';
 import { buildUserSeedTask } from './taskUtils';
 
-// Insert a new reminder into the user_seed_reminders table
-export async function insertTask(
-  userId: string,
-  userSeedId: string,
-  taskType: TaskType,
-  date: string,
-  title: string,
-  notes: string,
-  status: TaskStatus,
-): Promise<UserSeedTask> {
+type InsertTaskInput = {
+  userId: string;
+  userSeedId: string;
+  taskType: TaskType;
+  date: string;
+  customTaskType: string | null;
+  title: string;
+  notes: string;
+  status: TaskStatus;
+};
+
+// Insert a new task into the user_seed_tasks table
+export async function insertTask(input: InsertTaskInput): Promise<UserSeedTask> {
+  const { userId, userSeedId, taskType, date, customTaskType, title, notes, status } = input;
   const { data, error } = await supabase
     .from('user_seed_tasks')
     .insert({
       user_id: userId,
       user_seed_id: userSeedId,
       task_type: taskType,
+      custom_task_type: customTaskType,
+      completed_at: null,
       date: date,
       title: title,
       notes: notes,
@@ -33,21 +39,45 @@ export async function insertTask(
     userId: data.user_id,
     userSeedId: data.user_seed_id,
     taskType: data.task_type,
+    customTaskType: data.custom_task_type,
     title: data.title,
     notes: data.notes,
     status: data.status as TaskStatus,
     date: data.date,
     createdAt: data.created_at,
     updatedAt: data.updated_at,
+    completedAt: null,
   });
 }
 
 // Update a task's status in the user_seed_tasks table
-export async function updateTask(userId: string, taskId: string, status: TaskStatus): Promise<void> {
+export async function updateTaskStatus(userId: string, taskId: string, status: TaskStatus): Promise<void> {
   const { error } = await supabase
     .from('user_seed_tasks')
-    .update({ status: status, updated_at: new Date().toISOString() })
+    .update({
+      status: status,
+      updated_at: new Date().toISOString(),
+      completed_at: status === 'completed' ? new Date().toISOString() : null,
+    })
     .eq('id', taskId)
+    .eq('user_id', userId);
+
+  if (error) throw error;
+}
+
+// Update task details in the user_seed_tasks table
+export async function updateTaskDetails(userId: string, task: UserSeedTask): Promise<void> {
+  const { error } = await supabase
+    .from('user_seed_tasks')
+    .update({
+      task_type: task.taskType,
+      custom_task_type: task.customTaskType,
+      date: task.date,
+      title: task.title,
+      notes: task.notes,
+      updated_at: task.updatedAt,
+    })
+    .eq('id', task.id)
     .eq('user_id', userId);
 
   if (error) throw error;
@@ -65,7 +95,7 @@ export async function fetchTasksByUserSeedId(userSeedIds: string[]): Promise<Use
 
   const { data, error } = await supabase
     .from('user_seed_tasks')
-    .select('id, user_seed_id, user_id, task_type, title, date, notes, status, created_at, updated_at')
+    .select('id, user_seed_id, user_id, task_type, custom_task_type, title, date, notes, status, created_at, updated_at, completed_at')
     .in('user_seed_id', userSeedIds)
     .order('date', { ascending: true });
 
@@ -77,12 +107,14 @@ export async function fetchTasksByUserSeedId(userSeedIds: string[]): Promise<Use
       userId: task.user_id,
       userSeedId: task.user_seed_id,
       taskType: task.task_type,
+      customTaskType: task.custom_task_type,
       title: task.title,
       notes: task.notes,
       status: task.status as TaskStatus,
       date: task.date,
       createdAt: task.created_at,
       updatedAt: task.updated_at,
+      completedAt: task.completed_at,
     }),
   );
 

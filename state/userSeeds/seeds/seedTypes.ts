@@ -40,6 +40,7 @@ export type UserSeedContextValue = {
   addPhoto: (draft: AddPhotoDraft) => Promise<void>;
   deletePhoto: (photoId: string) => Promise<void>;
   addTask: (draft: AddTaskDraft) => Promise<void>;
+  updateTask: (task: UserSeedTask) => Promise<void>;
   deleteTask: (taskId: string) => Promise<void>;
   toggleTaskStatus: (task: UserSeedTask, newStatus: TaskStatus) => Promise<void>;
 };

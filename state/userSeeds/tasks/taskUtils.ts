@@ -9,12 +9,14 @@ export function buildUserSeedTask(input: BuildTaskInput): UserSeedTask {
     userId: input.userId,
     userSeedId: input.userSeedId,
     taskType: input.taskType,
+    customTaskType: input.customTaskType,
     title: input.title,
     notes: input.notes,
     status: input.status,
     date: input.date,
     createdAt: input.createdAt,
     updatedAt: input.updatedAt,
+    completedAt: input.completedAt,
   } as UserSeedTask;
 }
 
@@ -22,7 +24,7 @@ export function buildUserSeedTask(input: BuildTaskInput): UserSeedTask {
 export function createTask(seeds: UserSeed[], payload: UserSeedTask & { tempId: string }) {
   const seedsCopy = [...seeds];
 
-  const { userId, userSeedId, tempId, taskType, date, title, notes, status } = payload;
+  const { userId, userSeedId, tempId, taskType, customTaskType, date, title, notes, status } = payload;
 
   const updated = seedsCopy.map((s) => {
     if (s.id !== userSeedId) return s;
@@ -35,12 +37,14 @@ export function createTask(seeds: UserSeed[], payload: UserSeedTask & { tempId: 
       userId,
       userSeedId,
       taskType,
+      customTaskType,
       date,
       title,
       notes,
       status,
       createdAt: now,
       updatedAt: now,
+      completedAt: null,
     });
 
     return { ...s, tasks: [...currentTasks, newTask] };
@@ -58,6 +62,20 @@ export function replaceUITask(seeds: UserSeed[], payload: UserSeedTask & { tempI
     return {
       ...s,
       tasks: currentTasks.map((t) => (t.id === payload.tempId ? ({ ...payload } as UserSeedTask) : t)),
+    };
+  });
+  return updated;
+}
+
+// Edit a task in the UI
+export function editTask(seeds: UserSeed[], payload: UserSeedTask) {
+  const seedsCopy = [...seeds];
+  const updated = seedsCopy.map((seed) => {
+    if (seed.id !== payload.userSeedId) return seed;
+    const currentTasks = seed.tasks ?? [];
+    return {
+      ...seed,
+      tasks: currentTasks.map((task) => (task.id === payload.id ? ({ ...payload } as UserSeedTask) : task)),
     };
   });
   return updated;
@@ -95,13 +113,14 @@ export function restoreTask(seeds: UserSeed[], task: UserSeedTask) {
 export function applyTaskStatus(seeds: UserSeed[], payload: { userSeedId: string; taskId: string; status: TaskStatus }): UserSeed[] {
   const { userSeedId, taskId, status } = payload;
   const now = new Date().toISOString();
+  const completedAt = status === 'completed' ? now : null;
 
-  return seeds.map((s) => {
-    if (s.id !== userSeedId) return s;
-    const currentTasks = s.tasks ?? [];
+  return seeds.map((seed) => {
+    if (seed.id !== userSeedId) return seed;
+    const currentTasks = seed.tasks ?? [];
     return {
-      ...s,
-      tasks: currentTasks.map((t) => (t.id === taskId ? { ...t, status, updatedAt: now } : t)),
+      ...seed,
+      tasks: currentTasks.map((task) => (task.id === taskId ? { ...task, status, updatedAt: now, completedAt } : task)),
     } as UserSeed;
   });
 }
@@ -156,10 +175,49 @@ export function formatTaskDate(iso: string): string {
   });
 }
 
-export function isSameLocalDay(a: Date, b: Date): boolean {
-  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+// Check if the task date is the same day as the given date
+export function isDueToday(taskDate: Date, dueDate: Date): boolean {
+  return (
+    taskDate.getFullYear() === dueDate.getFullYear() &&
+    taskDate.getMonth() === dueDate.getMonth() &&
+    taskDate.getDate() === dueDate.getDate()
+  );
 }
 
+// Check if the task date is today
+export function isToday(iso: string): boolean {
+  return isDueToday(new Date(iso), new Date());
+}
+
+// Get the number of pending tasks due today
 export function getPendingTodayCount(tasks: UserSeedTask[], now = new Date()): number {
-  return tasks.filter((t) => t.status !== 'completed' && isSameLocalDay(new Date(t.date), now)).length;
+  return tasks.filter((task) => task.status !== 'completed' && isDueToday(new Date(task.date), now)).length;
+}
+
+export function splitTasks(tasks: UserSeedTask[]) {
+  const tasksPendingToday: UserSeedTask[] = [];
+  const tasksCompletedToday: UserSeedTask[] = [];
+  const upcomingTasks: UserSeedTask[] = [];
+  const timeline: UserSeedTask[] = [];
+
+  tasks.forEach((task) => {
+    // Pending tasks due today
+    if (task.status === 'pending' && isToday(task.date)) tasksPendingToday.push(task);
+    // Completed tasks due today
+    else if (task.status === 'completed' && task.completedAt && isToday(task.completedAt)) tasksCompletedToday.push(task);
+    // Pending tasks not due today
+    else if (task.status === 'pending' && !isToday(task.date)) upcomingTasks.push(task);
+    // Completed tasks not due today
+    else if (task.status === 'completed' && task.completedAt && !isToday(task.completedAt)) timeline.push(task);
+  });
+
+  // Sort timeline by completedAt date (most recent first)
+  const sortedTimeline = [...timeline].sort((a, b) => new Date(b.completedAt!).getTime() - new Date(a.completedAt!).getTime());
+
+  return {
+    tasksPendingToday,
+    tasksCompletedToday,
+    upcomingTasks,
+    timeline: sortedTimeline,
+  };
 }
