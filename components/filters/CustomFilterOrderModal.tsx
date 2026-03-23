@@ -2,7 +2,7 @@ import { View, Modal } from 'react-native';
 import { useCallback, useState, useEffect } from 'react';
 import { useFilters } from '../../state/filters/FiltersContext';
 import { Filter } from '../../state/filters/filterTypes';
-import Button from '../ui/buttons/Button';
+import Button from '../ui/buttons/AppButton';
 import DraggableFilterOrder from './DraggableFilterOrder';
 import { appStyles } from '../../styles/theme';
 

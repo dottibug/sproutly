@@ -1,33 +1,45 @@
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, Stack } from 'expo-router';
 import { useBrowseSeed } from '../../../state/browseSeeds/BrowseSeedContext';
 import { useUserSeed } from '../../../state/userSeeds/UserSeedsContext';
 import { BrowseSeed } from '../../../state/browseSeeds/browseTypes';
-import { UserSeed } from '../../../state/userSeeds/types/seedTypes';
+import { UserSeed } from '../../../state/userSeeds/seeds/seedTypes';
 
 import BrowseSeedScreen from '../../../components/browseSeeds/BrowseSeedScreen';
 import UserSeedScreen from '../../../components/userSeeds/UserSeedScreen';
+import ScreenMessage from '../../../components/ui/ScreenMessage';
 
 // SeedDetailsScreen display the details of a single see – either one being browsed from the catalog or one in the user's own seed collection
 export default function SeedDetailsScreen() {
   const { id, tab, source } = useLocalSearchParams();
+  const isMySeedsTab = tab === 'My Seeds';
 
-  const { seeds: userSeeds } = useUserSeed();
-  const { seeds: catalogSeeds } = useBrowseSeed();
+  let seed: UserSeed | BrowseSeed | undefined;
 
-  const seeds = tab === 'My Seeds' ? userSeeds : catalogSeeds;
+  if (isMySeedsTab) {
+    const { seeds: userSeeds } = useUserSeed();
 
-  const userSeed = seeds.find((s) => {
-    if (source === 'catalog') return (s as UserSeed).catalogSeedId === id;
-    if (source === 'custom') return (s as UserSeed).customSeedId === id;
-  });
+    seed = userSeeds.find((seed) => {
+      if (source === 'catalog') return seed.catalogSeedId === id;
+      if (source === 'custom') return seed.customSeedId === id;
+      return false;
+    }) as UserSeed | undefined;
+  }
 
-  const catalogSeed = seeds.find((s) => (s as BrowseSeed).id === id);
-  const seed = tab === 'My Seeds' ? userSeed : catalogSeed;
+  if (!isMySeedsTab) {
+    const { seeds: catalogSeeds } = useBrowseSeed();
+
+    seed = catalogSeeds.find((seed) => seed.id === id) as BrowseSeed | undefined;
+  }
+
+  if (!seed) return <ScreenMessage message="Seed not found" />;
+
+  const headerTitle = seed ? `${seed.variety} ${seed.plant}`.trim() : 'Seed Details';
 
   return (
     <>
-      {seed && tab === 'Browse' && <BrowseSeedScreen seed={seed} />}
-      {seed && tab === 'My Seeds' && <UserSeedScreen seed={seed as UserSeed} />}
+      <Stack.Screen options={{ title: headerTitle, headerBackButtonDisplayMode: 'minimal' }} />
+
+      {isMySeedsTab ? <UserSeedScreen seed={seed as UserSeed} /> : <BrowseSeedScreen seed={seed as BrowseSeed} />}
     </>
   );
 }

@@ -1,17 +1,17 @@
 import { createContext, useReducer, useCallback, useMemo, useEffect, useContext } from 'react';
 import { userSeedReducer } from './reducer';
-import { UserSeedState, UserSeedContextValue, UserSeed } from './types/seedTypes';
+import { UserSeedState, UserSeedContextValue, UserSeed } from './seeds/seedTypes';
 import { BrowseSeed } from '../browseSeeds/browseTypes';
-import { CustomSeedPayload } from '../customSeeds/customSeedTypes';
-import { ImagePreview, AddPhotoDraft } from './types/photoTypes';
-import { UserSeedNote, AddNoteDraft } from './types/noteTypes';
-import { UserSeedTask, TaskStatus, AddTaskDraft } from './types/taskTypes';
+import { CustomSeedPayload } from '../customSeedForm/customSeedTypes';
+import { ImagePreview, AddPhotoDraft } from './photos/photoTypes';
+import { UserSeedNote, AddNoteDraft } from './notes/noteTypes';
+import { UserSeedTask, TaskStatus, AddTaskDraft } from './tasks/taskTypes';
 import { useAuth } from '../app/AuthContext';
-import { runLoadUserSeeds, runAddSeedFromBrowse, runAddCustomSeed, runDeleteByCatalogId, runDeleteByCustomId } from './thunks/seedThunks';
-import { runAddNote, runUpdateNote, runDeleteNote } from './thunks/noteThunks';
-import { runAddPhoto, runDeletePhoto } from './thunks/photoThunks';
-import { runAddTask, runDeleteTask, runToggleTaskStatus, scheduleDailyTaskNotification } from './thunks/taskThunks';
-import { countDailyPendingTasks } from './utils/taskUtils';
+import { runLoadUserSeeds, runAddSeedFromBrowse, runAddCustomSeed, runDeleteByCatalogId, runDeleteByCustomId } from './seeds/seedThunks';
+import { runAddNote, runUpdateNote, runDeleteNote } from './notes/noteThunks';
+import { runAddPhoto, runDeletePhoto } from './photos/photoThunks';
+import { runAddTask, runDeleteTask, runToggleTaskStatus, scheduleDailyTaskNotification } from './tasks/taskThunks';
+import { countDailyPendingTasks } from './tasks/taskUtils';
 
 // TODO: Handle errors
 
@@ -69,6 +69,7 @@ export function UserSeedProvider({ children }: UserSeedProviderProps) {
   const addCustomSeed = useCallback(
     async (preview: ImagePreview | null, payload: CustomSeedPayload) => {
       if (!userId) return;
+      console.log('addCustomSeed called in UserSeedsContext.tsx');
       await runAddCustomSeed(dispatch, userId, payload, preview);
     },
     [dispatch, userId],

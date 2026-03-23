@@ -3,12 +3,12 @@ import { View, Text, StyleSheet, FlatList, Pressable, Image, Dimensions, Modal }
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
-import { UserSeed } from '../../state/userSeeds/types/seedTypes';
-import { UserSeedPhoto } from '../../state/userSeeds/types/photoTypes';
+import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
+import { UserSeedPhoto } from '../../state/userSeeds/photos/photoTypes';
 import Loading from '../../components/ui/Loading';
 import ScreenMessage from '../../components/ui/ScreenMessage';
 import { colors, appStyles } from '../../styles/theme';
-import Button from '../../components/ui/buttons/Button';
+import Button from '../../components/ui/buttons/AppButton';
 
 // TODO: REFACTOR for clarity
 // TODO: style the modal with a close button in the corner, as expected.
@@ -98,7 +98,7 @@ export default function GalleryScreen() {
             {selected && (
               <>
                 <Image source={{ uri: selected.photo.imageUri }} style={styles.modalImage} resizeMode="contain" />
-                <Text style={styles.modalSeedName}>{selected.seed.name}</Text>
+                <Text style={styles.modalSeedName}>{selected.seed.variety}</Text>
                 <Text style={styles.modalDate}>Added {formatPhotoDate(selected.photo.createdAt)}</Text>
 
                 {seedStillInCollection(selected.seed.id) && (

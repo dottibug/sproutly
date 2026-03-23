@@ -1,4 +1,4 @@
-import { UserSeed } from '../userSeeds/types/seedTypes';
+import { UserSeed } from '../userSeeds/seeds/seedTypes';
 import { BrowseSeed } from '../browseSeeds/browseTypes';
 
 // ---- TIMESTAMP ----
@@ -20,6 +20,6 @@ export function searchSeeds(seeds: UserSeed[] | BrowseSeed[], searchQuery: strin
   // Nullish coalescing; don't use || because it will return true for falsy empty strings
   return seeds.filter(
     (seed) =>
-      seed.name.toLowerCase().includes(query) ?? seed.category?.toLowerCase().includes(query) ?? seed.sku.toLowerCase().includes(query),
+      seed.variety.toLowerCase().includes(query) ?? seed.category?.toLowerCase().includes(query) ?? seed.sku.toLowerCase().includes(query),
   );
 }

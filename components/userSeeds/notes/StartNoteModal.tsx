@@ -2,10 +2,12 @@ import { Modal, View, Text, TextInput } from 'react-native';
 import { appStyles } from '../../../styles/theme';
 import Heading from '../../ui/Heading';
 import { useState } from 'react';
-import Button from '../../ui/buttons/Button';
+import Button from '../../ui/buttons/AppButton';
 import { useUserSeed } from '../../../state/userSeeds/UserSeedsContext';
+import AppModal from '../../ui/AppModal';
 
-// TODO: Proper close button on modal in the corner
+// TODO: Title for the modal and text in modal such as "Add a new note for {seed variety} {seed plant}"
+// TODO: Error handling if both the note and title are blank (nothing to save)
 
 type StartNoteModalProps = {
   readonly visible: boolean;
@@ -19,40 +21,33 @@ export default function StartNoteModal({ visible, onRequestClose, userSeedId }: 
   const { addNote } = useUserSeed();
 
   const handleSaveNote = async () => {
-    console.log('save note');
+    // TODO: Error handling to go here
 
-    try {
-      await addNote({ userSeedId, title: title || null, note });
-      onRequestClose();
-    } catch (error) {
-      console.error('Error adding note to seed:', error instanceof Error ? error.message : 'Unknown error');
-    }
+    // Do not await database insert
+    addNote({ userSeedId, title: title || null, note }).catch((error) => console.error('Error adding note to seed:', error));
+
+    onRequestClose();
   };
 
   return (
-    <Modal visible={visible} onRequestClose={onRequestClose} transparent={true}>
-      <View style={appStyles.modalContainer}>
-        <View style={appStyles.modalContent}>
-          <View style={appStyles.customSeedInputSection}>
-            <Heading size="xsmall">Title</Heading>
-            <TextInput placeholder="Note title" value={title} onChangeText={setTitle} style={appStyles.customSeedInput} />
-          </View>
-
-          <View style={appStyles.customSeedInputSection}>
-            <Heading size="xsmall">Note</Heading>
-            <TextInput
-              placeholder="Write your note here..."
-              value={note}
-              onChangeText={setNote}
-              multiline
-              style={appStyles.customSeedMultilineInput}
-            />
-          </View>
-
-          <Button text="Save" size="small" onPress={handleSaveNote} />
-          <Button text="Cancel" size="small" onPress={onRequestClose} color="secondary" />
-        </View>
+    <AppModal visible={visible} onRequestClose={onRequestClose} title="New Note">
+      <View style={appStyles.customSeedInputSection}>
+        <Heading size="xsmall">Title</Heading>
+        <TextInput placeholder="Note title" value={title} onChangeText={setTitle} style={appStyles.customSeedInput} />
       </View>
-    </Modal>
+
+      <View style={appStyles.customSeedInputSection}>
+        <Heading size="xsmall">Note</Heading>
+        <TextInput
+          placeholder="Write your note here..."
+          value={note}
+          onChangeText={setNote}
+          multiline
+          style={appStyles.customSeedMultilineInput}
+        />
+      </View>
+
+      <Button text="Save" size="small" onPress={handleSaveNote} />
+    </AppModal>
   );
 }

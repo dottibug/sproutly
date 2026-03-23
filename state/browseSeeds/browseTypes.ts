@@ -1,4 +1,4 @@
-import { SeedType, Planting } from '../userSeeds/types/seedInfoTypes';
+import { Category, Planting } from '../userSeeds/seeds/seedInfoTypes';
 
 export type BrowseSeedAction =
   | { type: 'LOAD_START'; payload: null }
@@ -8,11 +8,11 @@ export type BrowseSeedAction =
 // ---- BROWSE SEED ----
 export type BrowseSeed = {
   id: string;
-  name: string;
+  variety: string;
   sku: string;
-  type: SeedType;
+  category: Category;
   beanType: string | null;
-  category: string;
+  plant: string;
   latin: string | null;
   difficulty: string | null;
   exposure: string | null;
@@ -31,11 +31,11 @@ export type BrowseSeed = {
 // ---- BUILD BROWSE SEED INPUT ----
 export type BuildBrowseSeedInput = {
   id: string;
-  name: string;
+  variety: string;
   sku: string;
-  type: SeedType;
+  category: Category;
   beanType: string | null;
-  category: string;
+  plant: string;
   latin: string | null;
   difficulty: string | null;
   exposure: string | null;

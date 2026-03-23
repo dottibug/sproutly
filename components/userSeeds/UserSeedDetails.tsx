@@ -5,11 +5,12 @@ import Heading from '../ui/Heading';
 import { typography } from '../../styles/theme';
 import SeedQuickFacts from '../seeds/SeedQuickFacts';
 import Accordion from '../ui/Accordion';
-import Button from '../ui/buttons/Button';
-import { UserSeed } from '../../state/userSeeds/types/seedTypes';
+import Button from '../ui/buttons/AppButton';
+import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
 import { UserSeedTab } from '../../state/app/appTypes';
 import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
-import { Exposure } from '../../state/userSeeds/types/seedInfoTypes';
+import { Exposure } from '../../state/userSeeds/seeds/seedInfoTypes';
+import { useRouter } from 'expo-router';
 
 const DELETE = 'Delete from Collection';
 
@@ -20,16 +21,25 @@ type UserSeedDetailsProps = {
 
 // UserSeedDetails component displays the details of a single seed in the user's collection
 export default function UserSeedDetails({ seed, activeTab }: UserSeedDetailsProps) {
-  const { deleteByCustomId } = useUserSeed();
+  const router = useRouter();
+  const { deleteByCatalogId, deleteByCustomId } = useUserSeed();
 
-  const showTiming = seed.timing !== null;
-  const showStarting = seed.starting !== null;
-  const showGrowing = seed.growing !== null;
-  const showHarvest = seed.harvest !== null;
-  const showCompanionPlanting = seed.companionPlanting !== null;
+  const showDescription = seed.description !== null && seed.description !== '';
+  const showTiming = seed.timing !== null && seed.timing !== '';
+  const showStarting = seed.starting !== null && seed.starting !== '';
+  const showGrowing = seed.growing !== null && seed.growing !== '';
+  const showHarvest = seed.harvest !== null && seed.harvest !== '';
+  const showCompanionPlanting = seed.companionPlanting !== null && seed.companionPlanting !== '';
 
   const handleDeleteFromCollection = () => {
-    deleteByCustomId(seed);
+    if (seed.catalogSeedId) deleteByCatalogId(seed);
+    else deleteByCustomId(seed);
+    router.replace({
+      pathname: '/(tabs)/home',
+      params: {
+        tab: 'mySeeds',
+      },
+    });
   };
 
   return (
@@ -38,21 +48,23 @@ export default function UserSeedDetails({ seed, activeTab }: UserSeedDetailsProp
 
       <View>
         <SeedHeader
-          name={seed.name}
-          category={seed.category}
+          variety={seed.variety}
+          plant={seed.plant}
           beanType={seed.beanType}
           seedSKU={seed.sku}
           catalogId={seed.id}
           inUserCollection={true}
-          type={seed.type}
+          category={seed.category}
           exposure={seed.exposure as Exposure}
         />
 
-        <View style={styles.description}>
-          <Heading size="medium">Description</Heading>
-          <Text style={typography.textMedium}>{seed.description}</Text>
-          <SeedQuickFacts maturesInDays={seed.maturesInDays} difficulty={seed.difficulty} />
-        </View>
+        {showDescription && (
+          <View style={styles.description}>
+            <Heading size="medium">Description</Heading>
+            <Text style={typography.textMedium}>{seed.description}</Text>
+            <SeedQuickFacts maturesInDays={seed.maturesInDays} difficulty={seed.difficulty} />
+          </View>
+        )}
 
         {showTiming && <Accordion title={'Timing'} content={seed.timing} />}
         {showStarting && <Accordion title={'Starting'} content={seed.starting} />}

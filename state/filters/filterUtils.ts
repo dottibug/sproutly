@@ -1,7 +1,7 @@
-import { SelectedFilters, UserFilterPreferences, OpenFilters, FILTERS, DEFAULT_OPEN, PlantTypeFilter } from './filterTypes';
-import { UserSeed } from '../userSeeds/types/seedTypes';
+import { SelectedFilters, UserFilterPreferences, OpenFilters, FILTERS, DEFAULT_OPEN, CategoryFilter } from './filterTypes';
+import { UserSeed } from '../userSeeds/seeds/seedTypes';
 import { BrowseSeed } from '../browseSeeds/browseTypes';
-import { MONTH_MAP, PlantingAction } from '../userSeeds/types/seedInfoTypes';
+import { MONTH_MAP, PlantingAction } from '../userSeeds/seeds/seedInfoTypes';
 import { fetchUserFilterPrefs, updateUserFilterPrefs } from './filterQueries';
 
 /* Determine which filter sections are expanded when the 'Filters' accordion is opened
@@ -39,8 +39,8 @@ export function applyFilters(seeds: UserSeed[], selectedFilters: SelectedFilters
 
     list = list.filter((seed) => {
       switch (filter) {
-        case 'plantType':
-          return selected.includes(seed.type);
+        case 'category':
+          return selected.includes(seed.category);
         case 'starting':
           return filterByStarting(seed, selected);
         case 'exposure':
@@ -95,7 +95,7 @@ export function filterByReadyToHarvest(seed: UserSeed, selected: string[]) {
   });
 }
 
-export function filterBrowseSeeds(seeds: BrowseSeed[], selectedFilters: Set<PlantTypeFilter>): BrowseSeed[] {
+export function filterBrowseSeeds(seeds: BrowseSeed[], selectedFilters: Set<CategoryFilter>): BrowseSeed[] {
   if (selectedFilters.size > 0) {
     const filterArray = Array.from(selectedFilters);
 
@@ -104,7 +104,7 @@ export function filterBrowseSeeds(seeds: BrowseSeed[], selectedFilters: Set<Plan
       return plantType;
     });
 
-    return seeds.filter((seed) => new Set(filters).has(seed.type));
+    return seeds.filter((seed) => new Set(filters).has(seed.category));
   }
   return seeds; // No filters applied (return all seeds)
 }

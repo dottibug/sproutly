@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import PlantTypeFilters from './PlantTypeFilters';
+import CategoryFilters from './CategoryFilters';
 import Heading from '../ui/Heading';
 import { appStyles } from '../../styles/theme';
 import ScreenMessage from '../ui/ScreenMessage';
@@ -11,7 +11,7 @@ import { searchSeeds } from '../../state/app/appUtils';
 import SearchBar from '../ui/SearchBar';
 import BrowseSeedList from './BrowseSeedList';
 import { ListTab } from '../../state/app/appTypes';
-import { PlantTypeFilter } from '../../state/filters/filterTypes';
+import { type CategoryFilter } from '../../state/filters/filterTypes';
 
 // TODO: Styling of browse seeds screen
 
@@ -27,7 +27,7 @@ export default function BrowseSeeds({ activeTab }: BrowseSeedsProps) {
   const { seeds, loading, error } = useBrowseSeed();
 
   // State
-  const [selectedFilters, setSelectedFilters] = useState<Set<PlantTypeFilter>>(new Set());
+  const [selectedFilters, setSelectedFilters] = useState<Set<CategoryFilter>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
 
   // Filter and search seeds
@@ -42,13 +42,13 @@ export default function BrowseSeeds({ activeTab }: BrowseSeedsProps) {
   };
 
   // Toggle filters on/off
-  function toggleFilter(plantType: PlantTypeFilter) {
+  function toggleFilter(category: CategoryFilter) {
     setSelectedFilters((prev) => {
       const filterSet = new Set(prev);
       // Toggle filter off
-      if (filterSet.has(plantType)) filterSet.delete(plantType);
+      if (filterSet.has(category)) filterSet.delete(category);
       // Toggle filter on
-      else filterSet.add(plantType);
+      else filterSet.add(category);
       return filterSet;
     });
   }
@@ -58,7 +58,7 @@ export default function BrowseSeeds({ activeTab }: BrowseSeedsProps) {
 
   return (
     <View style={[styles.browseContainer, { display: activeTab === 'Browse' ? 'flex' : 'none' }]}>
-      <PlantTypeFilters selectedFilters={selectedFilters} onToggleFilter={toggleFilter} />
+      <CategoryFilters selectedFilters={selectedFilters} onToggleFilter={toggleFilter} />
 
       <SearchBar placeholder="Search seeds..." searchQuery={searchQuery} handleSearchQuery={setSearchQuery} />
 

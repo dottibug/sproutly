@@ -25,6 +25,9 @@ export default function Filters({ open, setOpen }: FiltersProps) {
     if (newOpen) applyOpenFilters();
   };
 
+  console.log('preferences in Filters.tsx: ', preferences);
+  console.log('options in Filters.tsx: ', FILTER_OPTIONS);
+
   return (
     <List.Accordion
       title={FILTERS_TITLE}

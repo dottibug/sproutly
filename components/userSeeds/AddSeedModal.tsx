@@ -1,10 +1,11 @@
 import { Modal, View, Text, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
-import Button from '../ui/buttons/Button';
+import Button from '../ui/buttons/AppButton';
 import { appStyles } from '../../styles/theme';
+import AppModal from '../ui/AppModal';
 
 // TODO: Styling
-// TODO: going to the browse tab is working, but the screen loads slow
+// TODO: Better text in the modal to explain the options to the user
 
 type AddSeedModalProps = {
   readonly visible: boolean;
@@ -27,17 +28,18 @@ export default function AddSeedModal({ visible, onRequestClose, onGoToBrowse }: 
   };
 
   return (
-    <Modal visible={visible} onRequestClose={onRequestClose} transparent={true}>
-      <View style={appStyles.modalContainer}>
-        <View style={appStyles.modalContent}>
-          <Text>Add Seed Modal</Text>
-          <Button text="Add Catalog Seed" size="small" onPress={handleAddCatalogSeed} />
-          <Button text="Add Custom Seed" size="small" onPress={handleAddCustomSeed} />
-          <Button text="Close" size="small" onPress={onRequestClose} />
-        </View>
+    <AppModal visible={visible} onRequestClose={onRequestClose} title="Add Seed">
+      <View style={styles.buttonContainer}>
+        <Button text="Add Catalog Seed" size="small" onPress={handleAddCatalogSeed} />
+        <Button text="Add Custom Seed" size="small" onPress={handleAddCustomSeed} />
       </View>
-    </Modal>
+    </AppModal>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  buttonContainer: {
+    marginVertical: 16,
+    gap: 24,
+  },
+});

@@ -1,6 +1,6 @@
 import { View, Text, Alert, Pressable, StyleSheet } from 'react-native';
 import { UserSeedTab } from '../../state/app/appTypes';
-import { UserSeedTask } from '../../state/userSeeds/types/taskTypes';
+import { UserSeedTask } from '../../state/userSeeds/tasks/taskTypes';
 import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
 import { useState, useMemo } from 'react';
 import MaterialCommunityIcons from '@expo/vector-icons/build/MaterialCommunityIcons';
@@ -8,11 +8,14 @@ import { colors } from '../../styles/theme';
 import StartTaskModal from './StartTaskModal';
 import Accordion from '../ui/Accordion';
 import { FAB as PaperFAB } from 'react-native-paper';
-import { UserSeed } from '../../state/userSeeds/types/seedTypes';
+import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
 
-// TODO: implement timeline functionality
+// TODO: Pending should be open by default. If there are no pending tasks, show the "No tasks yet. Add one to stay on schedule." message IN the pending section.
+// TODO: Dim the done accordion and make it inactive if there are no done tasks to show? Or maybe done should be the timeline accordion? Still need a place that users can undo completing a task if they accidentally marked it completed (which doens't make sense in a timeline section, but does in a done section)
+// TODO: Task editing
 // TODO: Add a clear all tasks button
-// TODO: styling
+// TODO: Timeline
+// TODO: Styling & format
 
 type UserSeedTasksProps = {
   readonly activeTab: UserSeedTab;
@@ -27,6 +30,7 @@ type TaskSectionProps = {
   readonly onDelete: (task: UserSeedTask) => void;
 };
 
+// TODO: Own component
 function TaskSection({ tasks, onToggleStatus, onDelete }: TaskSectionProps) {
   if (tasks.length === 0) return null;
 
@@ -58,7 +62,7 @@ function TaskSection({ tasks, onToggleStatus, onDelete }: TaskSectionProps) {
   );
 }
 
-export default function UserSeedTasks({ activeTab, seed }: UserSeedTasksProps) {
+export default function UserSeedTasks({ seed, activeTab }: UserSeedTasksProps) {
   const { toggleTaskStatus, deleteTask } = useUserSeed();
   const [showStartTaskModal, setShowStartTaskModal] = useState(false);
 
@@ -76,7 +80,20 @@ export default function UserSeedTasks({ activeTab, seed }: UserSeedTasksProps) {
     <View style={[styles.screen, { display: activeTab === 'Tasks' ? 'flex' : 'none' }]}>
       <View style={styles.scrollArea}>
         {seed.tasks.length === 0 && <Text style={{ marginVertical: 16, textAlign: 'center' }}>{NO_TASKS}</Text>}
-        <Text>Tasks Here...</Text>
+        <Accordion title="Pending">
+          <TaskSection
+            tasks={seed.tasks.filter((task) => task.status === 'pending')}
+            onToggleStatus={handleToggleStatus}
+            onDelete={handleDeleteTask}
+          />
+        </Accordion>
+        <Accordion title="Done">
+          <TaskSection
+            tasks={seed.tasks.filter((task) => task.status === 'completed' || task.status === 'skipped')}
+            onToggleStatus={handleToggleStatus}
+            onDelete={handleDeleteTask}
+          />
+        </Accordion>
       </View>
       <PaperFAB
         icon="plus"

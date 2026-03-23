@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
-import { UserSeed } from '../../state/userSeeds/types/seedTypes';
+import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
 import { BrowseSeed } from '../../state/browseSeeds/browseTypes';
 import SeedCard from '../seeds/seedCard/SeedCard';
 

@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { Pressable } from 'react-native';
+import { Pressable, Text, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
-import { UserSeed } from '../../state/userSeeds/types/seedTypes';
+import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
 import SeedCard from '../seeds/seedCard/SeedCard';
 import SeedCardAction from '../seeds/seedCard/SeedCardAction';
+import SeedCardOverlay from '../seeds/seedCard/SeedCardOverlay';
+import { colors } from '../../styles/theme';
 
 type UserSeedCardProps = {
   readonly seed: UserSeed;
@@ -18,8 +20,11 @@ export default function UserSeedCard({ seed }: UserSeedCardProps) {
   // State
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
-  const { deleteByCatalogId } = useUserSeed();
+  const { deleteByCatalogId, deleteByCustomId } = useUserSeed();
   const router = useRouter();
+
+  // Check if this seed is an optimistic update (has temp ID) and is being saved to the database
+  const isSaving = seed.id.startsWith('temp-') || (seed.customSeedId?.startsWith('temp-') ?? false);
 
   // Press handler to navigate to the seed details screen
   const handlePress = () => {
@@ -43,7 +48,8 @@ export default function UserSeedCard({ seed }: UserSeedCardProps) {
 
   // Delete the seed from the database
   const handleDelete = () => {
-    deleteByCatalogId(seed);
+    if (seed.catalogSeedId) deleteByCatalogId(seed);
+    else deleteByCustomId(seed);
     setShowDeleteConfirmation(false);
   };
 
@@ -52,10 +58,24 @@ export default function UserSeedCard({ seed }: UserSeedCardProps) {
       {/* Show the seed card */}
       {!showDeleteConfirmation && <SeedCard cardType="user" seed={seed} onPress={handlePress} />}
 
+      {isSaving && (
+        <SeedCardOverlay>
+          <Text style={styles.savingText}>Saving...</Text>
+        </SeedCardOverlay>
+      )}
+
       {/* Show the delete confirmation */}
       {showDeleteConfirmation && (
-        <SeedCardAction seedName={seed.name} seedCategory={seed.category} action="Delete" onCancel={handleCancel} onAction={handleDelete} />
+        <SeedCardAction variety={seed.variety} plant={seed.plant} action="Delete" onCancel={handleCancel} onAction={handleDelete} />
       )}
     </Pressable>
   );
 }
+
+const styles = StyleSheet.create({
+  savingText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: colors.primary,
+  },
+});

@@ -1,10 +1,10 @@
-import { UserSeedState, UserSeedAction } from './types/seedTypes';
+import { UserSeedState, UserSeedAction } from './seeds/seedTypes';
 import { createUserSeedFromBrowse } from '../browseSeeds/browseUtils';
-import { filterByCatalogId } from './utils/seedUtils';
-import { filterByCustomId } from '../customSeeds/customSeedUtils';
-import { createNote, editNote, replaceUINote, deleteByNoteId } from './utils/noteUtils';
-import { createPhoto, replaceUIPhoto, deleteByPhotoId, restorePhoto } from './utils/photoUtils';
-import { createTask, deleteByTaskId, replaceUITask, restoreTask, applyTaskStatus } from './utils/taskUtils';
+import { filterByCatalogId, replaceUISeed } from './seeds/seedUtils';
+import { filterByCustomId } from '../customSeedForm/customSeedUtils';
+import { createNote, editNote, replaceUINote, deleteByNoteId } from './notes/noteUtils';
+import { createPhoto, replaceUIPhoto, deleteByPhotoId, restorePhoto } from './photos/photoUtils';
+import { createTask, deleteByTaskId, replaceUITask, restoreTask, applyTaskStatus } from './tasks/taskUtils';
 
 // ---- REDUCER ----
 export function userSeedReducer(state: UserSeedState, action: UserSeedAction): UserSeedState {
@@ -25,6 +25,9 @@ export function userSeedReducer(state: UserSeedState, action: UserSeedAction): U
 
     case 'ADD_CUSTOM_SEED':
       return { ...state, seeds: [...state.seeds, payload] };
+
+    case 'SYNC_CUSTOM_SEED_WITH_DB':
+      return { ...state, seeds: replaceUISeed(state.seeds, payload) };
 
     case 'DELETE_BY_CATALOG_ID':
       return { ...state, seeds: filterByCatalogId(state.seeds, payload ?? '') };

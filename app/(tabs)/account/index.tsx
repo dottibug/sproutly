@@ -6,7 +6,7 @@ import { useFilters } from '../../../state/filters/FiltersContext';
 import { FILTERS, Filter } from '../../../state/filters/filterTypes';
 import CustomFilterOrderModal from '../../../components/filters/CustomFilterOrderModal';
 import Toggle from '../../../components/ui/Toggle';
-import Button from '../../../components/ui/buttons/Button';
+import Button from '../../../components/ui/buttons/AppButton';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { colors } from '../../../styles/theme';
 

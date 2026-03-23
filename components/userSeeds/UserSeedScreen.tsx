@@ -1,14 +1,13 @@
 import { UserSeedTab, USER_SEED_TABS } from '../../state/app/appTypes';
-import { StyleSheet } from 'react-native';
-
 import { useMemo, useState } from 'react';
 import UserSeedDetails from './UserSeedDetails';
 import UserSeedNotes from './UserSeedNotes';
 import UserSeedPhotos from './UserSeedPhotos';
 import Tabs from '../ui/Tabs';
-import { getPendingTodayCount } from '../../state/userSeeds/utils/taskUtils';
+import { getPendingTodayCount } from '../../state/userSeeds/tasks/taskUtils';
 import UserSeedTasks from './UserSeedTasks';
-import { UserSeed } from '../../state/userSeeds/types/seedTypes';
+import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
+import { colors } from '../../styles/theme';
 
 // TODO: change badge color of tasks
 
@@ -22,37 +21,15 @@ export default function UserSeedScreen({ seed }: UserSeedScreenProps) {
 
   const tasksTodayCount = useMemo(() => getPendingTodayCount(seed.tasks ?? []), [seed.tasks]);
 
-  const handleTabPress = (tab: string) => {
-    setActiveTab(tab as UserSeedTab);
-  };
+  const handleTabPress = (tab: string) => setActiveTab(tab as UserSeedTab);
 
   return (
     <>
       <Tabs tabs={USER_SEED_TABS} activeTab={activeTab} onTabPress={handleTabPress} badgeCounts={{ Tasks: tasksTodayCount }} />
       <UserSeedDetails seed={seed} activeTab={activeTab} />
-      <UserSeedNotes activeTab={activeTab} seed={seed} />
-      <UserSeedPhotos activeTab={activeTab} seed={seed} />
-      <UserSeedTasks activeTab={activeTab} seed={seed} />
+      <UserSeedNotes seed={seed} activeTab={activeTab} />
+      <UserSeedPhotos seed={seed} activeTab={activeTab} />
+      <UserSeedTasks seed={seed} activeTab={activeTab} />
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollStyle: {
-    flex: 1,
-  },
-  image: {
-    height: 400,
-    width: '100%',
-  },
-  description: {
-    flexDirection: 'column',
-    gap: 16,
-    padding: 16,
-  },
-  buttonContainer: {
-    marginBottom: 32,
-    marginTop: 24,
-    paddingHorizontal: 16,
-  },
-});

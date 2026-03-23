@@ -14,7 +14,7 @@ import SearchBar from '../ui/SearchBar';
 import { colors, appStyles } from '../../styles/theme';
 import { FAB as PaperFAB } from 'react-native-paper';
 import AddSeedModal from './AddSeedModal';
-import { UserSeed } from '../../state/userSeeds/types/seedTypes';
+import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
 
 const LOAD_MESSAGE = 'Loading your seeds…';
 const EMPTY_SEEDS_LIST = 'Your collection is empty. Add seeds to get started.';

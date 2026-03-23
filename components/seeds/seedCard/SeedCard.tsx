@@ -1,6 +1,6 @@
 import { View, StyleSheet, Pressable } from 'react-native';
 import { BrowseSeed } from '../../../state/browseSeeds/browseTypes';
-import { UserSeed } from '../../../state/userSeeds/types/seedTypes';
+import { UserSeed } from '../../../state/userSeeds/seeds/seedTypes';
 import SeedCardInfo from './SeedCardInfo';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import SeedImage from '../../seeds/SeedImage';
@@ -25,10 +25,10 @@ export default function SeedCard({ cardType, seed, onPress, inUserCollection = f
         <SeedImage imageUri={seed.image} size="small" />
         <SeedCardInfo
           seedId={seed.id}
-          name={seed.name}
-          category={seed.category}
+          variety={seed.variety}
+          plant={seed.plant}
           beanType={seed.beanType}
-          seedType={seed.type}
+          category={seed.category}
           cardType={cardType}
           inUserCollection={inUserCollection}
         />

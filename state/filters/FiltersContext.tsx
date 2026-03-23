@@ -28,7 +28,7 @@ const initialPreferences: UserFilterPreferences = {
 };
 
 const initialSelected: SelectedFilters = {
-  plantType: [],
+  category: [],
   starting: [],
   exposure: [],
   season: [],

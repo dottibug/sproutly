@@ -1,16 +1,16 @@
 import { BrowseSeed, BuildBrowseSeedInput } from './browseTypes';
-import { buildUserSeed, groupPlantingActionsByCategory, matchBeanVariant } from '../userSeeds/utils/seedUtils';
-import { PlantingActionRow } from '../userSeeds/types/seedInfoTypes';
+import { buildUserSeed, groupPlantingActionsByPlant, matchBeanVariant } from '../userSeeds/seeds/seedUtils';
+import { PlantingActionRow } from '../userSeeds/seeds/seedInfoTypes';
 
 // Build a browseSeed object
 export function buildBrowseSeed(input: BuildBrowseSeedInput): BrowseSeed {
   return {
     id: input.id,
-    name: input.name,
+    variety: input.variety,
     sku: input.sku,
-    type: input.type,
-    beanType: input.beanType,
     category: input.category,
+    beanType: input.beanType,
+    plant: input.plant,
     latin: input.latin,
     difficulty: input.difficulty,
     exposure: input.exposure,
@@ -33,11 +33,11 @@ export function createUserSeedFromBrowse(seed: BrowseSeed) {
     id: '',
     catalogSeedId: seed.id,
     customSeedId: null,
-    name: seed.name,
+    variety: seed.variety,
     sku: seed.sku,
-    type: seed.type,
-    beanType: seed.beanType,
     category: seed.category,
+    beanType: seed.beanType,
+    plant: seed.plant,
     latin: seed.latin,
     difficulty: seed.difficulty,
     exposure: seed.exposure,
@@ -61,11 +61,11 @@ export function createUserSeedFromBrowse(seed: BrowseSeed) {
 export function mapCatalogRowToBrowseSeed(row: any): BrowseSeed {
   return buildBrowseSeed({
     id: row.id,
-    name: row.name,
+    variety: row.variety,
     sku: row.sku,
-    type: row.type,
-    beanType: row.bean_type,
     category: row.category,
+    beanType: row.bean_type,
+    plant: row.plant,
     latin: row.latin,
     difficulty: row.difficulty,
     exposure: row.exposure,
@@ -84,16 +84,16 @@ export function mapCatalogRowToBrowseSeed(row: any): BrowseSeed {
 
 // Attach the planting actions to the seeds
 export function attachPlantingToSeeds(seeds: BrowseSeed[], plantingActions: PlantingActionRow[]): BrowseSeed[] {
-  const plantingActionsByCategory = groupPlantingActionsByCategory(plantingActions);
+  const plantingActionsByPlant = groupPlantingActionsByPlant(plantingActions);
 
   return seeds.map((seed) => {
-    const category = seed.category.toLowerCase();
+    const plant = seed.plant.toLowerCase();
     const beanVariant = matchBeanVariant(seed.beanType);
-    const plantingActionKey = `${category}-${beanVariant}`;
+    const plantingActionKey = `${plant}-${beanVariant}`;
 
     return {
       ...seed,
-      planting: plantingActionsByCategory.get(plantingActionKey) ?? [],
+      planting: plantingActionsByPlant.get(plantingActionKey) ?? [],
     } as BrowseSeed;
   });
 }

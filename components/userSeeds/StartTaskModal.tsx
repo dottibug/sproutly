@@ -3,11 +3,13 @@ import { useMemo, useState } from 'react';
 import { Modal, View, TextInput, Pressable, Text, StyleSheet, Platform } from 'react-native';
 import { appStyles, colors } from '../../styles/theme';
 import Heading from '../ui/Heading';
-import Button from '../ui/buttons/Button';
-import { TaskType } from '../../state/userSeeds/types/taskTypes';
+import Button from '../ui/buttons/AppButton';
+import { TaskType } from '../../state/userSeeds/tasks/taskTypes';
 import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
+import AppModal from '../ui/AppModal';
 
-// TODO: Notes, photos, and tasks share a lot of the same code; refactor and organize better
+// TODO: Error handling if both the title and notes are blank (nothing to save)
+// TODO: Text in the modal such as "Add a new task for {seed variety} {seed plant}"
 
 // TODO: add a clear all tasks button
 
@@ -47,72 +49,74 @@ export default function StartTaskModal({ visible, onRequestClose, userSeedId }: 
   const handleSaveTask = async () => {
     const payloadDate = new Date(taskDate);
     payloadDate.setHours(12, 0, 0, 0); // noon
-    await addTask({ userSeedId, taskType, date: payloadDate.toISOString(), title: title.trim() || null, notes: notes.trim() });
+    const payloadTitle = title.trim() || null;
+    const payloadNotes = notes.trim();
+
+    // TODO: Error handling to go here
+
+    // Do not await database insert
+    addTask({ userSeedId, taskType, date: payloadDate.toISOString(), title: payloadTitle, notes: payloadNotes }).catch((error) =>
+      console.error('Error adding task to seed:', error),
+    );
+
     onRequestClose();
   };
 
   return (
-    <Modal visible={visible} onRequestClose={onRequestClose} transparent animationType="fade">
-      <View style={appStyles.modalContainer}>
-        <View style={appStyles.modalContent}>
-          <Heading size="xsmall">New Task</Heading>
-
-          <View style={styles.section}>
-            <Heading size="xsmall">Type</Heading>
-            <View style={styles.typeRow}>
-              {TASK_TYPES.map((type) => {
-                const selected = taskType === type;
-                return (
-                  <Pressable key={type} onPress={() => setTaskType(type)} style={[styles.typeChip, selected && styles.typeChipSelected]}>
-                    <Text style={[styles.typeChipText, selected && styles.typeChipTextSelected]}>{type}</Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-          </View>
-
-          <View style={appStyles.customSeedInputSection}>
-            <Heading size="xsmall">Title (optional)</Heading>
-            <TextInput placeholder="Task title" value={title} onChangeText={setTitle} style={appStyles.customSeedInput} />
-          </View>
-
-          <View style={appStyles.customSeedInputSection}>
-            <Heading size="xsmall">Date</Heading>
-            <Pressable style={appStyles.customSeedInput} onPress={() => setShowDatePicker(true)}>
-              <Text>{formatDate(taskDate)}</Text>
-            </Pressable>
-
-            {showDatePicker && (
-              <DateTimePicker
-                value={taskDate}
-                mode="date"
-                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                minimumDate={new Date()}
-                onChange={(event, selected) => {
-                  if (Platform.OS === 'android') setShowDatePicker(false);
-                  if (!selected) return;
-                  setTaskDate(selected);
-                }}
-              />
-            )}
-          </View>
-
-          <View style={appStyles.customSeedInputSection}>
-            <Heading size="xsmall">Notes (optional)</Heading>
-            <TextInput
-              placeholder="Optional details"
-              value={notes}
-              onChangeText={setNotes}
-              multiline
-              style={appStyles.customSeedMultilineInput}
-            />
-          </View>
-
-          <Button text="Save Task" size="small" onPress={handleSaveTask} />
-          <Button text="Cancel" size="small" onPress={onRequestClose} color="secondary" />
+    <AppModal visible={visible} onRequestClose={onRequestClose} title="New Task">
+      <View style={styles.section}>
+        <Heading size="xsmall">Type</Heading>
+        <View style={styles.typeRow}>
+          {TASK_TYPES.map((type) => {
+            const selected = taskType === type;
+            return (
+              <Pressable key={type} onPress={() => setTaskType(type)} style={[styles.typeChip, selected && styles.typeChipSelected]}>
+                <Text style={[styles.typeChipText, selected && styles.typeChipTextSelected]}>{type}</Text>
+              </Pressable>
+            );
+          })}
         </View>
       </View>
-    </Modal>
+
+      <View style={appStyles.customSeedInputSection}>
+        <Heading size="xsmall">Title (optional)</Heading>
+        <TextInput placeholder="Task title" value={title} onChangeText={setTitle} style={appStyles.customSeedInput} />
+      </View>
+
+      <View style={appStyles.customSeedInputSection}>
+        <Heading size="xsmall">Date</Heading>
+        <Pressable style={appStyles.customSeedInput} onPress={() => setShowDatePicker(true)}>
+          <Text>{formatDate(taskDate)}</Text>
+        </Pressable>
+
+        {showDatePicker && (
+          <DateTimePicker
+            value={taskDate}
+            mode="date"
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+            minimumDate={new Date()}
+            onChange={(event, selected) => {
+              if (Platform.OS === 'android') setShowDatePicker(false);
+              if (!selected) return;
+              setTaskDate(selected);
+            }}
+          />
+        )}
+      </View>
+
+      <View style={appStyles.customSeedInputSection}>
+        <Heading size="xsmall">Notes (optional)</Heading>
+        <TextInput
+          placeholder="Optional details"
+          value={notes}
+          onChangeText={setNotes}
+          multiline
+          style={appStyles.customSeedMultilineInput}
+        />
+      </View>
+
+      <Button text="Save Task" size="small" onPress={handleSaveTask} />
+    </AppModal>
   );
 }
 

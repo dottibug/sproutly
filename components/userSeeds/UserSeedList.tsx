@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { UserSeed } from '../../state/userSeeds/types/seedTypes';
+import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
 import UserSeedCard from './UserSeedCard';
 
 type UserSeedListProps = {

@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
-import { UserSeed } from '../../state/userSeeds/types/seedTypes';
+import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
 import { BrowseSeed } from '../../state/browseSeeds/browseTypes';
 import { ScrollView, View, Text, StyleSheet } from 'react-native';
 import SeedImage from '../seeds/SeedImage';
@@ -9,8 +9,8 @@ import Heading from '../ui/Heading';
 import { typography } from '../../styles/theme';
 import SeedQuickFacts from '../seeds/SeedQuickFacts';
 import Accordion from '../ui/Accordion';
-import Button from '../ui/buttons/Button';
-import { Exposure } from '../../state/userSeeds/types/seedInfoTypes';
+import Button from '../ui/buttons/AppButton';
+import { Exposure } from '../../state/userSeeds/seeds/seedInfoTypes';
 
 const DESCRIPTION = 'Description';
 const TIMING = 'Timing';
@@ -60,13 +60,13 @@ export default function BrowseSeedScreen({ seed }: BrowseSeedProps) {
 
       <View>
         <SeedHeader
-          name={seed.name}
-          category={seed.category}
+          variety={seed.variety}
+          plant={seed.plant}
           beanType={seed.beanType}
           seedSKU={seed.sku}
           catalogId={seed.id}
           inUserCollection={inUserCollection}
-          type={seed.type}
+          category={seed.category}
           exposure={seed.exposure as Exposure}
         />
 

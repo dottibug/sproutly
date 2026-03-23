@@ -1,6 +1,6 @@
 import { View, Text, Pressable } from 'react-native';
 import { UserSeedTab } from '../../state/app/appTypes';
-import { UserSeed } from '../../state/userSeeds/types/seedTypes';
+import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useState } from 'react';
 import StartNoteModal from './notes/StartNoteModal';
@@ -16,7 +16,7 @@ type UserSeedNotesProps = {
 const NO_NOTES = 'No notes found. Add a note to get started.';
 
 // UserSeedNotes component displays the notes of a single seed in the user's collection
-export default function UserSeedNotes({ activeTab, seed }: UserSeedNotesProps) {
+export default function UserSeedNotes({ seed, activeTab }: UserSeedNotesProps) {
   const [showStartNoteModal, setShowStartNoteModal] = useState(false);
 
   const notes = seed.notes ?? [];

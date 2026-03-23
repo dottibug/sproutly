@@ -1,4 +1,4 @@
-import { StyleSheet, Text } from 'react-native';
+import { StyleProp, StyleSheet, Text, TextStyle } from 'react-native';
 import { colors } from '../../styles/theme';
 
 type HeadingProps = {
@@ -7,10 +7,18 @@ type HeadingProps = {
   readonly size?: 'xsmall' | 'small' | 'medium' | 'large';
   readonly marginVertical?: number;
   readonly uppercase?: boolean;
+  readonly customStyles?: StyleProp<TextStyle>;
 };
 
 // Heading component that applies styles based on size and color props. Can be uppercase.
-export default function Heading({ children, color = 'primary', size = 'medium', marginVertical = 0, uppercase = false }: HeadingProps) {
+export default function Heading({
+  children,
+  color = 'primary',
+  size = 'medium',
+  marginVertical = 0,
+  uppercase = false,
+  customStyles,
+}: HeadingProps) {
   const headingStyle = () => {
     let headingStyles = [];
     if (size === 'xsmall') headingStyles.push(styles.xsmallHeading);
@@ -23,7 +31,7 @@ export default function Heading({ children, color = 'primary', size = 'medium', 
     return headingStyles;
   };
 
-  return <Text style={[headingStyle(), { marginTop: marginVertical, marginBottom: marginVertical }]}>{children}</Text>;
+  return <Text style={[headingStyle(), { marginTop: marginVertical, marginBottom: marginVertical }, customStyles]}>{children}</Text>;
 }
 
 const styles = StyleSheet.create({

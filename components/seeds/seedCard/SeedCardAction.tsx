@@ -1,23 +1,23 @@
 import { View, Text, StyleSheet } from 'react-native';
 import SeedCardOverlay from './SeedCardOverlay';
 import { colors } from '../../../styles/theme';
-import Button from '../../ui/buttons/Button';
+import Button from '../../ui/buttons/AppButton';
 
 const CANCEL = 'Cancel';
 const ADD = 'Add';
 const DELETE = 'Delete';
 
 type SeedCardActionProps = {
-  readonly seedName: string;
-  readonly seedCategory: string;
+  readonly variety: string;
+  readonly plant: string;
   readonly action: typeof ADD | typeof DELETE;
   readonly onCancel: () => void;
   readonly onAction: () => void;
 };
 
 // SeedCardAction component displays the action buttons for a single seed in the user's collection or the browse list
-export default function SeedCardAction({ seedName, seedCategory, action, onCancel, onAction }: SeedCardActionProps) {
-  const seed = `${seedName} ${seedCategory}`;
+export default function SeedCardAction({ variety, plant, action, onCancel, onAction }: SeedCardActionProps) {
+  const seed = `${variety} ${plant}`;
   const actionColor = action === ADD ? 'primary' : 'danger';
   const actionIcon = action === ADD ? 'add' : 'delete';
 

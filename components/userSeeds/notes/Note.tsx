@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
-import { UserSeedNote } from '../../../state/userSeeds/types/noteTypes';
+import { UserSeedNote } from '../../../state/userSeeds/notes/noteTypes';
 import { colors } from '../../../styles/theme';
 import Heading from '../../ui/Heading';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
