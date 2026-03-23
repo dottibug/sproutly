@@ -1,13 +1,15 @@
 import { View, Pressable, Text, StyleSheet } from 'react-native';
 import { useFilters } from '../../state/filters/FiltersContext';
-import { FILTERS } from '../../state/filters/filterTypes';
+import { SEARCH_FILTER_NAMES } from '../../state/filters/filterTypes';
 import FilterChip from './FilterChip';
 import { colors } from '../../styles/theme';
 
 // TODO: Styling of chips and clear all filters button
 export default function FilterChips() {
   const { selected, clearAllSelected } = useFilters();
-  const chips = FILTERS.flatMap((filter) => selected[filter].map((option) => ({ filter, option })));
+
+  const chips = SEARCH_FILTER_NAMES.flatMap((filter) => selected[filter].map((option) => ({ filter, option })));
+
   const handleClearAllFilters = () => clearAllSelected();
 
   return (

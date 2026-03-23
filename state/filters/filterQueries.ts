@@ -1,5 +1,5 @@
 import { supabase } from '../app/supabase';
-import { UserFilterPreferences, FILTERS, DEFAULT_OPEN, Filter } from './filterTypes';
+import { UserFilterPreferences, SEARCH_FILTER_NAMES, DEFAULT_OPEN, SearchFilter } from './filterTypes';
 
 // Fetch user filter preferences from the database
 export async function fetchUserFilterPrefs(profileId: string): Promise<UserFilterPreferences> {
@@ -8,8 +8,8 @@ export async function fetchUserFilterPrefs(profileId: string): Promise<UserFilte
   if (error) throw error;
 
   return {
-    order: (data.filter_order as Filter[]) ?? FILTERS,
-    openByDefault: (data.filter_expanded_by_default as Filter[]) ?? DEFAULT_OPEN,
+    order: (data.filter_order as SearchFilter[]) ?? SEARCH_FILTER_NAMES,
+    openByDefault: (data.filter_expanded_by_default as SearchFilter[]) ?? DEFAULT_OPEN,
   };
 }
 

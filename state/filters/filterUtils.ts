@@ -1,4 +1,4 @@
-import { SelectedFilters, UserFilterPreferences, OpenFilters, FILTERS, DEFAULT_OPEN, CategoryFilter } from './filterTypes';
+import { SelectedFilters, UserFilterPreferences, OpenFilters, SEARCH_FILTER_NAMES, DEFAULT_OPEN, CategoryFilter } from './filterTypes';
 import { UserSeed } from '../userSeeds/seeds/seedTypes';
 import { BrowseSeed } from '../browseSeeds/browseTypes';
 import { MONTH_MAP, PlantingAction } from '../userSeeds/seeds/seedInfoTypes';
@@ -10,7 +10,7 @@ import { fetchUserFilterPrefs, updateUserFilterPrefs } from './filterQueries';
  */
 export function getOpenFilters(selected: SelectedFilters, preferences: UserFilterPreferences): OpenFilters {
   const open: OpenFilters = {};
-  for (const filter of FILTERS) {
+  for (const filter of SEARCH_FILTER_NAMES) {
     open[filter] = selected[filter].length > 0 || preferences.openByDefault.includes(filter);
   }
   return open;
@@ -18,13 +18,13 @@ export function getOpenFilters(selected: SelectedFilters, preferences: UserFilte
 
 // Fetch user filter preferences from the database
 export async function getUserFilterPreferences(profileId: string): Promise<UserFilterPreferences> {
-  if (!profileId) return { order: FILTERS, openByDefault: DEFAULT_OPEN };
+  if (!profileId) return { order: SEARCH_FILTER_NAMES, openByDefault: DEFAULT_OPEN };
   const userFilterPrefs = await fetchUserFilterPrefs(profileId);
   return userFilterPrefs;
 }
 
 export async function updateUserFilterPreferences(profileId: string, preferences: UserFilterPreferences): Promise<UserFilterPreferences> {
-  if (!profileId) return { order: FILTERS, openByDefault: DEFAULT_OPEN } as UserFilterPreferences;
+  if (!profileId) return { order: SEARCH_FILTER_NAMES, openByDefault: DEFAULT_OPEN } as UserFilterPreferences;
   const userFilterPrefs = await updateUserFilterPrefs(profileId, preferences);
   return userFilterPrefs;
 }
@@ -33,7 +33,7 @@ export async function updateUserFilterPreferences(profileId: string, preferences
 export function applyFilters(seeds: UserSeed[], selectedFilters: SelectedFilters) {
   let list = seeds;
 
-  for (const filter of FILTERS) {
+  for (const filter of SEARCH_FILTER_NAMES) {
     const selected = selectedFilters[filter];
     if (selected.length === 0) continue; // No filters selected in this section
 

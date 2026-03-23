@@ -3,12 +3,12 @@ import { List } from 'react-native-paper';
 import { colors } from '../../styles/theme';
 import FilterOption from './FilterOption';
 import { useFilters } from '../../state/filters/FiltersContext';
-import { Filter } from '../../state/filters/filterTypes';
+import { type SearchFilter } from '../../state/filters/filterTypes';
 
 type FilterCategoryProps = {
   readonly title: string;
   readonly options: string[];
-  readonly filter: Filter;
+  readonly filter: SearchFilter;
 };
 
 export default function FilterCategory({ title, options, filter }: FilterCategoryProps) {

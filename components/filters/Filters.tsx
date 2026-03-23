@@ -1,7 +1,7 @@
 import { View, StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
 import { useFilters } from '../../state/filters/FiltersContext';
-import { FILTER_MAP, FILTER_OPTIONS } from '../../state/filters/filterTypes';
+import { FILTER_NAME_MAP, SEARCH_FILTERS } from '../../state/filters/filterTypes';
 import FilterCategory from './FilterCategory';
 import { colors } from '../../styles/theme';
 
@@ -26,7 +26,15 @@ export default function Filters({ open, setOpen }: FiltersProps) {
   };
 
   console.log('preferences in Filters.tsx: ', preferences);
-  console.log('options in Filters.tsx: ', FILTER_OPTIONS);
+  console.log('options in Filters.tsx: ', SEARCH_FILTERS);
+
+  console.log('SEARCH_FILTERS[category]: ', SEARCH_FILTERS['category']);
+  console.log('SEARCH_FILTERS[starting]: ', SEARCH_FILTERS['starting']);
+  console.log('SEARCH_FILTERS[exposure]: ', SEARCH_FILTERS['exposure']);
+  console.log('SEARCH_FILTERS[season]: ', SEARCH_FILTERS['season']);
+  console.log('SEARCH_FILTERS[month]: ', SEARCH_FILTERS['month']);
+  console.log('SEARCH_FILTERS[readyToHarvest]: ', SEARCH_FILTERS['readyToHarvest']);
+  console.log('SEARCH_FILTERS[difficulty]: ', SEARCH_FILTERS['difficulty']);
 
   return (
     <List.Accordion
@@ -39,7 +47,7 @@ export default function Filters({ open, setOpen }: FiltersProps) {
       <View style={styles.accordionContent}>
         <View style={styles.filters}>
           {preferences.order.map((filter) => (
-            <FilterCategory key={filter} title={FILTER_MAP[filter]} options={FILTER_OPTIONS[filter]} filter={filter} />
+            <FilterCategory key={filter} title={FILTER_NAME_MAP[filter]} options={SEARCH_FILTERS[filter]} filter={filter} />
           ))}
         </View>
       </View>

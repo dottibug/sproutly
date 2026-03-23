@@ -1,11 +1,11 @@
 import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useFilters } from '../../state/filters/FiltersContext';
-import { Filter } from '../../state/filters/filterTypes';
+import { type SearchFilter } from '../../state/filters/filterTypes';
 import { colors } from '../../styles/theme';
 
 type FilterOptionProps = {
   readonly option: string;
-  readonly filter: Filter;
+  readonly filter: SearchFilter;
 };
 
 export default function FilterOption({ option, filter }: FilterOptionProps) {

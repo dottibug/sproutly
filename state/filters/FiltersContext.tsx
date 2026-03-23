@@ -1,14 +1,14 @@
 import { createContext, useReducer, useEffect, useCallback, useMemo, useContext } from 'react';
 import { useAuth } from '../app/AuthContext';
-import { Filter, OpenFilters, SelectedFilters, UserFilterPreferences, FILTERS, DEFAULT_OPEN } from './filterTypes';
+import { SearchFilter, OpenFilters, SelectedFilters, UserFilterPreferences, SEARCH_FILTER_NAMES, DEFAULT_OPEN } from './filterTypes';
 import { getOpenFilters, getUserFilterPreferences, updateUserFilterPreferences } from './filterUtils';
 
 // ---- TYPES ----
 export type FilterAction =
-  | { type: 'SET_SELECTED'; payload: { filter: Filter; value: string[] } }
-  | { type: 'CLEAR_SELECTED'; payload: Filter }
+  | { type: 'SET_SELECTED'; payload: { filter: SearchFilter; value: string[] } }
+  | { type: 'CLEAR_SELECTED'; payload: SearchFilter }
   | { type: 'CLEAR_ALL_SELECTED' }
-  | { type: 'SET_OPEN_FILTERS'; payload: { filter: Filter; open: boolean } }
+  | { type: 'SET_OPEN_FILTERS'; payload: { filter: SearchFilter; open: boolean } }
   | { type: 'OPEN_FILTERS'; payload: OpenFilters }
   | { type: 'SET_FILTER_PREFERENCES'; payload: UserFilterPreferences }
   | { type: 'LOAD_FILTER_PREFERENCES'; payload: UserFilterPreferences }
@@ -23,7 +23,7 @@ type FilterState = {
 };
 
 const initialPreferences: UserFilterPreferences = {
-  order: FILTERS,
+  order: SEARCH_FILTER_NAMES,
   openByDefault: DEFAULT_OPEN,
 };
 
@@ -71,10 +71,10 @@ function filterReducer(state: FilterState, action: FilterAction): FilterState {
 
 // ---- CONTEXT SETUP ----
 type FilterContextValue = FilterState & {
-  setSelected: (filter: Filter, value: string[]) => void;
-  clearSelected: (filter: Filter) => void;
+  setSelected: (filter: SearchFilter, value: string[]) => void;
+  clearSelected: (filter: SearchFilter) => void;
   clearAllSelected: () => void;
-  setOpenFilters: (filter: Filter, open: boolean) => void;
+  setOpenFilters: (filter: SearchFilter, open: boolean) => void;
   applyOpenFilters: () => void;
   setFilterPreferences: (prefs: UserFilterPreferences) => void;
   loadFilterPreferences: () => Promise<void>;
@@ -105,15 +105,15 @@ export function FilterProvider({ children }: FilterProviderProps) {
   }, [profile?.id, loadFilterPreferences]);
 
   const setSelected = useCallback(
-    (filter: Filter, value: SelectedFilters[Filter]) => dispatch({ type: 'SET_SELECTED', payload: { filter, value } }),
+    (filter: SearchFilter, value: SelectedFilters[SearchFilter]) => dispatch({ type: 'SET_SELECTED', payload: { filter, value } }),
     [],
   );
 
-  const clearSelected = useCallback((filter: Filter) => dispatch({ type: 'CLEAR_SELECTED', payload: filter }), []);
+  const clearSelected = useCallback((filter: SearchFilter) => dispatch({ type: 'CLEAR_SELECTED', payload: filter }), []);
   const clearAllSelected = useCallback(() => dispatch({ type: 'CLEAR_ALL_SELECTED' }), []);
 
   const setOpenFilters = useCallback(
-    (filter: Filter, open: boolean) => dispatch({ type: 'SET_OPEN_FILTERS', payload: { filter, open } }),
+    (filter: SearchFilter, open: boolean) => dispatch({ type: 'SET_OPEN_FILTERS', payload: { filter, open } }),
     [],
   );
 

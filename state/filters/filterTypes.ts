@@ -1,23 +1,24 @@
 import { DIFFICULTY, EXPOSURE, STARTING, SEASON, MONTH, READY_TO_HARVEST, CATEGORIES } from '../userSeeds/seeds/seedInfoTypes';
 
-export type Filter = 'category' | 'starting' | 'exposure' | 'season' | 'month' | 'readyToHarvest' | 'difficulty';
+export type SearchFilter = 'category' | 'starting' | 'exposure' | 'season' | 'month' | 'readyToHarvest' | 'difficulty';
 export type CategoryFilter = 'Veggie' | 'Flower' | 'Fruit' | 'Herb';
 
-export type SelectedFilters = Record<Filter, string[]>;
-export type OpenFilters = Partial<Record<Filter, boolean>>;
+export type SelectedFilters = Record<SearchFilter, string[]>;
+export type OpenFilters = Partial<Record<SearchFilter, boolean>>;
 
 export type UserFilterPreferences = {
-  order: Filter[];
-  openByDefault: Filter[];
+  order: SearchFilter[];
+  openByDefault: SearchFilter[];
 };
 
 // ---- CONSTANTS ----
-export const FILTERS: Filter[] = ['category', 'starting', 'exposure', 'season', 'month', 'readyToHarvest', 'difficulty'];
+export const SEARCH_FILTER_NAMES: SearchFilter[] = ['category', 'starting', 'exposure', 'season', 'month', 'readyToHarvest', 'difficulty'];
+
 export const CATEGORY_FILTERS: CategoryFilter[] = ['Veggie', 'Flower', 'Fruit', 'Herb'];
 
-export const DEFAULT_OPEN: Filter[] = ['category', 'starting'];
+export const DEFAULT_OPEN: SearchFilter[] = ['category', 'starting'];
 
-export const FILTER_MAP: Record<Filter, string> = {
+export const FILTER_NAME_MAP: Record<SearchFilter, string> = {
   category: 'Category',
   starting: 'Starting',
   exposure: 'Exposure',
@@ -27,7 +28,7 @@ export const FILTER_MAP: Record<Filter, string> = {
   difficulty: 'Difficulty',
 };
 
-export const FILTER_OPTIONS: Record<Filter, string[]> = {
+export const SEARCH_FILTERS: Record<SearchFilter, string[]> = {
   category: CATEGORIES,
   starting: STARTING,
   exposure: EXPOSURE,
