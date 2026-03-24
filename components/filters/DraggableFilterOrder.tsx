@@ -1,6 +1,6 @@
 import { Text, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useState, useEffect } from 'react';
-import { Filter, FILTER_MAP } from '../../state/filters/filterTypes';
+import { SearchFilter, FILTER_NAME_MAP } from '../../state/filters/filterTypes';
 import DragList, { DragListRenderItemInfo } from 'react-native-draglist';
 import { colors } from '../../styles/theme';
 
@@ -12,19 +12,19 @@ type FilterItem = {
 };
 
 type DraggableFilterOrderProps = {
-  readonly order: Filter[];
-  readonly onOrderChange: (order: Filter[]) => void;
+  readonly order: SearchFilter[];
+  readonly onOrderChange: (order: SearchFilter[]) => void;
 };
 
 export default function DraggableFilterOrder({ order, onOrderChange }: DraggableFilterOrderProps) {
-  const initialOrder = order.map((filter) => ({ key: filter, label: FILTER_MAP[filter] }));
+  const initialOrder = order.map((filter) => ({ key: filter, label: FILTER_NAME_MAP[filter] }));
 
   // Local state to track the order/reordering of filters
   const [data, setData] = useState<FilterItem[]>(initialOrder);
 
   // Update the UI when filter order changes
   useEffect(() => {
-    setData(order.map((filter) => ({ key: filter, label: FILTER_MAP[filter] })));
+    setData(order.map((filter) => ({ key: filter, label: FILTER_NAME_MAP[filter] })));
   }, [order]);
 
   const renderItem = (info: DragListRenderItemInfo<FilterItem>) => {
@@ -46,7 +46,7 @@ export default function DraggableFilterOrder({ order, onOrderChange }: Draggable
     const [removed] = dataCopy.splice(fromIndex, 1);
     dataCopy.splice(toIndex, 0, removed);
     setData(dataCopy);
-    onOrderChange(dataCopy.map((item) => item.key as Filter));
+    onOrderChange(dataCopy.map((item) => item.key as SearchFilter));
   }
 
   return (

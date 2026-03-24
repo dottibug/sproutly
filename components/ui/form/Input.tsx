@@ -1,8 +1,8 @@
 import { View, TextInput, Text, StyleSheet } from 'react-native';
-import Heading from '../ui/Heading';
+import Heading from '../Heading';
 import Foundation from '@expo/vector-icons/Foundation';
-import { colors } from '../../styles/theme';
-import IconButton from '../ui/buttons/IconButton';
+import { colors } from '../../../styles/theme';
+import IconButton from '../buttons/IconButton';
 
 type InputProps = {
   readonly required?: boolean;

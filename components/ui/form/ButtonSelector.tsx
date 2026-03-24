@@ -1,8 +1,8 @@
 import { View, StyleSheet } from 'react-native';
 import { SegmentedButtons } from 'react-native-paper';
-import Heading from '../ui/Heading';
-import { colors } from '../../styles/theme';
-import IconButton from '../ui/buttons/IconButton';
+import Heading from '../Heading';
+import { colors } from '../../../styles/theme';
+import IconButton from '../buttons/IconButton';
 
 type SelectorProps = {
   readonly disabled?: boolean;

@@ -15,12 +15,12 @@ import Heading from '../../../components/ui/Heading';
 
 import { createCustomSeedPayload } from '../../../state/customSeedForm/customSeedUtils';
 
-import Input from '../../../components/form/Input';
+import Input from '../../../components/ui/form/Input';
 import { CustomSeedFormErrors } from '../../../state/customSeedForm/customSeedTypes';
 import { cleanCustomSeedForm, isValid, validateCustomSeedForm } from '../../../components/customSeeds/helpers/validateCustomSeedForm';
-import ButtonSelector from '../../../components/form/ButtonSelector';
+import ButtonSelector from '../../../components/ui/form/ButtonSelector';
 import { BeanType, Category, Difficulty, DIFFICULTY, Exposure, EXPOSURE } from '../../../state/userSeeds/seeds/seedInfoTypes';
-import ListSelector from '../../../components/form/ListSelector';
+import ListSelector from '../../../components/ui/form/ListSelector';
 import IconButton from '../../../components/ui/buttons/IconButton';
 import AppModal from '../../../components/ui/AppModal';
 

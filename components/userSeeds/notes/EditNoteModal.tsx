@@ -1,11 +1,11 @@
-import { UserSeedNote } from '../../state/userSeeds/notes/noteTypes';
-import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
+import { UserSeedNote } from '../../../state/userSeeds/notes/noteTypes';
+import { useUserSeed } from '../../../state/userSeeds/UserSeedsContext';
 import { useEffect, useState } from 'react';
 import { Modal, TextInput, View } from 'react-native';
-import { appStyles } from '../../styles/theme';
-import Heading from '../ui/Heading';
-import Button from '../ui/buttons/AppButton';
-import AppModal from '../ui/AppModal';
+import { appStyles } from '../../../styles/theme';
+import Heading from '../../ui/Heading';
+import Button from '../../ui/buttons/AppButton';
+import AppModal from '../../ui/AppModal';
 
 type EditNoteModalProps = {
   readonly visible: boolean;

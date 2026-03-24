@@ -6,7 +6,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useUserSeed } from '../../../state/userSeeds/UserSeedsContext';
 import { useState } from 'react';
-import EditNoteModal from '../EditNoteModal';
+import EditNoteModal from '../notes/EditNoteModal';
 
 // TODO: Use a modal for delete confirmation instead of Alert?
 

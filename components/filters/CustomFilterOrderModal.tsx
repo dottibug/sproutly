@@ -1,7 +1,7 @@
 import { View, Modal } from 'react-native';
 import { useCallback, useState, useEffect } from 'react';
 import { useFilters } from '../../state/filters/FiltersContext';
-import { Filter } from '../../state/filters/filterTypes';
+import { SearchFilter } from '../../state/filters/filterTypes';
 import Button from '../ui/buttons/AppButton';
 import DraggableFilterOrder from './DraggableFilterOrder';
 import { appStyles } from '../../styles/theme';
@@ -15,7 +15,7 @@ type CustomFilterOrderModalProps = {
 
 export default function CustomFilterOrderModal({ visible, onRequestClose }: CustomFilterOrderModalProps) {
   const { preferences, setFilterPreferences, saveFilterPreferences } = useFilters();
-  const [editingOrder, setEditingOrder] = useState<Filter[]>(preferences.order);
+  const [editingOrder, setEditingOrder] = useState<SearchFilter[]>(preferences.order);
 
   const handleSave = useCallback(async () => {
     setFilterPreferences({ ...preferences, order: editingOrder });

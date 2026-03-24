@@ -13,6 +13,7 @@ import FilterChips from '../filters/FilterChips';
 import SearchBar from '../ui/SearchBar';
 import { colors, appStyles } from '../../styles/theme';
 import { FAB as PaperFAB } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AddSeedModal from './AddSeedModal';
 import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
 
@@ -26,7 +27,10 @@ type UserSeedsProps = {
 };
 
 // UserSeeds component displays the user's seed collection and a floating action button to add a new seed
+const FAB_MARGIN = 16;
+
 export default function UserSeeds({ activeTab, onGoToBrowse }: UserSeedsProps) {
+  const insets = useSafeAreaInsets();
   // State
   const [openFilterMenu, setOpenFilterMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -75,8 +79,9 @@ export default function UserSeeds({ activeTab, onGoToBrowse }: UserSeedsProps) {
         </View>
       </ScrollView>
       <PaperFAB
+        accessibilityLabel="Add seed"
         icon="plus"
-        style={[styles.addSeedFab, { backgroundColor: colors.hunterGreen }]}
+        style={[styles.addSeedFab, { backgroundColor: colors.hunterGreen, bottom: FAB_MARGIN + insets.bottom, right: FAB_MARGIN }]}
         color={colors.white}
         onPress={handleAddSeed}
       />
@@ -105,8 +110,5 @@ const styles = StyleSheet.create({
   },
   addSeedFab: {
     position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 0,
   },
 });

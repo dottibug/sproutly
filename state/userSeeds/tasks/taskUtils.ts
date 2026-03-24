@@ -194,30 +194,50 @@ export function getPendingTodayCount(tasks: UserSeedTask[], now = new Date()): n
   return tasks.filter((task) => task.status !== 'completed' && isDueToday(new Date(task.date), now)).length;
 }
 
+// Get the start of the day for a given date
+function startOfDay(date: Date): number {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0).getTime();
+}
+
+// Sort the timeline by completedAt date (most recent first)
+function sortTimeline(timeline: UserSeedTask[]) {
+  return [...timeline].sort((a, b) => {
+    const aTime = new Date(a.completedAt!).getTime();
+    const bTime = new Date(b.completedAt!).getTime();
+    return bTime - aTime;
+  });
+}
+
 export function splitTasks(tasks: UserSeedTask[]) {
-  const tasksPendingToday: UserSeedTask[] = [];
-  const tasksCompletedToday: UserSeedTask[] = [];
-  const upcomingTasks: UserSeedTask[] = [];
+  const pending: UserSeedTask[] = [];
+  const completedToday: UserSeedTask[] = [];
+  const upcoming: UserSeedTask[] = [];
   const timeline: UserSeedTask[] = [];
 
+  const today = startOfDay(new Date());
+
   tasks.forEach((task) => {
-    // Pending tasks due today
-    if (task.status === 'pending' && isToday(task.date)) tasksPendingToday.push(task);
-    // Completed tasks due today
-    else if (task.status === 'completed' && task.completedAt && isToday(task.completedAt)) tasksCompletedToday.push(task);
-    // Pending tasks not due today
-    else if (task.status === 'pending' && !isToday(task.date)) upcomingTasks.push(task);
-    // Completed tasks not due today
-    else if (task.status === 'completed' && task.completedAt && !isToday(task.completedAt)) timeline.push(task);
+    const due = startOfDay(new Date(task.date));
+
+    if (task.status === 'pending') {
+      if (due > today) upcoming.push(task);
+      else pending.push(task);
+      return;
+    }
+
+    if (task.status === 'completed') {
+      if (task.completedAt && isToday(task.completedAt)) completedToday.push(task);
+      else timeline.push(task);
+    }
   });
 
   // Sort timeline by completedAt date (most recent first)
-  const sortedTimeline = [...timeline].sort((a, b) => new Date(b.completedAt!).getTime() - new Date(a.completedAt!).getTime());
+  const sortedTimeline = sortTimeline(timeline);
 
   return {
-    tasksPendingToday,
-    tasksCompletedToday,
-    upcomingTasks,
+    pending,
+    completedToday,
+    upcoming,
     timeline: sortedTimeline,
   };
 }

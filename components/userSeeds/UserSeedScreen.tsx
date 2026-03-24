@@ -1,11 +1,11 @@
 import { UserSeedTab, USER_SEED_TABS } from '../../state/app/appTypes';
 import { useMemo, useState } from 'react';
 import UserSeedDetails from './UserSeedDetails';
-import UserSeedNotes from './UserSeedNotes';
+import UserSeedNotes from './notes/UserSeedNotes';
 import UserSeedPhotos from './UserSeedPhotos';
 import Tabs from '../ui/Tabs';
 import { getPendingTodayCount } from '../../state/userSeeds/tasks/taskUtils';
-import UserSeedTasks from './UserSeedTasks';
+import UserSeedTasks from './tasks/UserSeedTasks';
 import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
 import { colors } from '../../styles/theme';
 

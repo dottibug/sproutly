@@ -55,3 +55,5 @@ export type AddTaskDraft = {
   title: string | null;
   notes: string;
 };
+
+export type TaskSectionMode = 'editable' | 'todayDone' | 'timeline';

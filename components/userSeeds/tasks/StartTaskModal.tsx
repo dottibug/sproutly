@@ -1,12 +1,12 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useMemo, useState, useEffect } from 'react';
 import { View, TextInput, Pressable, Text, StyleSheet, Platform } from 'react-native';
-import { appStyles, colors } from '../../styles/theme';
-import Heading from '../ui/Heading';
-import Button from '../ui/buttons/AppButton';
-import { TaskType, UserSeedTask } from '../../state/userSeeds/tasks/taskTypes';
-import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
-import AppModal from '../ui/AppModal';
+import { appStyles, colors } from '../../../styles/theme';
+import Heading from '../../ui/Heading';
+import Button from '../../ui/buttons/AppButton';
+import { TaskType, UserSeedTask } from '../../../state/userSeeds/tasks/taskTypes';
+import { useUserSeed } from '../../../state/userSeeds/UserSeedsContext';
+import AppModal from '../../ui/AppModal';
 
 // TODO: Error handling if both the title and notes are blank (nothing to save)
 // TODO: Text in the modal such as "Add a new task for {seed variety} {seed plant}"
@@ -22,7 +22,7 @@ type StartTaskModalProps = {
   readonly editingTask?: UserSeedTask | null;
 };
 
-const TASK_TYPES: TaskType[] = ['sow', 'transplant', 'fertilize', 'harvest'];
+const TASK_TYPES: TaskType[] = ['sow', 'transplant', 'fertilize', 'harvest', 'prune'];
 
 const formatDate = (date: Date): string => {
   return date.toLocaleDateString(undefined, {

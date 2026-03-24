@@ -1,8 +1,8 @@
 import { View, StyleSheet } from 'react-native';
-import Heading from '../ui/Heading';
+import Heading from '../Heading';
 import { RadioButton } from 'react-native-paper';
-import { colors } from '../../styles/theme';
-import IconButton from '../ui/buttons/IconButton';
+import { colors } from '../../../styles/theme';
+import IconButton from '../buttons/IconButton';
 
 type ListSelectorProps = {
   readonly title: string;

@@ -17,9 +17,19 @@ export function searchSeeds(seeds: UserSeed[] | BrowseSeed[], searchQuery: strin
   const query = searchQuery.trim().toLowerCase();
   if (!query) return seeds;
 
-  // Nullish coalescing; don't use || because it will return true for falsy empty strings
-  return seeds.filter(
-    (seed) =>
-      seed.variety.toLowerCase().includes(query) ?? seed.category?.toLowerCase().includes(query) ?? seed.sku.toLowerCase().includes(query),
-  );
+  return seeds.filter((seed) => {
+    const variety = seed.variety?.toLowerCase() ?? '';
+    const plant = seed.plant?.toLowerCase() ?? '';
+    const category = seed.category?.toLowerCase() ?? '';
+    const sku = seed.sku?.toLowerCase() ?? '';
+
+    return variety.includes(query) || plant.includes(query) || category.includes(query) || sku.includes(query);
+  });
+}
+
+// ---- SORT UTILS ----
+export function sortByDate(a: string, b: string): number {
+  const aTime = new Date(a).getTime();
+  const bTime = new Date(b).getTime();
+  return bTime - aTime;
 }

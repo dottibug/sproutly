@@ -25,17 +25,6 @@ export default function Filters({ open, setOpen }: FiltersProps) {
     if (newOpen) applyOpenFilters();
   };
 
-  console.log('preferences in Filters.tsx: ', preferences);
-  console.log('options in Filters.tsx: ', SEARCH_FILTERS);
-
-  console.log('SEARCH_FILTERS[category]: ', SEARCH_FILTERS['category']);
-  console.log('SEARCH_FILTERS[starting]: ', SEARCH_FILTERS['starting']);
-  console.log('SEARCH_FILTERS[exposure]: ', SEARCH_FILTERS['exposure']);
-  console.log('SEARCH_FILTERS[season]: ', SEARCH_FILTERS['season']);
-  console.log('SEARCH_FILTERS[month]: ', SEARCH_FILTERS['month']);
-  console.log('SEARCH_FILTERS[readyToHarvest]: ', SEARCH_FILTERS['readyToHarvest']);
-  console.log('SEARCH_FILTERS[difficulty]: ', SEARCH_FILTERS['difficulty']);
-
   return (
     <List.Accordion
       title={FILTERS_TITLE}
