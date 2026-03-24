@@ -1,3 +1,5 @@
+import { UserSeed } from '../seeds/seedTypes';
+
 // ---- ACTIONS ----
 export type PhotoAction =
   | { type: 'ADD_PHOTO'; payload: UserSeedPhoto & { tempId: string } }
@@ -26,4 +28,11 @@ export type ImagePreview = {
 export type AddPhotoDraft = {
   userSeedId: string;
   preview?: ImagePreview | null;
+};
+
+// ---- GALLERY CELL ----
+export type GalleryCell = {
+  key: string;
+  photo: UserSeedPhoto;
+  seed: UserSeed;
 };

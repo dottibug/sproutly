@@ -34,6 +34,7 @@ export default function TabsLayout() {
         options={{
           title: 'Home',
           tabBarLabel: 'Seeds',
+          popToTopOnBlur: true,
           tabBarIcon: ({ color }) => <FontAwesome6 name="seedling" size={24} color={color} />,
         }}
       />

@@ -1,5 +1,5 @@
 import { UserSeed } from '../seeds/seedTypes';
-import { ImagePreview, UserSeedPhoto } from './photoTypes';
+import { ImagePreview, UserSeedPhoto, GalleryCell } from './photoTypes';
 import { getTimestamp } from '../../app/appUtils';
 import * as ImagePicker from 'expo-image-picker';
 
@@ -116,4 +116,41 @@ export function groupPhotosByUserSeedId(photos: UserSeedPhoto[]): Map<string, Us
   });
 
   return map;
+}
+
+// Flatten photos into a single list of GalleryCells
+export function flattenPhotos(seeds: UserSeed[]): GalleryCell[] {
+  const photos: GalleryCell[] = [];
+
+  for (const seed of seeds) {
+    for (const photo of seed.photos ?? []) photos.push({ key: photo.id, photo, seed });
+  }
+  // Sort photos by createdAt descending
+  photos.sort((a, b) => new Date(b.photo.createdAt).getTime() - new Date(a.photo.createdAt).getTime());
+  return photos;
+}
+
+// Calculate the aspect ratio of a photo (width / height)
+export function calculatePhotoAspectRatio(width: number, height: number): number {
+  if (width > 0 && height > 0) return width / height;
+  return 1;
+}
+
+// Get caption for the photo (variety and plant)
+export function getPhotoCaption(variety: string, plant: string): string {
+  if (!variety && !plant) return '';
+  if (variety && plant) return `${variety} ${plant}`;
+  if (variety) return variety;
+  return plant;
+}
+
+// Format the photo date for display (ex. "Mar 23, 2026")
+export function formatPhotoDate(iso: string): string {
+  const date = new Date(iso);
+
+  return date.toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
 }
