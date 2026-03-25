@@ -1,15 +1,17 @@
-import { ActivityIndicator, Text, StyleSheet } from 'react-native';
+import { ActivityIndicator, Text, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Logo from '../app/Logo';
 import { colors } from '../../styles/theme';
 
-// TODO: Styling
-
-// Loading screen for the app
+// AppLoadingScreen.tsx: Initial loading screen for the app
 export default function AppLoadingScreen() {
   return (
     <SafeAreaView style={styles.container}>
-      <ActivityIndicator size="large" color={colors.hunterGreen} />
-      <Text style={styles.message}>Loading...</Text>
+      <Logo size="large" />
+      <View style={styles.loadingMessageContainer}>
+        <ActivityIndicator size="large" color={colors.hunterGreen} />
+        <Text style={styles.message}>Germinating seeds...</Text>
+      </View>
     </SafeAreaView>
   );
 }
@@ -17,12 +19,19 @@ export default function AppLoadingScreen() {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    justifyContent: 'center',
     flex: 1,
+    gap: 32,
+    marginTop: 96,
+  },
+  loadingMessageContainer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 12,
+    justifyContent: 'center',
+    marginTop: 64,
   },
   message: {
-    color: colors.gray,
-    fontSize: 12,
-    marginTop: 16,
+    color: colors.hunterGreen,
+    fontSize: 20,
   },
 });

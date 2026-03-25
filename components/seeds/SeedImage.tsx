@@ -20,7 +20,7 @@ export default function SeedImage({ imageUri, size }: SeedImageProps) {
 
 const styles = StyleSheet.create({
   smallImage: {
-    borderRadius: 9,
+    borderRadius: 14,
     height: 96,
     width: 96,
   },

@@ -1,123 +1,118 @@
-import { useState } from 'react';
-import { useAuth } from '../../state/app/AuthContext';
+import { Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, Pressable, View, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, Pressable } from 'react-native';
-import { colors, typography } from '../../styles/theme';
+import { useState } from 'react';
+import { useAuth } from '../../state/auth/AuthContext';
+import { validateSignUp } from '../../state/auth/authUtils';
+import Logo from '../../components/app/Logo';
+import Input from '../../components/ui/form/Input';
+import AppButton from '../../components/ui/buttons/AppButton';
+import { colors } from '../../styles/theme';
 
-const TITLE = 'Create an account';
-const SUBTITLE = 'Choose a username';
-const CREATE_ACCOUNT = 'Create account';
-const CREATING_ACCOUNT = 'Creating...';
-const SIGN_IN = 'Already have an account? Sign in';
-
+// (auth)/signUp.tsx: Sign up page for the app
 export default function SignUp() {
+  const router = useRouter();
+  const { signUp } = useAuth();
+
   const [username, setUsername] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const { signUp, error, clearError } = useAuth();
-  const router = useRouter();
+
+  const windowWidth = useWindowDimensions().width;
+  const buttonWidth = windowWidth - PADDING * 2;
 
   const handleSignUp = async () => {
-    const usernameTrim = username.trim();
+    const error = validateSignUp(username);
 
-    if (!username) {
-      Alert.alert('Username required');
+    if (error) {
+      Alert.alert(error);
       return;
     }
 
-    setSubmitting(true);
-    clearError();
-
     try {
-      await signUp(usernameTrim);
+      setSubmitting(true);
+      await signUp(username);
       router.replace('/(tabs)/home');
-    } catch (error) {
-      Alert.alert('Sign up failed', error instanceof Error ? error.message : 'Username may be taken already');
+    } catch {
+      Alert.alert(SIGN_UP_FAILED, SIGN_UP_FAIL_MESSAGE);
     } finally {
       setSubmitting(false);
     }
   };
 
+  const handleSignIn = () => router.replace('/(auth)/');
+
   return (
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <Text style={styles.title}>{TITLE}</Text>
-      <Text style={styles.subtitle}>{SUBTITLE}</Text>
+      <Logo size="medium" />
 
-      {error ? <Text style={styles.error}>{error}</Text> : null}
+      <View style={styles.formContainer}>
+        <Text style={styles.description}>{SUBTITLE}</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={(text) => {
-          setUsername(text);
-          clearError();
-        }}
-        autoCapitalize="none"
-        autoCorrect={false}
-      />
+        <View style={styles.inputContainer}>
+          {/* Username Input */}
+          <Input label="Username" placeholder="Username" value={username} onChangeText={(text) => setUsername(text)} />
+        </View>
 
-      {/* Create Account Button */}
-      <Pressable style={[styles.button, submitting && styles.buttonDisabled]} onPress={handleSignUp} disabled={submitting}>
-        <Text style={styles.buttonText}>{submitting ? CREATING_ACCOUNT : CREATE_ACCOUNT}</Text>
-      </Pressable>
-
-      {/* Sign in link */}
-      <Pressable style={styles.signInLink} onPress={() => router.replace('/(auth)/')}>
-        <Text style={styles.signInLinkText}>{SIGN_IN}</Text>
-      </Pressable>
+        <View style={styles.buttonContainer}>
+          {/* Create Account button */}
+          <AppButton
+            text={submitting ? CREATING_ACCOUNT : CREATE_ACCOUNT}
+            onPress={handleSignUp}
+            disabled={submitting}
+            width={buttonWidth}
+          />
+          {/* Sign in link */}
+          <Pressable style={styles.signInLink} onPress={handleSignIn}>
+            <Text style={styles.signInLinkText}>{SIGN_IN}</Text>
+          </Pressable>
+        </View>
+      </View>
     </KeyboardAvoidingView>
   );
 }
 
+// ---- CONSTANTS ----
+const SUBTITLE = 'Choose a username';
+const CREATE_ACCOUNT = 'Create account';
+const CREATING_ACCOUNT = 'Creating...';
+const SIGN_UP_FAILED = 'Sign up failed';
+const SIGN_UP_FAIL_MESSAGE = 'Username may be taken already';
+const SIGN_IN = 'Already have an account? Sign in';
+const PADDING = 48;
+
+// ---- STYLES ----
 const styles = StyleSheet.create({
   container: {
+    alignItems: 'center',
     flex: 1,
-    padding: 24,
     justifyContent: 'center',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    color: colors.primary,
+  formContainer: {
+    alignItems: 'center',
+    marginTop: 48,
+    paddingHorizontal: 48,
   },
-  subtitle: {
-    fontSize: 16,
+  description: {
+    fontSize: 18,
     color: colors.secondary,
     marginBottom: 24,
+    textAlign: 'center',
   },
-  error: {
-    color: colors.red,
-    marginBottom: 12,
+  inputContainer: {
+    gap: 24,
   },
-  input: {
-    borderWidth: 1,
-    borderColor: colors.gray,
-    borderRadius: 8,
-    padding: 14,
-    fontSize: typography.textMedium.fontSize,
-    marginBottom: 12,
-  },
-  button: {
-    backgroundColor: colors.hunterGreen,
-    padding: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    color: colors.white,
-    fontSize: typography.textMedium.fontSize,
-    fontWeight: 'bold',
+  buttonContainer: {
+    gap: 16,
+    paddingHorizontal: PADDING,
+    marginTop: 32,
   },
   signInLink: {
-    marginTop: 24,
     alignItems: 'center',
+    marginTop: 24,
   },
   signInLinkText: {
-    color: colors.blue,
+    color: colors.hunterGreen,
+    fontSize: 16,
+    textDecorationColor: colors.hunterGreen,
+    textDecorationLine: 'underline',
   },
 });

@@ -55,7 +55,7 @@ export default function TaskTimeline({ tasks, emptyMessage }: TaskTimelineProps)
 
 function Description({ task }: { task: UserSeedTask }) {
   const typeLabel = task.customTaskType ?? task.taskType;
-  const taskLabelColor = TASK_TYPE_COLOR_MAP[task.taskType];
+  const taskLabelColor = TASK_TYPE_COLOR_MAP[task.taskType as keyof typeof TASK_TYPE_COLOR_MAP];
 
   const notes = (task.notes ?? '').trim();
   const hasNotes = notes.length > 0;
@@ -85,8 +85,8 @@ function mapTasksToTimelineData(tasks: UserSeedTask[]): TaskTimelineRow[] {
   return sortedTasks.map((task) => {
     const time = '';
     const title = '';
-    const lineColor = TASK_TYPE_COLOR_MAP[task.taskType];
-    const circleColor = TASK_TYPE_COLOR_MAP[task.taskType];
+    const lineColor = TASK_TYPE_COLOR_MAP[task.taskType as keyof typeof TASK_TYPE_COLOR_MAP];
+    const circleColor = TASK_TYPE_COLOR_MAP[task.taskType as keyof typeof TASK_TYPE_COLOR_MAP];
     const description = <Description task={task} />;
     return { taskId: task.id, time, title, description, lineColor, circleColor };
   });

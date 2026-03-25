@@ -1,11 +1,12 @@
-import { useAuth } from '../../state/app/AuthContext';
 import { useRouter, Stack } from 'expo-router';
 import { useEffect } from 'react';
+import { useAuth } from '../../state/auth/AuthContext';
 import AppLoadingScreen from '../../components/ui/AppLoadingScreen';
 
+// (auth)/_layout.tsx: Layout for the app auth screens. Redirects user to home screen (home)/_index.tsx if already signed in. Otherwise displays the sign-in/sign-up screens.
 export default function AuthLayout() {
-  const { session, loading } = useAuth();
   const router = useRouter();
+  const { session, loading } = useAuth();
 
   useEffect(() => {
     if (loading) return;
@@ -13,11 +14,8 @@ export default function AuthLayout() {
   }, [session, loading, router]);
 
   if (loading) return <AppLoadingScreen />;
-
-  // If the user is already signed in, redirect to the tabs
   if (session) return null;
 
-  // If the user is signed out, show the auth screens
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />

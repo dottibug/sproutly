@@ -1,11 +1,13 @@
 import { UserSeedNote } from '../../../state/userSeeds/notes/noteTypes';
 import { useUserSeed } from '../../../state/userSeeds/UserSeedsContext';
 import { useEffect, useState } from 'react';
-import { Modal, TextInput, View } from 'react-native';
+import { Alert, TextInput, View } from 'react-native';
 import { appStyles } from '../../../styles/theme';
 import Heading from '../../ui/Heading';
 import Button from '../../ui/buttons/AppButton';
 import AppModal from '../../ui/AppModal';
+import { noteHasContent } from '../../../state/userSeeds/notes/noteUtils';
+import Input from '../../ui/form/Input';
 
 type EditNoteModalProps = {
   readonly visible: boolean;
@@ -26,27 +28,24 @@ export default function EditNoteModal({ visible, onRequestClose, note }: EditNot
   }, [visible, note.title, note.note]);
 
   const handleSave = async () => {
-    console.log('editing note:', { id: note.id, noteUserId: note.userId, title, noteText });
+    const payloadTitle = title.trim() || null;
+    const payloadNote = noteText.trim();
+    if (!noteHasContent(payloadTitle, payloadNote)) {
+      Alert.alert('Cannot save', 'Enter a title or note (or both).');
+      return;
+    }
 
-    await updateNote({ ...note, title: title || null, note: noteText });
+    await updateNote({ ...note, title: payloadTitle, note: payloadNote });
     onRequestClose();
   };
 
   return (
     <AppModal visible={visible} onRequestClose={onRequestClose} title="Edit Note">
       <View style={appStyles.customSeedInputSection}>
-        <Heading size="xsmall">Title</Heading>
-        <TextInput placeholder="Note title" value={title} onChangeText={setTitle} style={appStyles.customSeedInput} />
+        <Input label="Title" placeholder="Note title" value={title} onChangeText={setTitle} />
       </View>
       <View style={appStyles.customSeedInputSection}>
-        <Heading size="xsmall">Note</Heading>
-        <TextInput
-          placeholder="Write your note here..."
-          value={noteText}
-          onChangeText={setNoteText}
-          multiline
-          style={appStyles.customSeedMultilineInput}
-        />
+        <Input label="Note" placeholder="Write your note here..." value={noteText} onChangeText={setNoteText} multiline />
       </View>
       <Button text="Save" size="small" onPress={handleSave} />
     </AppModal>

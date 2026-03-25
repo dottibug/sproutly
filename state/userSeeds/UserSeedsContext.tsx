@@ -1,12 +1,12 @@
 import { createContext, useReducer, useCallback, useMemo, useEffect, useContext } from 'react';
 import { userSeedReducer } from './reducer';
-import { UserSeedState, UserSeedContextValue, UserSeed } from './seeds/seedTypes';
+import { UserSeedState, UserSeedContextValue, UserSeed, AddSeedFromBrowseResult } from './seeds/seedTypes';
 import { BrowseSeed } from '../browseSeeds/browseTypes';
 import { CustomSeedPayload } from '../customSeedForm/customSeedTypes';
 import { ImagePreview, AddPhotoDraft } from './photos/photoTypes';
 import { UserSeedNote, AddNoteDraft } from './notes/noteTypes';
 import { UserSeedTask, TaskStatus, AddTaskDraft } from './tasks/taskTypes';
-import { useAuth } from '../app/AuthContext';
+import { useAuth } from '../auth/AuthContext';
 import { runLoadUserSeeds, runAddSeedFromBrowse, runAddCustomSeed, runDeleteByCatalogId, runDeleteByCustomId } from './seeds/seedThunks';
 import { runAddNote, runUpdateNote, runDeleteNote } from './notes/noteThunks';
 import { runAddPhoto, runDeletePhoto } from './photos/photoThunks';
@@ -59,9 +59,9 @@ export function UserSeedProvider({ children }: UserSeedProviderProps) {
   }, [userId, state.seeds]);
 
   const addSeedFromBrowse = useCallback(
-    async (browseSeed: BrowseSeed) => {
-      if (!userId) return;
-      await runAddSeedFromBrowse(dispatch, userId, state.seeds, browseSeed);
+    async (browseSeed: BrowseSeed): Promise<AddSeedFromBrowseResult> => {
+      if (!userId) return 'no_user';
+      return runAddSeedFromBrowse(dispatch, userId, state.seeds, browseSeed);
     },
     [dispatch, userId, state.seeds],
   );

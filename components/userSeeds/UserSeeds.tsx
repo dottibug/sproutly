@@ -4,7 +4,7 @@ import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
 import { useFilters } from '../../state/filters/FiltersContext';
 import { applyFilters, getNumberOfSelectedFilters } from '../../state/filters/filterUtils';
 import { searchSeeds } from '../../state/app/appUtils';
-import { ListTab } from '../../state/app/appTypes';
+import { FAB_MARGIN_RIGHT, ListTab } from '../../state/app/appTypes';
 import UserSeedList from './UserSeedList';
 import Loading from '../ui/Loading';
 import ScreenMessage from '../ui/ScreenMessage';
@@ -27,7 +27,6 @@ type UserSeedsProps = {
 };
 
 // UserSeeds component displays the user's seed collection and a floating action button to add a new seed
-const FAB_MARGIN = 16;
 
 export default function UserSeeds({ activeTab, onGoToBrowse }: UserSeedsProps) {
   const insets = useSafeAreaInsets();
@@ -81,7 +80,7 @@ export default function UserSeeds({ activeTab, onGoToBrowse }: UserSeedsProps) {
       <PaperFAB
         accessibilityLabel="Add seed"
         icon="plus"
-        style={[styles.addSeedFab, { backgroundColor: colors.hunterGreen, bottom: FAB_MARGIN + insets.bottom, right: FAB_MARGIN }]}
+        style={[styles.addSeedFab, { backgroundColor: colors.hunterGreen, bottom: insets.bottom, right: FAB_MARGIN_RIGHT }]}
         color={colors.white}
         onPress={handleAddSeed}
       />

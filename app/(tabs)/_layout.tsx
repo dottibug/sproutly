@@ -9,7 +9,7 @@ import { colors } from '../../styles/theme';
 
 // TODO: change tabBarActiveTintColor
 
-// Tabs layout for the app
+// (tabs)/_layout.tsx: Tabs layout for the app
 export default function TabsLayout() {
   return (
     <Tabs

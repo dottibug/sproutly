@@ -2,11 +2,18 @@ import { UserSeed } from '../seeds/seedTypes';
 import { NotePayload, UserSeedNote } from './noteTypes';
 import { createTempId, getTimestamp } from '../../app/appUtils';
 
+/** True if at least one of title or body has non-whitespace content. */
+export function noteHasContent(title: string | null | undefined, note: string | null | undefined): boolean {
+  const t = title?.trim() ?? '';
+  const n = note?.trim() ?? '';
+  return Boolean(t || n);
+}
+
 // Build a note payload for adding a new note to a seed
 export function buildNotePayload(userId: string, userSeedId: string, title: string | null, note: string): NotePayload | null {
-  const trimTitle = title?.trim() || null;
+  const trimTitle = title?.trim() ? title.trim() : null;
   const trimNote = note.trim();
-  if (!trimNote) return null;
+  if (!noteHasContent(trimTitle, trimNote)) return null;
   const tempId = createTempId();
 
   return {
@@ -52,7 +59,7 @@ export function createNote(seeds: UserSeed[], payload: NotePayload) {
 
     const newNote = buildUserSeedNote(tempId, userSeedId, userId, title, note, now, now);
 
-    return { ...s, notes: [...currentNotes, newNote] };
+    return { ...s, notes: [newNote, ...currentNotes] };
   });
 }
 

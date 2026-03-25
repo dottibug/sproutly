@@ -5,6 +5,8 @@ import { CustomSeedPayload } from '../../customSeedForm/customSeedTypes';
 import { Category, Planting } from './seedInfoTypes';
 import { BrowseSeed } from '../../browseSeeds/browseTypes';
 
+export type AddSeedFromBrowseResult = 'added' | 'duplicate' | 'failed' | 'no_user';
+
 // ---- ACTIONS ----
 export type UserSeedAction = SeedAction | NoteAction | PhotoAction | TaskAction;
 
@@ -30,7 +32,7 @@ export type UserSeedContextValue = {
   seeds: UserSeed[];
   loading: boolean;
   error: string | null;
-  addSeedFromBrowse: (seed: BrowseSeed) => Promise<void>;
+  addSeedFromBrowse: (seed: BrowseSeed) => Promise<AddSeedFromBrowseResult>;
   addCustomSeed: (preview: ImagePreview | null, payload: CustomSeedPayload) => Promise<void>;
   deleteByCatalogId: (seed: UserSeed) => Promise<void>;
   deleteByCustomId: (seed: UserSeed) => Promise<void>;

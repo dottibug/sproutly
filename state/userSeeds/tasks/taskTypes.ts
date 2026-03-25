@@ -43,7 +43,7 @@ export type BuildTaskInput = {
 };
 
 // ---- TASK INFO ----
-export type TaskType = 'sow' | 'transplant' | 'fertilize' | 'harvest' | 'prune';
+export type TaskType = 'sow' | 'transplant' | 'fertilize' | 'harvest' | 'prune' | 'custom';
 export type TaskStatus = 'pending' | 'completed';
 
 // ---- DRAFT (what the user types in the modal) ----

@@ -1,5 +1,5 @@
 import { View, Alert, StyleSheet, ScrollView } from 'react-native';
-import { UserSeedTab } from '../../../state/app/appTypes';
+import { FAB_MARGIN_RIGHT, UserSeedTab } from '../../../state/app/appTypes';
 import { UserSeedTask } from '../../../state/userSeeds/tasks/taskTypes';
 import { useUserSeed } from '../../../state/userSeeds/UserSeedsContext';
 import { useState } from 'react';
@@ -8,7 +8,6 @@ import TaskTimeline from './Timeline';
 import Accordion from '../../ui/Accordion';
 import { FAB as PaperFAB } from 'react-native-paper';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { UserSeed } from '../../../state/userSeeds/seeds/seedTypes';
 import { splitTasks } from '../../../state/userSeeds/tasks/taskUtils';
@@ -35,7 +34,6 @@ const FAB_BOTTOM_GAP = 16;
 
 export default function UserSeedTasks({ seed, activeTab }: UserSeedTasksProps) {
   const insets = useSafeAreaInsets();
-  const tabBarHeight = useBottomTabBarHeight();
   const { toggleTaskStatus, deleteTask } = useUserSeed();
 
   const [showStartTaskModal, setShowStartTaskModal] = useState(false);
@@ -72,11 +70,7 @@ export default function UserSeedTasks({ seed, activeTab }: UserSeedTasksProps) {
     <View style={[styles.screen, { display: activeTab === 'Tasks' ? 'flex' : 'none' }]}>
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingBottom: FAB_BOTTOM_GAP + 56 + tabBarHeight + insets.bottom + 16 },
-        ]}
-      >
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: FAB_BOTTOM_GAP + 56 + insets.bottom + 16 }]}>
         <View style={styles.content}>
           <Accordion title="Today" openByDefault>
             {/* Pending tasks */}
@@ -131,8 +125,8 @@ export default function UserSeedTasks({ seed, activeTab }: UserSeedTasksProps) {
           styles.fab,
           {
             backgroundColor: colors.hunterGreen,
-            bottom: FAB_BOTTOM_GAP + tabBarHeight + insets.bottom,
-            right: FAB_BOTTOM_GAP,
+            bottom: insets.bottom,
+            right: FAB_MARGIN_RIGHT,
           },
         ]}
         color={colors.white}

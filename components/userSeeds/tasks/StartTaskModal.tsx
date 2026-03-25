@@ -1,19 +1,20 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useMemo, useState, useEffect } from 'react';
-import { View, TextInput, Pressable, Text, StyleSheet, Platform } from 'react-native';
+import { Alert, View, TextInput, Pressable, Text, StyleSheet, Platform, Modal } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { appStyles, colors } from '../../../styles/theme';
 import Heading from '../../ui/Heading';
 import Button from '../../ui/buttons/AppButton';
 import { TaskType, UserSeedTask } from '../../../state/userSeeds/tasks/taskTypes';
 import { useUserSeed } from '../../../state/userSeeds/UserSeedsContext';
 import AppModal from '../../ui/AppModal';
+import { taskHasSaveableText } from '../../../state/userSeeds/tasks/taskUtils';
+import Input from '../../ui/form/Input';
 
-// TODO: Error handling if both the title and notes are blank (nothing to save)
 // TODO: Text in the modal such as "Add a new task for {seed variety} {seed plant}"
 
 // TODO: add a clear all tasks button
-
-// TODO: Pick a nicer calendar component?
 
 type StartTaskModalProps = {
   readonly visible: boolean;
@@ -22,7 +23,7 @@ type StartTaskModalProps = {
   readonly editingTask?: UserSeedTask | null;
 };
 
-const TASK_TYPES: TaskType[] = ['sow', 'transplant', 'fertilize', 'harvest', 'prune'];
+const TASK_TYPES: TaskType[] = ['sow', 'transplant', 'fertilize', 'harvest', 'prune', 'custom'];
 
 const formatDate = (date: Date): string => {
   return date.toLocaleDateString(undefined, {
@@ -32,8 +33,15 @@ const formatDate = (date: Date): string => {
   });
 };
 
+function startOfToday(): Date {
+  const t = new Date();
+  t.setHours(0, 0, 0, 0);
+  return t;
+}
+
 export default function StartTaskModal({ visible, onRequestClose, userSeedId, editingTask = null }: StartTaskModalProps) {
   const { addTask, updateTask } = useUserSeed();
+  const insets = useSafeAreaInsets();
 
   const defaultDate = useMemo(() => {
     const d = new Date();
@@ -67,14 +75,25 @@ export default function StartTaskModal({ visible, onRequestClose, userSeedId, ed
     setTaskDate(defaultDate);
   }, [visible, editingTask, defaultDate]);
 
+  useEffect(() => {
+    if (!visible) setShowDatePicker(false);
+  }, [visible]);
+
+  const dateMinimum = editingTask ? undefined : startOfToday();
+
+  const customTypeEnabled = taskType === 'custom';
+
   const handleSaveTask = async () => {
     const payloadDate = new Date(taskDate);
     payloadDate.setHours(12, 0, 0, 0); // noon
     const payloadTitle = title.trim() || null;
     const payloadNotes = notes.trim();
-    const payloadCustomTaskType = customTaskType.trim() || null;
+    const payloadCustomTaskType = customTypeEnabled ? customTaskType.trim() || null : null;
 
-    // TODO: Error handling to go here
+    if (!taskHasSaveableText(payloadTitle, payloadNotes)) {
+      Alert.alert('Cannot save', 'Enter a title or notes (at least one).');
+      return;
+    }
 
     // Do not await database insert/update
     if (editingTask) {
@@ -109,7 +128,13 @@ export default function StartTaskModal({ visible, onRequestClose, userSeedId, ed
           {TASK_TYPES.map((type) => {
             const selected = taskType === type;
             return (
-              <Pressable key={type} onPress={() => setTaskType(type)} style={[styles.typeChip, selected && styles.typeChipSelected]}>
+              <Pressable
+                key={type}
+                onPress={() => {
+                  setTaskType(type);
+                  if (type !== 'custom') setCustomTaskType('');
+                }}
+                style={[styles.typeChip, selected && styles.typeChipSelected]}>
                 <Text style={[styles.typeChipText, selected && styles.typeChipTextSelected]}>{type}</Text>
               </Pressable>
             );
@@ -118,50 +143,78 @@ export default function StartTaskModal({ visible, onRequestClose, userSeedId, ed
       </View>
 
       <View style={appStyles.customSeedInputSection}>
-        <Heading size="xsmall">Custom Type (optional)</Heading>
-        <TextInput
-          placeholder="e.g. water, prune, weed"
+        <Input
+          label="Custom Type"
+          placeholder={customTypeEnabled ? 'e.g. water, prune, weed' : 'Select "custom" above'}
           value={customTaskType}
           onChangeText={setCustomTaskType}
-          style={appStyles.customSeedInput}
+          editable={customTypeEnabled}
+          readOnly={!customTypeEnabled}
         />
       </View>
 
       <View style={appStyles.customSeedInputSection}>
         <Heading size="xsmall">Title (optional)</Heading>
-        <TextInput placeholder="Task title" value={title} onChangeText={setTitle} style={appStyles.customSeedInput} />
+        <Input label="Title" placeholder="Task title" value={title} onChangeText={setTitle} />
       </View>
 
       <View style={appStyles.customSeedInputSection}>
         <Heading size="xsmall">Date</Heading>
-        <Pressable style={appStyles.customSeedInput} onPress={() => setShowDatePicker(true)}>
-          <Text>{formatDate(taskDate)}</Text>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Choose task date"
+          style={styles.dateInputRow}
+          onPress={() => setShowDatePicker(true)}>
+          <Text style={styles.dateInputText}>{formatDate(taskDate)}</Text>
+          <Ionicons name="calendar-outline" size={22} color={colors.gray} />
         </Pressable>
 
-        {showDatePicker && (
+        {Platform.OS === 'android' && showDatePicker && (
           <DateTimePicker
             value={taskDate}
             mode="date"
-            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-            minimumDate={new Date()}
-            onChange={(event, selected) => {
-              if (Platform.OS === 'android') setShowDatePicker(false);
-              if (!selected) return;
-              setTaskDate(selected);
+            display="default"
+            minimumDate={dateMinimum}
+            onChange={(_, selected) => {
+              setShowDatePicker(false);
+              if (selected) setTaskDate(selected);
             }}
           />
+        )}
+
+        {Platform.OS === 'ios' && (
+          <Modal visible={showDatePicker} transparent animationType="fade" onRequestClose={() => setShowDatePicker(false)}>
+            <View style={styles.pickerBackdrop}>
+              <Pressable
+                style={StyleSheet.absoluteFill}
+                onPress={() => setShowDatePicker(false)}
+                accessibilityLabel="Dismiss date picker"
+              />
+              <View style={[styles.pickerSheet, { paddingBottom: Math.max(16, insets.bottom) }]}>
+                <View style={styles.pickerHeader}>
+                  <Text style={styles.pickerTitle}>Choose date</Text>
+                  <Pressable onPress={() => setShowDatePicker(false)} hitSlop={12}>
+                    <Text style={styles.headerButton}>Done</Text>
+                  </Pressable>
+                </View>
+                <DateTimePicker
+                  value={taskDate}
+                  mode="date"
+                  display="inline"
+                  minimumDate={dateMinimum}
+                  themeVariant="light"
+                  onChange={(_, selected) => {
+                    if (selected) setTaskDate(selected);
+                  }}
+                />
+              </View>
+            </View>
+          </Modal>
         )}
       </View>
 
       <View style={appStyles.customSeedInputSection}>
-        <Heading size="xsmall">Notes (optional)</Heading>
-        <TextInput
-          placeholder="Optional details"
-          value={notes}
-          onChangeText={setNotes}
-          multiline
-          style={appStyles.customSeedMultilineInput}
-        />
+        <Input label="Notes" placeholder="Optional details" value={notes} onChangeText={setNotes} multiline />
       </View>
 
       <Button text={editingTask ? 'Save Changes' : 'Save Task'} size="small" onPress={handleSaveTask} />
@@ -197,26 +250,43 @@ const styles = StyleSheet.create({
   typeChipTextSelected: {
     color: colors.white,
   },
+  customTypeInputDisabled: {
+    opacity: 0.55,
+    backgroundColor: colors.lightGray,
+  },
   rowButtons: {
     flexDirection: 'row',
     gap: 8,
   },
+  dateInputRow: {
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.gray,
+    borderRadius: 9,
+    fontSize: 16,
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
+  dateInputText: {
+    fontSize: 16,
+    color: colors.primary,
+    flex: 1,
+  },
   pickerBackdrop: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
+    flex: 1,
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.35)',
+    backgroundColor: 'rgba(0,0,0,0.4)',
   },
   pickerSheet: {
     backgroundColor: colors.white,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
-    paddingBottom: 24,
     paddingTop: 8,
     paddingHorizontal: 12,
+    maxHeight: '72%',
   },
   pickerHeader: {
     flexDirection: 'row',

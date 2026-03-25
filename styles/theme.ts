@@ -1,15 +1,23 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 
 export type Color = 'primary' | 'secondary';
 
 export const colors = {
-  primary: '#000',
+  primary: '#2F2F2F', // #2F2F2F
   secondary: '#666',
+
+  hunterGreen: '#2B624D', // #2B624D
+  green: '#2B624D', // #2B624D
+  greenMedium: '#40725E', // #40725E
+  greenLight: '#79988C', // #79988C
+  green90: '#2B624D90', // #2B624D80
+
+  /////////// EDITING (colors above fold are keepers)
+  // primary: '#000',
   white: '#FFF',
   gray: '#666',
   mediumGray: '#999',
   lightGray: '#ccc',
-  hunterGreen: '#38684C', // #38684C
   blue: '#669BBC', // blue #669BBC
   dusk: '#445A9C', // dusk #445A9C
   teal: '#4B927A', // teal #4B927A
@@ -21,12 +29,6 @@ export const colors = {
   amethyst: '#AD6FB3', // amethyst #AD6FB3
   grape: '#584778', // grape #584778
   yellow: '#F3C51F', // yellow2 #fcdc5d
-};
-
-export const buttonColorMap = {
-  primary: colors.hunterGreen,
-  secondary: colors.mediumGray,
-  danger: colors.red,
 };
 
 export const seedTypeColorMap = {
@@ -53,6 +55,28 @@ const MEDIUM_SPACING = 16;
 const LARGE_SPACING = 24;
 
 export const appStyles = StyleSheet.create({
+  card: {
+    backgroundColor: colors.white,
+    borderRadius: 22,
+    padding: 14,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 5 },
+        shadowOpacity: 0.13,
+        shadowRadius: 14,
+      },
+      android: {
+        elevation: 5,
+      },
+    }),
+  },
+  cardPressed: {
+    opacity: 0.94,
+    transform: [{ scale: 0.99 }],
+  },
+
+  ///// above fold are finished styles
   resultsList: {
     flex: 1,
     gap: 16,
@@ -81,23 +105,5 @@ export const appStyles = StyleSheet.create({
   },
   customSeedInputSection: {
     gap: 8,
-  },
-  customSeedInput: {
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.gray,
-    borderRadius: 9,
-    fontSize: 16,
-    padding: 12,
-  },
-  customSeedMultilineInput: {
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.gray,
-    borderRadius: 9,
-    fontSize: 16,
-    height: 120,
-    maxHeight: 120,
-    padding: 12,
   },
 });

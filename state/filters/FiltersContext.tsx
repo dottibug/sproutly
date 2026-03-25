@@ -1,5 +1,5 @@
 import { createContext, useReducer, useEffect, useCallback, useMemo, useContext } from 'react';
-import { useAuth } from '../app/AuthContext';
+import { useAuth } from '../auth/AuthContext';
 import { SearchFilter, OpenFilters, SelectedFilters, UserFilterPreferences, SEARCH_FILTER_NAMES, DEFAULT_OPEN } from './filterTypes';
 import { getOpenFilters, getUserFilterPreferences, updateUserFilterPreferences } from './filterUtils';
 
@@ -78,7 +78,7 @@ type FilterContextValue = FilterState & {
   applyOpenFilters: () => void;
   setFilterPreferences: (prefs: UserFilterPreferences) => void;
   loadFilterPreferences: () => Promise<void>;
-  saveFilterPreferences: () => Promise<void>;
+  saveFilterPreferences: (prefsToSave?: UserFilterPreferences) => Promise<void>;
   resetFilterPreferences: () => void;
 };
 
@@ -127,9 +127,13 @@ export function FilterProvider({ children }: FilterProviderProps) {
     [],
   );
 
-  const saveFilterPreferences = useCallback(async () => {
-    await updateUserFilterPreferences(profile?.id as string, state.preferences);
-  }, [profile?.id, state.preferences]);
+  const saveFilterPreferences = useCallback(
+    async (prefsToSave?: UserFilterPreferences) => {
+      const prefs = prefsToSave ?? state.preferences;
+      await updateUserFilterPreferences(profile?.id as string, prefs);
+    },
+    [profile?.id, state.preferences],
+  );
 
   const resetFilterPreferences = useCallback(() => dispatch({ type: 'RESET_FILTER_PREFERENCES' }), []);
 

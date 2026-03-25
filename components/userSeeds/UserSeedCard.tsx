@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Pressable, Text, StyleSheet } from 'react-native';
+import { useState, Fragment } from 'react';
+import { Text, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
 import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
@@ -54,21 +54,35 @@ export default function UserSeedCard({ seed }: UserSeedCardProps) {
   };
 
   return (
-    <Pressable onLongPress={handleLongPress} delayLongPress={500}>
-      {/* Show the seed card */}
-      {!showDeleteConfirmation && <SeedCard cardType="user" seed={seed} onPress={handlePress} />}
-
-      {isSaving && (
-        <SeedCardOverlay>
-          <Text style={styles.savingText}>Saving...</Text>
-        </SeedCardOverlay>
+    <Fragment>
+      {!showDeleteConfirmation && (
+        <>
+          <SeedCard
+            cardType="user"
+            seed={seed}
+            onPress={handlePress}
+            onLongPress={isSaving ? undefined : handleLongPress}
+            delayLongPress={500}
+          />
+          {isSaving && (
+            <SeedCardOverlay>
+              <Text style={styles.savingText}>Saving...</Text>
+            </SeedCardOverlay>
+          )}
+        </>
       )}
 
-      {/* Show the delete confirmation */}
       {showDeleteConfirmation && (
-        <SeedCardAction variety={seed.variety} plant={seed.plant} action="Delete" onCancel={handleCancel} onAction={handleDelete} />
+        <SeedCardAction
+          seed={seed}
+          variety={seed.variety}
+          plant={seed.plant}
+          action="Delete"
+          onCancel={handleCancel}
+          onAction={handleDelete}
+        />
       )}
-    </Pressable>
+    </Fragment>
   );
 }
 

@@ -1,21 +1,7 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { View, Text, StyleSheet } from 'react-native';
 import { colors } from '../../../styles/theme';
 import { TaskSectionMode, UserSeedTask } from '../../../state/userSeeds/tasks/taskTypes';
-import { isDueToday } from '../../../state/userSeeds/tasks/taskUtils';
 import TaskCard from './TaskCard';
-
-const formatDueDate = (iso: string): string =>
-  new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-
-const formatCompletedAt = (iso: string): string =>
-  new Date(iso).toLocaleString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-  });
 
 type TaskSectionProps = {
   readonly title?: string;
@@ -25,7 +11,6 @@ type TaskSectionProps = {
   readonly onToggleStatus?: (task: UserSeedTask) => void;
   readonly onDelete?: (task: UserSeedTask) => void;
   readonly onEdit?: (task: UserSeedTask) => void;
-  // readonly showDueDate?: boolean;
 };
 
 export default function TaskSection({
@@ -36,7 +21,6 @@ export default function TaskSection({
   onToggleStatus,
   onDelete,
   onEdit,
-  // showDueDate = true,
 }: TaskSectionProps) {
   const hasTasks = tasks.length > 0;
   const showToggle = mode !== 'timeline';
@@ -88,62 +72,4 @@ const styles = StyleSheet.create({
   list: {
     gap: 10,
   },
-  // card: {
-  //   backgroundColor: colors.white,
-  //   borderWidth: 1,
-  //   borderColor: colors.gray,
-  //   borderRadius: 12,
-  //   padding: 14,
-  //   gap: 8,
-  // },
-  // row: {
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   justifyContent: 'space-between',
-  //   gap: 8,
-  // },
-  // title: {
-  //   flex: 1,
-  //   fontSize: 16,
-  //   fontWeight: '600',
-  // },
-  // titleDone: {
-  //   textDecorationLine: 'line-through',
-  //   color: colors.secondary,
-  // },
-  // actions: {
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   gap: 10,
-  // },
-  // metaRow: {
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-between',
-  //   alignItems: 'center',
-  //   gap: 8,
-  // },
-  // typeChip: {
-  //   backgroundColor: colors.lightGray,
-  //   borderRadius: 999,
-  //   paddingHorizontal: 8,
-  //   paddingVertical: 4,
-  //   alignSelf: 'flex-start',
-  // },
-  // typeChipText: {
-  //   fontSize: 12,
-  //   textTransform: 'capitalize',
-  //   color: colors.primary,
-  // },
-  // metaText: {
-  //   fontSize: 13,
-  //   color: colors.secondary,
-  // },
-  metaSubtle: {
-    fontSize: 12,
-    color: colors.gray,
-  },
-  // notes: {
-  //   fontSize: 14,
-  //   lineHeight: 19,
-  // },
 });

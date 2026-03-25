@@ -5,13 +5,14 @@ import { UserSeedAction } from '../seeds/seedTypes';
 import { UserSeedTask, TaskStatus, AddTaskDraft } from './taskTypes';
 import { getTimestamp, createTempId } from '../../app/appUtils';
 import { insertTask, deleteTask, updateTaskDetails, updateTaskStatus } from './taskQueries';
-import { buildUserSeedTask, requestReminderPermissions } from './taskUtils';
+import { buildUserSeedTask, requestReminderPermissions, taskHasSaveableText } from './taskUtils';
 
 export async function runAddTask(dispatch: Dispatch<UserSeedAction>, userId: string, draft: AddTaskDraft) {
+  if (!taskHasSaveableText(draft.title, draft.notes)) return;
+
   const now = getTimestamp();
   const trimTitle = draft.title?.trim() || '';
   const trimNotes = draft.notes.trim();
-  if (!trimNotes) return;
 
   const { userSeedId, taskType, customTaskType, date } = draft;
   const taskDate = new Date(date).toISOString();

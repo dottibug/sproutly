@@ -1,11 +1,10 @@
 import { View, Text, Alert, Pressable, StyleSheet, Image, ScrollView } from 'react-native';
-import { UserSeedTab } from '../../state/app/appTypes';
+import { FAB_MARGIN_RIGHT, UserSeedTab } from '../../state/app/appTypes';
 import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
 import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { FAB as PaperFAB } from 'react-native-paper';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '../../styles/theme';
 
@@ -29,7 +28,6 @@ const FAB_BOTTOM_GAP = 16;
 // UserSeedPhotos component displays the photos of a single seed in the user's collection
 export default function UserSeedPhotos({ seed, activeTab }: UserSeedPhotosProps) {
   const insets = useSafeAreaInsets();
-  const tabBarHeight = useBottomTabBarHeight();
   const { addPhoto, deletePhoto } = useUserSeed();
 
   const photos = seed.photos ?? [];
@@ -56,11 +54,7 @@ export default function UserSeedPhotos({ seed, activeTab }: UserSeedPhotosProps)
     <View style={[styles.screen, { display: activeTab === 'Photos' ? 'flex' : 'none' }]}>
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingBottom: FAB_BOTTOM_GAP + 56 + tabBarHeight + insets.bottom + 16 },
-        ]}
-      >
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: FAB_BOTTOM_GAP + 56 + insets.bottom + 16 }]}>
         {!hasPhotos && <Text style={styles.empty}>{NO_PHOTOS}</Text>}
         {hasPhotos && (
           <View style={styles.grid}>
@@ -83,8 +77,8 @@ export default function UserSeedPhotos({ seed, activeTab }: UserSeedPhotosProps)
           styles.fab,
           {
             backgroundColor: colors.hunterGreen,
-            bottom: FAB_BOTTOM_GAP + tabBarHeight + insets.bottom,
-            right: FAB_BOTTOM_GAP,
+            bottom: insets.bottom,
+            right: FAB_MARGIN_RIGHT,
           },
         ]}
         color={colors.white}

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Button from '../../../components/ui/buttons/AppButton';
 import { colors } from '../../../styles/theme';
 
-import { useAuth } from '../../../state/app/AuthContext';
+import { useAuth } from '../../../state/auth/AuthContext';
 import { useCustomSeedForm } from '../../../state/customSeedForm/CustomSeedFormContext';
 import { useUserSeed } from '../../../state/userSeeds/UserSeedsContext';
 import { ImagePreview } from '../../../state/userSeeds/photos/photoTypes';

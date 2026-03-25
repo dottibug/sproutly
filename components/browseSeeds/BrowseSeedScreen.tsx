@@ -1,16 +1,15 @@
-import { useRouter } from 'expo-router';
 import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
 import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
 import { BrowseSeed } from '../../state/browseSeeds/browseTypes';
-import { ScrollView, View, Text, StyleSheet } from 'react-native';
+import { Alert, ScrollView, View, Text, StyleSheet, Pressable, Platform } from 'react-native';
 import SeedImage from '../seeds/SeedImage';
 import SeedHeader from '../seeds/SeedHeader';
 import Heading from '../ui/Heading';
-import { typography } from '../../styles/theme';
+import { typography, colors } from '../../styles/theme';
 import SeedQuickFacts from '../seeds/SeedQuickFacts';
 import Accordion from '../ui/Accordion';
-import Button from '../ui/buttons/AppButton';
 import { Exposure } from '../../state/userSeeds/seeds/seedInfoTypes';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 const DESCRIPTION = 'Description';
 const TIMING = 'Timing';
@@ -18,8 +17,6 @@ const STARTING = 'Starting';
 const GROWING = 'Growing';
 const HARVEST = 'Harvest';
 const COMPANION_PLANTING = 'Companion Planting';
-const ADD = 'Add to Collection';
-const MY_SEED = 'My Seed Details';
 
 type BrowseSeedProps = {
   readonly seed: BrowseSeed;
@@ -27,8 +24,6 @@ type BrowseSeedProps = {
 
 // BrowseSeed component displays the details of a single seed in the browse list
 export default function BrowseSeedScreen({ seed }: BrowseSeedProps) {
-  const router = useRouter();
-
   const { addSeedFromBrowse, seeds: userSeeds } = useUserSeed();
 
   const inUserCollection = userSeeds.some((s: UserSeed) => s.catalogSeedId === seed.id);
@@ -40,23 +35,36 @@ export default function BrowseSeedScreen({ seed }: BrowseSeedProps) {
   const showCompanionPlanting = seed.companionPlanting !== null;
 
   const handleAddToCollection = () => {
-    addSeedFromBrowse(seed);
-  };
-
-  // Redirects user to this seed in their collection (home tab)
-  const handleGoToMySeed = () => {
-    router.replace({
-      pathname: `/home/${seed.id}`,
-      params: {
-        source: 'catalog',
-        tab: 'home',
-      },
-    });
+    const seedLabel = `${seed.variety} ${seed.plant}`.trim();
+    void (async () => {
+      const result = await addSeedFromBrowse(seed);
+      if (result === 'added') {
+        Alert.alert('Added to collection', `${seedLabel} is now in My Seeds.`);
+      } else if (result === 'duplicate') {
+        Alert.alert('Already in collection', 'This seed is already in My Seeds.');
+      } else if (result === 'failed') {
+        Alert.alert('Could not add seed', 'Something went wrong. Please try again.');
+      } else if (result === 'no_user') {
+        Alert.alert('Sign in required', 'Please sign in to add seeds to your collection.');
+      }
+    })();
   };
 
   return (
-    <ScrollView style={styles.scrollStyle}>
-      <SeedImage imageUri={seed.image} size="large" />
+    <ScrollView style={styles.scrollStyle} contentContainerStyle={styles.scrollContent}>
+      <View style={styles.heroWrap}>
+        <SeedImage imageUri={seed.image} size="large" />
+        {!inUserCollection && (
+          <Pressable
+            onPress={handleAddToCollection}
+            style={({ pressed }) => [styles.addOnImage, pressed && styles.addOnImagePressed]}
+            accessibilityRole="button"
+            accessibilityLabel="Add to my seeds">
+            <Ionicons name="add" size={22} color={colors.hunterGreen} />
+            <Text style={styles.addOnImageText}>Add to my seeds</Text>
+          </Pressable>
+        )}
+      </View>
 
       <View>
         <SeedHeader
@@ -82,18 +90,6 @@ export default function BrowseSeedScreen({ seed }: BrowseSeedProps) {
         {showHarvest && <Accordion title={HARVEST} content={seed.harvest} />}
         {showCompanionPlanting && <Accordion title={COMPANION_PLANTING} content={seed.companionPlanting} />}
       </View>
-
-      {!inUserCollection && (
-        <View style={styles.buttonContainer}>
-          <Button text={ADD} width={218} size="medium" onPress={handleAddToCollection} />
-        </View>
-      )}
-
-      {inUserCollection && (
-        <View style={styles.buttonContainer}>
-          <Button text={MY_SEED} size="medium" onPress={handleGoToMySeed} />
-        </View>
-      )}
     </ScrollView>
   );
 }
@@ -102,18 +98,49 @@ const styles = StyleSheet.create({
   scrollStyle: {
     flex: 1,
   },
-  image: {
-    height: 400,
+  scrollContent: {
+    paddingBottom: 28,
+  },
+  heroWrap: {
+    position: 'relative',
     width: '100%',
+  },
+  addOnImage: {
+    position: 'absolute',
+    right: 14,
+    bottom: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 999,
+    backgroundColor: 'rgba(255,255,255,0.94)',
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.08)',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.12,
+        shadowRadius: 8,
+      },
+      android: { elevation: 4 },
+    }),
+  },
+  addOnImagePressed: {
+    opacity: 0.92,
+    transform: [{ scale: 0.98 }],
+  },
+  addOnImageText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.hunterGreen,
+    letterSpacing: 0.2,
   },
   description: {
     flexDirection: 'column',
     gap: 16,
     padding: 16,
-  },
-  buttonContainer: {
-    marginBottom: 32,
-    marginTop: 24,
-    paddingHorizontal: 16,
   },
 });

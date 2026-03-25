@@ -1,5 +1,5 @@
 import { Dispatch } from 'react';
-import { UserSeedAction, UserSeed } from './seedTypes';
+import { UserSeedAction, UserSeed, AddSeedFromBrowseResult } from './seedTypes';
 import { BrowseSeed } from '../../browseSeeds/browseTypes';
 import { CustomSeedPayload } from '../../customSeedForm/customSeedTypes';
 import { ImagePreview } from '../photos/photoTypes';
@@ -24,21 +24,26 @@ export async function runLoadUserSeeds(dispatch: Dispatch<UserSeedAction>, userI
 }
 
 // Add a browsed seed to the user collection
-export async function runAddSeedFromBrowse(dispatch: Dispatch<UserSeedAction>, userId: string, seeds: UserSeed[], browseSeed: BrowseSeed) {
+export async function runAddSeedFromBrowse(
+  dispatch: Dispatch<UserSeedAction>,
+  userId: string,
+  seeds: UserSeed[],
+  browseSeed: BrowseSeed,
+): Promise<AddSeedFromBrowseResult> {
   const { id } = browseSeed;
 
-  if (isDuplicateSeed(seeds, id)) return;
+  if (isDuplicateSeed(seeds, id)) return 'duplicate';
 
   // Optimistic state update
   dispatch({ type: 'ADD_SEED_FROM_BROWSE', payload: browseSeed });
 
   try {
-    // Database insert
-    const newUserSeed = await addBrowseSeedToCollection(userId, id);
+    await addBrowseSeedToCollection(userId, id);
+    return 'added';
   } catch (error) {
-    // Rollback optimistic state update
     dispatch({ type: 'DELETE_BY_CATALOG_ID', payload: id });
     console.error('Error adding seed from browse:', error);
+    return 'failed';
   }
 }
 

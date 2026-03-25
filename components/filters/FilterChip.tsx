@@ -1,11 +1,11 @@
 import { Pressable, Text, StyleSheet } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useFilters } from '../../state/filters/FiltersContext';
-import { Filter } from '../../state/filters/filterTypes';
+import { SearchFilter } from '../../state/filters/filterTypes';
 import { colors } from '../../styles/theme';
 
 type FilterChipProps = {
-  readonly filter: Filter;
+  readonly filter: SearchFilter;
   readonly option: string;
 };
 

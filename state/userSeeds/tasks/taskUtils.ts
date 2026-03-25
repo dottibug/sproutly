@@ -3,6 +3,13 @@ import { UserSeedTask, TaskStatus, BuildTaskInput } from './taskTypes';
 import { getTimestamp } from '../../app/appUtils';
 import * as Notifications from 'expo-notifications';
 
+/** Title and notes cannot both be empty — same idea as notes (need at least one). Applies to all task types including custom. */
+export function taskHasSaveableText(title: string | null | undefined, notes: string | null | undefined): boolean {
+  const titleTrim = title?.trim() ?? '';
+  const notesTrim = notes?.trim() ?? '';
+  return Boolean(titleTrim || notesTrim);
+}
+
 export function buildUserSeedTask(input: BuildTaskInput): UserSeedTask {
   return {
     id: input.id,

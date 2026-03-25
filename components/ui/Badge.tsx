@@ -42,11 +42,11 @@ export default function Badge({ type, text, color, width = '100%' }: BadgeProps)
 const styles = StyleSheet.create({
   badgeStyleCard: {
     alignItems: 'center',
-    borderRadius: 0,
+    borderRadius: 999,
     borderWidth: 1,
-    marginTop: 8,
     opacity: 0.8,
-    padding: 2,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
   badgeTextCard: {
     color: colors.white,

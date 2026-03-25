@@ -16,6 +16,9 @@ type InputProps = {
   readonly errorMessage?: string;
   readonly showInfoIcon?: boolean;
   readonly onIconPress?: () => void;
+  readonly secureTextEntry?: boolean;
+  readonly editable?: boolean;
+  readonly readOnly?: boolean;
 };
 
 export default function Input({
@@ -30,6 +33,9 @@ export default function Input({
   errorMessage = 'Invalid input',
   showInfoIcon = false,
   onIconPress,
+  secureTextEntry = false,
+  editable = true,
+  readOnly = false,
 }: InputProps) {
   const inputStyles = StyleSheet.flatten([styles.input, multiline && styles.inputMultiline, hasError && styles.inputError]);
 
@@ -54,6 +60,11 @@ export default function Input({
         multiline={multiline}
         inputMode={inputMode}
         style={inputStyles}
+        autoCapitalize="none"
+        autoCorrect={false}
+        secureTextEntry={secureTextEntry}
+        editable={editable}
+        readOnly={readOnly}
       />
       {hasError && <Text style={styles.errorText}>{errorMessage}</Text>}
     </View>

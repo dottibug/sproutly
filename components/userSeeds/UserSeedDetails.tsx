@@ -73,8 +73,16 @@ export default function UserSeedDetails({ seed, activeTab }: UserSeedDetailsProp
         {showCompanionPlanting && <Accordion title={'Companion Planting'} content={seed.companionPlanting} />}
       </View>
 
-      <View style={styles.buttonContainer}>
-        <Button text={DELETE} color="danger" size="medium" width={268} onPress={handleDeleteFromCollection} />
+      <View style={styles.dangerSection}>
+        <Button
+          text={DELETE}
+          color="danger"
+          variant="outline"
+          size="medium"
+          width="100%"
+          icon="delete"
+          onPress={handleDeleteFromCollection}
+        />
       </View>
     </ScrollView>
   );
@@ -93,9 +101,12 @@ const styles = StyleSheet.create({
     gap: 16,
     padding: 16,
   },
-  buttonContainer: {
-    marginBottom: 32,
-    marginTop: 24,
+  dangerSection: {
+    marginTop: 8,
+    marginBottom: 40,
     paddingHorizontal: 16,
+    paddingTop: 28,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: 'rgba(214, 85, 100, 0.25)',
   },
 });

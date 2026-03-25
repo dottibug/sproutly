@@ -1,10 +1,10 @@
 import { Switch } from 'react-native-paper';
-import { Filter } from '../../state/filters/filterTypes';
+import { SearchFilter } from '../../state/filters/filterTypes';
 
 type ToggleProps = {
-  readonly filter: Filter;
+  readonly filter: SearchFilter;
   readonly value: boolean;
-  readonly onToggle: (filter: Filter) => void;
+  readonly onToggle: (filter: SearchFilter) => void;
 };
 
 // Toggle component

@@ -5,10 +5,10 @@ import { buildUserSeedNote } from './noteUtils';
 
 // Insert a new note into the user_seed_notes table
 export async function insertNote(notePayload: NotePayload): Promise<UserSeedNote> {
-  const titleTrim = notePayload.title?.trim();
+  const titleTrim = notePayload.title?.trim() || null;
   const noteTrim = notePayload.note.trim();
 
-  if (!noteTrim) throw new Error('Note cannot be empty');
+  if (!titleTrim && !noteTrim) throw new Error('Title and note cannot both be empty');
 
   const { data, error } = await supabase
     .from('user_seed_notes')
@@ -16,7 +16,7 @@ export async function insertNote(notePayload: NotePayload): Promise<UserSeedNote
       user_id: notePayload.userId,
       user_seed_id: notePayload.userSeedId,
       title: titleTrim,
-      note: noteTrim,
+      note: noteTrim || '',
     })
     .select('id, user_seed_id, user_id, title, note, created_at, updated_at')
     .single();
@@ -31,17 +31,17 @@ export async function insertNote(notePayload: NotePayload): Promise<UserSeedNote
 export async function updateNote(userNote: UserSeedNote): Promise<void> {
   const { id, title, note, userId } = userNote;
 
-  const titleTrim = title?.trim();
-  const noteTrim = note?.trim();
+  const titleTrim = title?.trim() || null;
+  const noteTrim = note?.trim() ?? '';
 
-  if (!noteTrim) throw new Error('Note cannot be empty');
+  if (!titleTrim && !noteTrim) throw new Error('Title and note cannot both be empty');
   const now = getTimestamp();
 
   const { error } = await supabase
     .from('user_seed_notes')
     .update({
       title: titleTrim,
-      note: noteTrim,
+      note: noteTrim || '',
       updated_at: now,
     })
     .eq('id', id)

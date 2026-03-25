@@ -1,5 +1,6 @@
 import { Stack } from 'expo-router';
 
+// (tabs)/home/_layout.tsx: Layout for the home tab
 export default function HomeLayout() {
   return (
     <Stack screenOptions={{ headerShown: true }}>
