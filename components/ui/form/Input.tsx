@@ -18,7 +18,8 @@ type InputProps = {
   readonly onIconPress?: () => void;
   readonly secureTextEntry?: boolean;
   readonly editable?: boolean;
-  readonly readOnly?: boolean;
+  readonly disabled?: boolean;
+  readonly headingSize?: 'xsmall' | 'small' | 'medium' | 'large';
 };
 
 export default function Input({
@@ -35,15 +36,27 @@ export default function Input({
   onIconPress,
   secureTextEntry = false,
   editable = true,
-  readOnly = false,
+  disabled = false,
+  headingSize = 'xsmall',
 }: InputProps) {
-  const inputStyles = StyleSheet.flatten([styles.input, multiline && styles.inputMultiline, hasError && styles.inputError]);
+  const headingCustomStyles = disabled ? { color: colors.grayMedium, opacity: 0.78 } : {};
+  const placeholderColor = disabled ? colors.grayMedium : colors.gray;
+
+  const inputStyles = StyleSheet.flatten([
+    styles.input,
+    multiline && styles.inputMultiline,
+    hasError && styles.inputError,
+    !editable && styles.inputReadOnly,
+    disabled && styles.inputDisabled,
+  ]);
 
   return (
     <View style={styles.inputContainer}>
       <View style={styles.labelContainer}>
         <View style={styles.labelContainerRow}>
-          <Heading size="xsmall">{label}</Heading>
+          <Heading size={headingSize} customStyles={headingCustomStyles}>
+            {label}
+          </Heading>
           {showInfoIcon && <IconButton icon="info" onPress={onIconPress || (() => {})} />}
           {required && (
             <View style={styles.requiredContainer}>
@@ -55,6 +68,7 @@ export default function Input({
       </View>
       <TextInput
         placeholder={placeholder}
+        placeholderTextColor={placeholderColor}
         value={value}
         onChangeText={onChangeText}
         multiline={multiline}
@@ -64,7 +78,6 @@ export default function Input({
         autoCorrect={false}
         secureTextEntry={secureTextEntry}
         editable={editable}
-        readOnly={readOnly}
       />
       {hasError && <Text style={styles.errorText}>{errorMessage}</Text>}
     </View>
@@ -100,7 +113,7 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: colors.gray,
+    borderColor: colors.opaqueBlack45,
     borderRadius: 9,
     fontSize: 16,
     padding: 12,
@@ -116,5 +129,11 @@ const styles = StyleSheet.create({
     color: colors.red,
     fontSize: 14,
     fontStyle: 'italic',
+  },
+  inputReadOnly: {},
+  inputDisabled: {
+    opacity: 0.85,
+    backgroundColor: colors.alabaster,
+    borderColor: colors.alabaster,
   },
 });

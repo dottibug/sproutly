@@ -1,6 +1,6 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import type { ComponentProps } from 'react';
-import { buttonColorMap } from '../../../styles/theme';
+import { BUTTON_COLOR_MAP } from './AppButton';
 
 const iconSizeMap = {
   xsmall: 14,
@@ -26,7 +26,7 @@ export default function AppButtonIcon({ icon, size = 'medium', color = 'primary'
     cancel: 'close-thick',
   };
 
-  const iconColor = variant === 'solid' ? 'white' : buttonColorMap[color];
+  const iconColor = variant === 'solid' ? 'white' : BUTTON_COLOR_MAP[color];
 
   return <MaterialCommunityIcons name={iconMap[icon]} size={iconSizeMap[size]} color={iconColor} />;
 }

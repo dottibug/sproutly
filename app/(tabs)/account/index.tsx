@@ -1,4 +1,5 @@
 import { Text, View, StyleSheet, Pressable } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../../state/auth/AuthContext';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -19,7 +20,7 @@ export default function Account() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.contentContainer}>
         <View style={styles.logoContainer}>
           <Logo size="medium" showText={true} />
@@ -45,7 +46,7 @@ export default function Account() {
           </Pressable>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -53,6 +54,7 @@ export default function Account() {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
+    backgroundColor: colors.alabaster,
     flex: 1,
     paddingHorizontal: 16,
   },

@@ -3,7 +3,8 @@ import * as Notifications from 'expo-notifications';
 import { Dispatch } from 'react';
 import { UserSeedAction } from '../seeds/seedTypes';
 import { UserSeedTask, TaskStatus, AddTaskDraft } from './taskTypes';
-import { getTimestamp, createTempId } from '../../app/appUtils';
+import { createTempId } from '../../app/appUtils';
+import { getTimestamp } from '../../app/dateUtils';
 import { insertTask, deleteTask, updateTaskDetails, updateTaskStatus } from './taskQueries';
 import { buildUserSeedTask, requestReminderPermissions, taskHasSaveableText } from './taskUtils';
 

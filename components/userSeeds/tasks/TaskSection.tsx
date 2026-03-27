@@ -1,48 +1,48 @@
 import { View, Text, StyleSheet } from 'react-native';
-import { colors } from '../../../styles/theme';
 import { TaskSectionMode, UserSeedTask } from '../../../state/userSeeds/tasks/taskTypes';
 import TaskCard from './TaskCard';
+import { colors } from '../../../styles/theme';
 
 type TaskSectionProps = {
-  readonly title?: string;
   readonly tasks: UserSeedTask[];
   readonly mode: TaskSectionMode;
+  readonly title?: string;
+  readonly showToggle?: boolean;
   readonly emptyMessage?: string;
   readonly onToggleStatus?: (task: UserSeedTask) => void;
-  readonly onDelete?: (task: UserSeedTask) => void;
   readonly onEdit?: (task: UserSeedTask) => void;
+  readonly onDelete?: (task: UserSeedTask) => void;
 };
 
+// TaskSection.tsx: Renders a list of tasks in a section.
 export default function TaskSection({
-  title,
   tasks,
   mode,
+  title,
   emptyMessage = 'No tasks.',
+  showToggle = true,
   onToggleStatus,
-  onDelete,
   onEdit,
+  onDelete,
 }: TaskSectionProps) {
-  const hasTasks = tasks.length > 0;
-  const showToggle = mode !== 'timeline';
   const showEdit = mode === 'editable';
-
-  // TODO: do we need this still?
-  const showDelete = true;
+  const hasTasks = tasks.length > 0;
+  const hasTitle = title && title.trim() !== '';
+  const paddingTop = hasTitle ? 0 : 8;
 
   return (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
+    <View style={[styles.section, { paddingTop }]}>
+      {hasTitle && <Text style={styles.sectionTitle}>{title}</Text>}
       {!hasTasks && <Text style={styles.emptyText}>{emptyMessage}</Text>}
 
       {hasTasks && (
-        <View style={styles.list}>
+        <View style={styles.tasks}>
           {tasks.map((task) => (
             <TaskCard
               key={task.id}
               task={task}
               showEdit={showEdit}
               showToggle={showToggle}
-              showDelete={showDelete}
               onEdit={onEdit}
               onToggle={onToggleStatus}
               onDelete={onDelete}
@@ -54,22 +54,25 @@ export default function TaskSection({
   );
 }
 
+// ---- STYLES ----
 const styles = StyleSheet.create({
   section: {
     gap: 10,
   },
   sectionTitle: {
-    fontSize: 15,
+    color: colors.primary,
+    fontSize: 16,
     fontWeight: '700',
-    color: colors.hunterGreen,
+    marginTop: 2,
+    textTransform: 'uppercase',
+  },
+  tasks: {
+    gap: 18,
+    marginBottom: 10,
   },
   emptyText: {
-    textAlign: 'center',
     color: colors.secondary,
     fontStyle: 'italic',
     marginVertical: 8,
-  },
-  list: {
-    gap: 10,
   },
 });

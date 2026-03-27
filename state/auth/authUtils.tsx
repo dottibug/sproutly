@@ -5,6 +5,7 @@ export const UNIVERSAL_PIN = '123456';
 export type Profile = {
   id: string;
   username: string;
+  createdAt: string | null;
 };
 
 // ---- SIGN-IN/SIGN-UP UTILS ----

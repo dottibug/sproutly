@@ -1,66 +1,55 @@
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { useMemo, useState, useEffect } from 'react';
-import { Alert, View, TextInput, Pressable, Text, StyleSheet, Platform, Modal } from 'react-native';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { appStyles, colors } from '../../../styles/theme';
+import { useState, useEffect, useMemo } from 'react';
+import { Alert, View, Pressable, Text, StyleSheet } from 'react-native';
+import { colors } from '../../../styles/theme';
 import Heading from '../../ui/Heading';
-import Button from '../../ui/buttons/AppButton';
-import { TaskType, UserSeedTask } from '../../../state/userSeeds/tasks/taskTypes';
+import AppButton from '../../ui/buttons/AppButton';
+import { AddTaskDraft, TaskType, UserSeedTask } from '../../../state/userSeeds/tasks/taskTypes';
 import { useUserSeed } from '../../../state/userSeeds/UserSeedsContext';
 import AppModal from '../../ui/AppModal';
-import { taskHasSaveableText } from '../../../state/userSeeds/tasks/taskUtils';
+import { taskHasSaveableText, getNewTaskModalTitle } from '../../../state/userSeeds/tasks/taskUtils';
 import Input from '../../ui/form/Input';
+import DatePickerSheet from '../../ui/DatePickerSheet';
+import { startOfToday, createNoonDate } from '../../../state/app/dateUtils';
+import SheetModal from '../../ui/SheetModal';
 
 // TODO: Text in the modal such as "Add a new task for {seed variety} {seed plant}"
 
-// TODO: add a clear all tasks button
-
 type StartTaskModalProps = {
   readonly visible: boolean;
-  readonly onRequestClose: () => void;
   readonly userSeedId: string;
   readonly editingTask?: UserSeedTask | null;
+  readonly onRequestClose: () => void;
+  readonly variety: string;
+  readonly plant: string;
 };
 
-const TASK_TYPES: TaskType[] = ['sow', 'transplant', 'fertilize', 'harvest', 'prune', 'custom'];
-
-const formatDate = (date: Date): string => {
-  return date.toLocaleDateString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-};
-
-function startOfToday(): Date {
-  const t = new Date();
-  t.setHours(0, 0, 0, 0);
-  return t;
-}
-
-export default function StartTaskModal({ visible, onRequestClose, userSeedId, editingTask = null }: StartTaskModalProps) {
+export default function StartTaskModal({ visible, userSeedId, editingTask = null, onRequestClose, variety, plant }: StartTaskModalProps) {
   const { addTask, updateTask } = useUserSeed();
-  const insets = useSafeAreaInsets();
 
-  const defaultDate = useMemo(() => {
-    const d = new Date();
-    d.setHours(12, 0, 0, 0); // noon default
-    return d;
-  }, []);
+  const defaultDate = useMemo(() => createNoonDate(), []);
+  const dateMinimum = editingTask ? undefined : startOfToday();
 
   const [taskType, setTaskType] = useState<TaskType>('sow');
   const [customTaskType, setCustomTaskType] = useState('');
+  const [customTaskEnabled, setCustomTaskEnabled] = useState(false);
   const [title, setTitle] = useState('');
   const [notes, setNotes] = useState('');
-  const [taskDate, setTaskDate] = useState<Date>(defaultDate);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [taskDate, setTaskDate] = useState<Date>(defaultDate);
 
+  const modalTitleNewTask = useMemo(() => getNewTaskModalTitle(variety, plant), [variety, plant]);
+  const modalTitle = editingTask ? EDIT_TITLE : modalTitleNewTask;
+
+  // Effect to set the state of the modal when it is opened
   useEffect(() => {
-    if (!visible) return;
+    if (!visible) {
+      setShowDatePicker(false);
+      return;
+    }
 
     if (editingTask) {
       setTaskType(editingTask.taskType);
+      setCustomTaskEnabled(editingTask.taskType === 'custom');
       setCustomTaskType(editingTask.customTaskType || '');
       setTitle(editingTask.title || '');
       setNotes(editingTask.notes || '');
@@ -68,239 +57,176 @@ export default function StartTaskModal({ visible, onRequestClose, userSeedId, ed
       return;
     }
 
+    setCustomTaskEnabled(false);
     setTaskType('sow');
     setCustomTaskType('');
     setTitle('');
     setNotes('');
     setTaskDate(defaultDate);
-  }, [visible, editingTask, defaultDate]);
+  }, [visible, editingTask?.id, defaultDate]);
 
-  useEffect(() => {
-    if (!visible) setShowDatePicker(false);
-  }, [visible]);
-
-  const dateMinimum = editingTask ? undefined : startOfToday();
-
-  const customTypeEnabled = taskType === 'custom';
+  const handleSelectTaskType = (type: TaskType) => {
+    setTaskType(type);
+    if (type === 'custom') setCustomTaskEnabled(true);
+    else {
+      setCustomTaskType('');
+      setCustomTaskEnabled(false);
+    }
+  };
 
   const handleSaveTask = async () => {
-    const payloadDate = new Date(taskDate);
-    payloadDate.setHours(12, 0, 0, 0); // noon
-    const payloadTitle = title.trim() || null;
-    const payloadNotes = notes.trim();
-    const payloadCustomTaskType = customTypeEnabled ? customTaskType.trim() || null : null;
+    const date = new Date(taskDate);
+    date.setHours(12, 0, 0, 0);
 
-    if (!taskHasSaveableText(payloadTitle, payloadNotes)) {
-      Alert.alert('Cannot save', 'Enter a title or notes (at least one).');
+    const draft: AddTaskDraft = {
+      userSeedId,
+      taskType,
+      customTaskType: taskType === 'custom' ? customTaskType.trim() || 'custom' : null,
+      date: date.toISOString(),
+      title: title.trim() || null,
+      notes: notes.trim(),
+    };
+
+    if (!taskHasSaveableText(draft.title, draft.notes)) {
+      Alert.alert(SAVE_ERROR_TITLE, SAVE_ERROR_MESSAGE);
       return;
     }
 
-    // Do not await database insert/update
     if (editingTask) {
-      updateTask({
+      void updateTask({
         ...editingTask,
-        taskType,
-        customTaskType: payloadCustomTaskType,
-        date: payloadDate.toISOString(),
-        title: payloadTitle,
-        notes: payloadNotes,
+        ...draft,
         updatedAt: new Date().toISOString(),
-      }).catch((error) => console.error('Error updating task:', error));
+      }).catch((e) => {
+        console.error('Error updating task:', e);
+        Alert.alert('Could not sync yet', 'Check your connection. Your change may not be saved on the server.');
+      });
     } else {
-      addTask({
-        userSeedId,
-        taskType,
-        customTaskType: payloadCustomTaskType,
-        date: payloadDate.toISOString(),
-        title: payloadTitle,
-        notes: payloadNotes,
-      }).catch((error) => console.error('Error adding task to seed:', error));
+      void addTask(draft).catch((e) => {
+        console.error('Error adding task to seed:', e);
+        Alert.alert('Could not sync yet', 'Check your connection. This task may disappear after refresh until it syncs.');
+      });
     }
 
     onRequestClose();
   };
 
   return (
-    <AppModal visible={visible} onRequestClose={onRequestClose} title={editingTask ? 'Edit Task' : 'New Task'}>
-      <View style={styles.section}>
-        <Heading size="xsmall">Type</Heading>
-        <View style={styles.typeRow}>
-          {TASK_TYPES.map((type) => {
-            const selected = taskType === type;
-            return (
-              <Pressable
-                key={type}
-                onPress={() => {
-                  setTaskType(type);
-                  if (type !== 'custom') setCustomTaskType('');
-                }}
-                style={[styles.typeChip, selected && styles.typeChipSelected]}>
-                <Text style={[styles.typeChipText, selected && styles.typeChipTextSelected]}>{type}</Text>
-              </Pressable>
-            );
-          })}
+    <SheetModal
+      accessibilityLabel={modalTitle}
+      title={modalTitle}
+      open={visible}
+      showTrigger={false}
+      onPressTrigger={() => {}}
+      onRequestClose={onRequestClose}>
+      <View style={styles.contentContainer}>
+        <View style={styles.inputSection}>
+          <Heading size="xsmall">{TASK_TYPE_TITLE}</Heading>
+          <View style={styles.taskChips}>
+            {TASK_TYPES.map((type) => {
+              const selected = taskType === type;
+              return (
+                <Pressable
+                  key={type}
+                  onPress={() => handleSelectTaskType(type)}
+                  style={[styles.taskChip, selected && styles.taskChipSelected]}>
+                  <Text style={[styles.taskChipText, selected && styles.taskChipTextSelected]}>{type}</Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
+
+        <View style={styles.inputSection}>
+          <Input
+            label={CUSTOM_TYPE_TITLE}
+            placeholder={customTaskEnabled ? CUSTOM_PLACEHOLER_EXAMPLE : CUSTOM_PLACEHOLER_SELECT}
+            value={customTaskType}
+            onChangeText={setCustomTaskType}
+            editable={customTaskEnabled}
+            disabled={!customTaskEnabled}
+            headingSize="xsmall"
+          />
+        </View>
+
+        <View style={styles.inputSection}>
+          <Input label={TASK_TITLE} headingSize="xsmall" placeholder={TASK_PLACEHOLDER} value={title} onChangeText={setTitle} />
+        </View>
+
+        <DatePickerSheet
+          showDatePicker={showDatePicker}
+          setShowDatePicker={setShowDatePicker}
+          taskDate={taskDate}
+          setTaskDate={setTaskDate}
+          dateMinimum={dateMinimum}
+        />
+
+        <View style={styles.inputSection}>
+          <Input label={NOTES_TITLE} headingSize="xsmall" placeholder={NOTES_PLACEHOLDER} value={notes} onChangeText={setNotes} multiline />
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <AppButton text={editingTask ? EDIT_SAVE_BUTTON : NEW_SAVE_BUTTON} size="xsmall" rounded onPress={handleSaveTask} />
         </View>
       </View>
-
-      <View style={appStyles.customSeedInputSection}>
-        <Input
-          label="Custom Type"
-          placeholder={customTypeEnabled ? 'e.g. water, prune, weed' : 'Select "custom" above'}
-          value={customTaskType}
-          onChangeText={setCustomTaskType}
-          editable={customTypeEnabled}
-          readOnly={!customTypeEnabled}
-        />
-      </View>
-
-      <View style={appStyles.customSeedInputSection}>
-        <Heading size="xsmall">Title (optional)</Heading>
-        <Input label="Title" placeholder="Task title" value={title} onChangeText={setTitle} />
-      </View>
-
-      <View style={appStyles.customSeedInputSection}>
-        <Heading size="xsmall">Date</Heading>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Choose task date"
-          style={styles.dateInputRow}
-          onPress={() => setShowDatePicker(true)}>
-          <Text style={styles.dateInputText}>{formatDate(taskDate)}</Text>
-          <Ionicons name="calendar-outline" size={22} color={colors.gray} />
-        </Pressable>
-
-        {Platform.OS === 'android' && showDatePicker && (
-          <DateTimePicker
-            value={taskDate}
-            mode="date"
-            display="default"
-            minimumDate={dateMinimum}
-            onChange={(_, selected) => {
-              setShowDatePicker(false);
-              if (selected) setTaskDate(selected);
-            }}
-          />
-        )}
-
-        {Platform.OS === 'ios' && (
-          <Modal visible={showDatePicker} transparent animationType="fade" onRequestClose={() => setShowDatePicker(false)}>
-            <View style={styles.pickerBackdrop}>
-              <Pressable
-                style={StyleSheet.absoluteFill}
-                onPress={() => setShowDatePicker(false)}
-                accessibilityLabel="Dismiss date picker"
-              />
-              <View style={[styles.pickerSheet, { paddingBottom: Math.max(16, insets.bottom) }]}>
-                <View style={styles.pickerHeader}>
-                  <Text style={styles.pickerTitle}>Choose date</Text>
-                  <Pressable onPress={() => setShowDatePicker(false)} hitSlop={12}>
-                    <Text style={styles.headerButton}>Done</Text>
-                  </Pressable>
-                </View>
-                <DateTimePicker
-                  value={taskDate}
-                  mode="date"
-                  display="inline"
-                  minimumDate={dateMinimum}
-                  themeVariant="light"
-                  onChange={(_, selected) => {
-                    if (selected) setTaskDate(selected);
-                  }}
-                />
-              </View>
-            </View>
-          </Modal>
-        )}
-      </View>
-
-      <View style={appStyles.customSeedInputSection}>
-        <Input label="Notes" placeholder="Optional details" value={notes} onChangeText={setNotes} multiline />
-      </View>
-
-      <Button text={editingTask ? 'Save Changes' : 'Save Task'} size="small" onPress={handleSaveTask} />
-    </AppModal>
+    </SheetModal>
   );
 }
 
+// ---- CONSTANTS ----
+const TASK_TYPES: TaskType[] = ['sow', 'transplant', 'fertilize', 'harvest', 'prune', 'custom'];
+const EDIT_TITLE = 'Edit Task';
+const TASK_TYPE_TITLE = 'Select Garden Task';
+const CUSTOM_TYPE_TITLE = 'Custom Garden Task';
+const CUSTOM_PLACEHOLER_EXAMPLE = 'e.g. water, prune, weed';
+const CUSTOM_PLACEHOLER_SELECT = `Tap 'custom' to enable`;
+const TASK_TITLE = 'Task Title';
+const TASK_PLACEHOLDER = 'Name of task';
+const NOTES_TITLE = 'Notes';
+const NOTES_PLACEHOLDER = 'Additional task notes';
+const EDIT_SAVE_BUTTON = 'Save Changes';
+const NEW_SAVE_BUTTON = 'Save Task';
+const SAVE_ERROR_TITLE = 'Cannot save task';
+const SAVE_ERROR_MESSAGE = 'Tasks must have a title or notes.';
+
+// ---- STYLES ----
 const styles = StyleSheet.create({
   section: {
-    gap: 8,
+    // gap: 12,
   },
-  typeRow: {
+  contentContainer: {
+    gap: 18,
+  },
+  inputSection: {
+    gap: 8,
+    marginTop: 2,
+  },
+  taskChips: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    columnGap: 8,
   },
-  typeChip: {
-    borderWidth: 1,
-    borderColor: colors.gray,
-    borderRadius: 999,
+  taskChip: {
+    backgroundColor: colors.alabaster,
+    alignSelf: 'flex-start',
+    borderRadius: 100,
+    marginVertical: 6,
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
-  typeChipSelected: {
-    backgroundColor: colors.hunterGreen,
-    borderColor: colors.hunterGreen,
+  taskChipSelected: {
+    backgroundColor: colors.greenLight,
   },
-  typeChipText: {
-    fontSize: 14,
-    color: colors.gray,
-    textTransform: 'capitalize',
+  taskChipText: {
+    color: colors.opaqueBlack,
+    fontSize: 12,
+    fontWeight: '700',
+    textTransform: 'uppercase',
   },
-  typeChipTextSelected: {
+  taskChipTextSelected: {
     color: colors.white,
   },
-  customTypeInputDisabled: {
-    opacity: 0.55,
-    backgroundColor: colors.lightGray,
-  },
-  rowButtons: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  dateInputRow: {
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.gray,
-    borderRadius: 9,
-    fontSize: 16,
-    padding: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 8,
-  },
-  dateInputText: {
-    fontSize: 16,
-    color: colors.primary,
-    flex: 1,
-  },
-  pickerBackdrop: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.4)',
-  },
-  pickerSheet: {
-    backgroundColor: colors.white,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    paddingTop: 8,
-    paddingHorizontal: 12,
-    maxHeight: '72%',
-  },
-  pickerHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    minHeight: 44,
-  },
-  pickerTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  headerButton: {
-    color: colors.hunterGreen,
-    fontSize: 16,
-    fontWeight: '600',
+  buttonContainer: {
+    marginVertical: 16,
   },
 });

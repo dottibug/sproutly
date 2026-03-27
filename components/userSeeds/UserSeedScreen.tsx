@@ -8,6 +8,7 @@ import { getPendingTodayCount } from '../../state/userSeeds/tasks/taskUtils';
 import UserSeedTasks from './tasks/UserSeedTasks';
 import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
 import { colors } from '../../styles/theme';
+import { View, StyleSheet } from 'react-native';
 
 // TODO: change badge color of tasks
 
@@ -24,12 +25,20 @@ export default function UserSeedScreen({ seed }: UserSeedScreenProps) {
   const handleTabPress = (tab: string) => setActiveTab(tab as UserSeedTab);
 
   return (
-    <>
+    <View style={styles.container}>
       <Tabs tabs={USER_SEED_TABS} activeTab={activeTab} onTabPress={handleTabPress} badgeCounts={{ Tasks: tasksTodayCount }} />
       <UserSeedDetails seed={seed} activeTab={activeTab} />
       <UserSeedNotes seed={seed} activeTab={activeTab} />
       <UserSeedPhotos seed={seed} activeTab={activeTab} />
       <UserSeedTasks seed={seed} activeTab={activeTab} />
-    </>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+
+    paddingBottom: 0,
+  },
+});

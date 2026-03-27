@@ -1,47 +1,44 @@
-import { View, Text, Alert, Pressable, StyleSheet, Image, ScrollView } from 'react-native';
+import { View, Text, Alert, Pressable, StyleSheet, Image, FlatList, Dimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useMemo, useState } from 'react';
+import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
 import { FAB_MARGIN_RIGHT, UserSeedTab } from '../../state/app/appTypes';
 import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
-import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { GalleryCell } from '../../state/userSeeds/photos/photoTypes';
+import { flattenPhotos } from '../../state/userSeeds/photos/photoUtils';
 import { FAB as PaperFAB } from 'react-native-paper';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Loading from '../ui/Loading';
+import ScreenMessage from '../ui/ScreenMessage';
+import GalleryModal from '../gallery/GalleryModal';
 import { colors } from '../../styles/theme';
-
-function photosFabIcon({ size, color }: { size: number; color: string }) {
-  return <FontAwesome5 name="camera" size={size} color={color} solid />;
-}
-
-// TODO: styling
-// TODO: Error handling
-// TODO: Show a brief placeholder image while photo is uploading so the user knows the photo is being added
 
 type UserSeedPhotosProps = {
   readonly activeTab: UserSeedTab;
   readonly seed: UserSeed;
 };
 
-const NO_PHOTOS = 'No photos yet. Add one to track progress.';
-
-const FAB_BOTTOM_GAP = 16;
-
-// UserSeedPhotos component displays the photos of a single seed in the user's collection
+// UserSeedPhotos.tsx: Displays the photos of a single seed in the user's collection. Includes a FAB to add a new photo, delete buttons for each photo, and a modal to view an enlarged photo.
 export default function UserSeedPhotos({ seed, activeTab }: UserSeedPhotosProps) {
   const insets = useSafeAreaInsets();
-  const { addPhoto, deletePhoto } = useUserSeed();
+  const { loading, error, addPhoto, deletePhoto } = useUserSeed();
+  const [selected, setSelected] = useState<GalleryCell | null>(null);
 
-  const photos = seed.photos ?? [];
-  const hasPhotos = photos.length > 0;
+  const cells = useMemo(() => flattenPhotos([seed] as UserSeed[]), [seed]);
+  const hasPhotos = cells.length > 0;
+
+  if (loading) return <Loading message="Loading photos…" />;
+  if (error) return <ScreenMessage message={error} />;
 
   const handleAddPhoto = () => {
     void addPhoto({ userSeedId: seed.id });
   };
 
   const handleDeletePhoto = (photoId: string) => {
-    Alert.alert('Delete photo?', 'This cannot be undone.', [
-      { text: 'Cancel', style: 'cancel' },
+    Alert.alert(DELETE_PHOTO_TITLE, DELETE_PHOTO_MESSAGE, [
+      { text: CANCEL, style: 'cancel' },
       {
-        text: 'Delete',
+        text: DELETE,
         style: 'destructive',
         onPress: () => {
           deletePhoto(photoId).catch((error) => console.error('Error deleting photo:', error));
@@ -50,25 +47,33 @@ export default function UserSeedPhotos({ seed, activeTab }: UserSeedPhotosProps)
     ]);
   };
 
+  // Render item for the FlatList
+  const photoCell = ({ item }: { item: GalleryCell }) => (
+    <Pressable style={styles.tile} onPress={() => setSelected(item)}>
+      <Image source={{ uri: item.photo.imageUri }} style={styles.thumb} resizeMode="cover" />
+      <Pressable style={styles.deleteButton} onPress={() => handleDeletePhoto(item.photo.id)}>
+        <FontAwesome5 name="trash-alt" size={20} color={colors.alabaster} />
+      </Pressable>
+    </Pressable>
+  );
+
   return (
-    <View style={[styles.screen, { display: activeTab === 'Photos' ? 'flex' : 'none' }]}>
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: FAB_BOTTOM_GAP + 56 + insets.bottom + 16 }]}>
-        {!hasPhotos && <Text style={styles.empty}>{NO_PHOTOS}</Text>}
-        {hasPhotos && (
-          <View style={styles.grid}>
-            {photos.map((photo) => (
-              <View key={photo.createdAt} style={styles.tile}>
-                <Image source={{ uri: photo.imageUri }} style={styles.image} resizeMode="cover" />
-                <Pressable style={styles.deleteButton} onPress={() => handleDeletePhoto(photo.id)}>
-                  <MaterialCommunityIcons name="trash-can" size={20} color={colors.white} />
-                </Pressable>
-              </View>
-            ))}
-          </View>
-        )}
-      </ScrollView>
+    <View style={[styles.container, { display: activeTab === 'Photos' ? 'flex' : 'none' }]}>
+      <Text style={styles.subtitle}>Tap a photo for a larger view</Text>
+      {!hasPhotos && <ScreenMessage message={NO_PHOTOS_MESSAGE} />}
+
+      {hasPhotos && (
+        <FlatList
+          data={cells}
+          keyExtractor={(item) => item.key}
+          numColumns={2}
+          columnWrapperStyle={styles.row}
+          contentContainerStyle={styles.list}
+          renderItem={photoCell}
+        />
+      )}
+
+      <GalleryModal visible={selected !== null} onRequestClose={() => setSelected(null)} selected={selected} useViewButton={false} />
 
       <PaperFAB
         accessibilityLabel="Add photo"
@@ -88,48 +93,64 @@ export default function UserSeedPhotos({ seed, activeTab }: UserSeedPhotosProps)
   );
 }
 
+// ---- FAB ICON ----
+function photosFabIcon({ size, color }: { size: number; color: string }) {
+  return <FontAwesome5 name="camera" size={size} color={color} solid />;
+}
+
+// ---- CONSTANTS ----
+const NO_PHOTOS_MESSAGE = 'No photos yet. Add photos to track the progress of your seeds.';
+const DELETE_PHOTO_TITLE = 'Delete photo?';
+const DELETE_PHOTO_MESSAGE = 'This cannot be undone.';
+const CANCEL = 'Cancel';
+const DELETE = 'Delete';
+const GAP = 8;
+const COLS = 2;
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const PADDING = 16;
+const CELL_SIZE = (SCREEN_WIDTH - PADDING * 2 - GAP) / COLS;
+
+// ---- STYLES ----
 const styles = StyleSheet.create({
-  screen: {
+  container: {
+    backgroundColor: colors.alabaster,
     flex: 1,
+    paddingTop: PADDING,
     position: 'relative',
   },
-  scroll: {
-    flex: 1,
+  subtitle: {
+    color: colors.secondary,
+    fontSize: 16,
+    marginBottom: 14,
+    paddingHorizontal: PADDING,
   },
-  scrollContent: {
-    padding: 16,
+  thumb: {
+    backgroundColor: colors.lightGray,
+    borderRadius: 18,
+    height: CELL_SIZE,
+    width: CELL_SIZE,
   },
-  empty: {
-    marginVertical: 16,
-    textAlign: 'center',
+  list: {
+    paddingBottom: 24,
+    paddingHorizontal: PADDING,
   },
-  fab: {
-    position: 'absolute',
-  },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
+  row: {
+    gap: GAP,
+    marginBottom: GAP,
   },
   tile: {
-    width: '48%',
-    aspectRatio: 1,
-    borderRadius: 12,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: colors.lightGray,
-    position: 'relative',
-  },
-  image: {
-    width: '100%',
-    height: '100%',
+    width: CELL_SIZE,
   },
   deleteButton: {
     position: 'absolute',
     top: 8,
     right: 8,
-    backgroundColor: 'rgba(0,0,0,0.55)',
+    backgroundColor: colors.opaqueBlack,
     borderRadius: 999,
-    padding: 6,
+    padding: 7,
+    zIndex: 2,
+  },
+  fab: {
+    position: 'absolute',
   },
 });

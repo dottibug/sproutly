@@ -1,6 +1,7 @@
 import { Dispatch } from 'react';
 import { UserSeedAction } from '../seeds/seedTypes';
-import { createTempId, getTimestamp } from '../../app/appUtils';
+import { createTempId } from '../../app/appUtils';
+import { getTimestamp } from '../../app/dateUtils';
 import { buildUserSeedPhoto, selectImage } from './photoUtils';
 import { uploadImage, getSignedImageUrl, insertPhoto, deletePhoto } from './photoQueries';
 import { AddPhotoDraft } from './photoTypes';

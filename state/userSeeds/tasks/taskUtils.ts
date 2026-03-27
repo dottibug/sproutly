@@ -1,6 +1,6 @@
 import { UserSeed } from '../seeds/seedTypes';
 import { UserSeedTask, TaskStatus, BuildTaskInput } from './taskTypes';
-import { getTimestamp } from '../../app/appUtils';
+import { getTimestamp, isSameDay, isDueToday, isISOToday, startOfDay } from '../../app/dateUtils';
 import * as Notifications from 'expo-notifications';
 
 /** Title and notes cannot both be empty — same idea as notes (need at least one). Applies to all task types including custom. */
@@ -144,12 +144,6 @@ export function countDailyPendingTasks(seeds: UserSeed[]): number {
   return numTasks;
 }
 
-export function isSameDay(dueDate: Date): boolean {
-  const now = new Date();
-
-  return dueDate.getFullYear() === now.getFullYear() && dueDate.getMonth() === now.getMonth() && dueDate.getDate() === now.getDate();
-}
-
 // Group tasks by userSeedId (key is userSeedId)
 export function groupTasksByUserSeedId(tasks: UserSeedTask[]): Map<string, UserSeedTask[]> {
   const map = new Map<string, UserSeedTask[]>();
@@ -170,40 +164,9 @@ export async function requestReminderPermissions(): Promise<boolean> {
   return requested.granted;
 }
 
-// Format the task date for display
-export function formatTaskDate(iso: string): string {
-  const date = new Date(iso);
-  return date.toLocaleString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-  });
-}
-
-// Check if the task date is the same day as the given date
-export function isDueToday(taskDate: Date, dueDate: Date): boolean {
-  return (
-    taskDate.getFullYear() === dueDate.getFullYear() &&
-    taskDate.getMonth() === dueDate.getMonth() &&
-    taskDate.getDate() === dueDate.getDate()
-  );
-}
-
-// Check if the task date is today
-export function isToday(iso: string): boolean {
-  return isDueToday(new Date(iso), new Date());
-}
-
 // Get the number of pending tasks due today
 export function getPendingTodayCount(tasks: UserSeedTask[], now = new Date()): number {
   return tasks.filter((task) => task.status !== 'completed' && isDueToday(new Date(task.date), now)).length;
-}
-
-// Get the start of the day for a given date
-function startOfDay(date: Date): number {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0).getTime();
 }
 
 // Sort the timeline by completedAt date (most recent first)
@@ -233,7 +196,7 @@ export function splitTasks(tasks: UserSeedTask[]) {
     }
 
     if (task.status === 'completed') {
-      if (task.completedAt && isToday(task.completedAt)) completedToday.push(task);
+      if (task.completedAt && isISOToday(task.completedAt)) completedToday.push(task);
       else timeline.push(task);
     }
   });
@@ -247,4 +210,21 @@ export function splitTasks(tasks: UserSeedTask[]) {
     upcoming,
     timeline: sortedTimeline,
   };
+}
+
+// Check if the task is a user-defined custom task
+export function isCustomTask(task: UserSeedTask): boolean {
+  return (
+    task.taskType !== 'sow' &&
+    task.taskType !== 'transplant' &&
+    task.taskType !== 'fertilize' &&
+    task.taskType !== 'harvest' &&
+    task.taskType !== 'prune'
+  );
+}
+
+// Get the title for the new task modal
+export function getNewTaskModalTitle(variety: string, plant: string) {
+  if (variety !== '' && plant !== '') return `Create New Task for ${variety} ${plant}`;
+  else return 'Create New Task';
 }

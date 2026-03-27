@@ -1,6 +1,7 @@
 import { UserSeed } from '../seeds/seedTypes';
 import { NotePayload, UserSeedNote } from './noteTypes';
-import { createTempId, getTimestamp } from '../../app/appUtils';
+import { createTempId } from '../../app/appUtils';
+import { getTimestamp } from '../../app/dateUtils';
 
 /** True if at least one of title or body has non-whitespace content. */
 export function noteHasContent(title: string | null | undefined, note: string | null | undefined): boolean {

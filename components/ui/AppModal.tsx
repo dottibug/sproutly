@@ -21,7 +21,11 @@ export default function AppModal({ visible, onRequestClose, title, children }: A
           <View style={styles.closeButtonContainer}>
             <IconButton icon="close" size={24} onPress={onRequestClose} />
           </View>
-          {hasTitle && <Heading size="small">{title}</Heading>}
+          {hasTitle && (
+            <View style={styles.titleContainer}>
+              <Heading size="medium">{title}</Heading>
+            </View>
+          )}
           {children}
         </View>
       </View>
@@ -32,7 +36,8 @@ export default function AppModal({ visible, onRequestClose, title, children }: A
 const styles = StyleSheet.create({
   modalContainer: {
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    // backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    backgroundColor: colors.graphite,
     flex: 1,
     justifyContent: 'center',
   },
@@ -50,7 +55,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    width: '80%',
+    width: '100%',
   },
   closeButtonContainer: {
     alignItems: 'center',
@@ -62,5 +67,10 @@ const styles = StyleSheet.create({
     top: 16,
     width: 32,
     zIndex: 1000,
+  },
+  titleContainer: {
+    alignItems: 'center',
+    marginTop: 32,
+    marginBottom: 16,
   },
 });

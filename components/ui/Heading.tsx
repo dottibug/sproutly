@@ -36,7 +36,7 @@ export default function Heading({
 
 const styles = StyleSheet.create({
   xsmallHeading: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: 'bold',
   },
   smallHeading: {

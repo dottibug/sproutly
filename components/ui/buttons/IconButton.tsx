@@ -9,7 +9,7 @@ type IconButtonProps = {
   readonly onPress: () => void;
 };
 
-export default function IconButton({ icon, size = 24, color = colors.lavender, onPress }: IconButtonProps) {
+export default function IconButton({ icon, size = 24, color = colors.primary, onPress }: IconButtonProps) {
   const iconMap = {
     info: 'circle-info',
     closeCircle: 'circle-xmark',

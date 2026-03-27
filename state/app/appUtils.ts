@@ -1,10 +1,10 @@
 import { UserSeed } from '../userSeeds/seeds/seedTypes';
 import { BrowseSeed } from '../browseSeeds/browseTypes';
+import { getTimestamp } from './dateUtils';
 
-// ---- TIMESTAMP ----
-export function getTimestamp() {
-  return new Date().toISOString();
-}
+/**
+ * appUtils.ts: Contains utility functions for the app
+ */
 
 // ---- TEMP ID ----
 export function createTempId() {
@@ -25,11 +25,4 @@ export function searchSeeds(seeds: UserSeed[] | BrowseSeed[], searchQuery: strin
 
     return variety.includes(query) || plant.includes(query) || category.includes(query) || sku.includes(query);
   });
-}
-
-// ---- SORT UTILS ----
-export function sortByDate(a: string, b: string): number {
-  const aTime = new Date(a).getTime();
-  const bTime = new Date(b).getTime();
-  return bTime - aTime;
 }

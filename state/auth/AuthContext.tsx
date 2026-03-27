@@ -2,6 +2,7 @@ import { createContext, useReducer, useCallback, useEffect, useMemo, useContext 
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '../app/supabase';
 import { runLoadSessionAndProfile, runSignIn, runSignUp, runSubscribeToAuthStateChanges } from './authThunks';
+import type { Profile } from './authUtils';
 
 /**
  * AuthContext.tsx: Manages user authentication state and provides authentication functions to child components.
@@ -10,10 +11,6 @@ import { runLoadSessionAndProfile, runSignIn, runSignUp, runSubscribeToAuthState
  */
 
 // ---- TYPES ----
-type Profile = {
-  id: string;
-  username: string;
-};
 
 type AuthState = {
   session: Session | null;

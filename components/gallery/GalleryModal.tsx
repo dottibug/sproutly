@@ -1,21 +1,23 @@
-import { useEffect, useState } from 'react';
-import { GalleryCell } from '../../state/userSeeds/photos/photoTypes';
-import { calculatePhotoAspectRatio, formatPhotoDate, getPhotoCaption } from '../../state/userSeeds/photos/photoUtils';
 import { Modal, StyleSheet, Text, Image, View, Pressable, ScrollView, useWindowDimensions } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
+import { GalleryCell } from '../../state/userSeeds/photos/photoTypes';
+import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
+import { calculatePhotoAspectRatio, formatPhotoDate, getPhotoCaption } from '../../state/userSeeds/photos/photoUtils';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { colors } from '../../styles/theme';
 
 type GalleryModalProps = {
   readonly visible: boolean;
   readonly onRequestClose: () => void;
   readonly selected: GalleryCell | null;
-  readonly isSeedInCollection: boolean;
+  readonly isSeedInCollection?: boolean;
+  readonly useViewButton?: boolean;
 };
 
-export default function GalleryModal({ visible, onRequestClose, selected, isSeedInCollection }: GalleryModalProps) {
+// GalleryModal.tsx: Displays an enlarged view of a photo from the photo gallery. Includes the photo, a caption, photo date, and a link to the associated seed.
+export default function GalleryModal({ visible, onRequestClose, selected, isSeedInCollection, useViewButton = true }: GalleryModalProps) {
   const router = useRouter();
 
   const insets = useSafeAreaInsets();
@@ -48,12 +50,9 @@ export default function GalleryModal({ visible, onRequestClose, selected, isSeed
   // Navigate to this seed in the user's collection
   const viewSeedDetails = (seed: UserSeed | null) => {
     if (!seed) return;
-
     const seedId = seed.customSeedId ? seed.customSeedId : seed.catalogSeedId;
     const source = seed.customSeedId ? 'custom' : 'catalog';
-
     onRequestClose();
-
     router.replace({
       pathname: `/(tabs)/home/${seedId}`,
       params: { source, tab: 'My Seeds' },
@@ -69,7 +68,7 @@ export default function GalleryModal({ visible, onRequestClose, selected, isSeed
             onPress={onRequestClose}
             accessibilityRole="button"
             accessibilityLabel="Close">
-            <FontAwesome6 name="xmark" size={26} color={colors.white} />
+            <FontAwesome6 name="xmark" size={26} color={colors.alabaster} />
           </Pressable>
 
           <ScrollView
@@ -82,13 +81,14 @@ export default function GalleryModal({ visible, onRequestClose, selected, isSeed
                 <Image source={{ uri }} style={[styles.photo, { width: windowWidth, aspectRatio: aspect }]} resizeMode="contain" />
               )}
 
-              {/* Avoids layout shift before the photo is loaded */}
+              {/* Avoid layout shift before the photo is loaded by displaying a placeholder */}
               {!aspectRatioReady && <View style={[styles.photo, { width: windowWidth, aspectRatio: 1 }]} />}
 
               <View style={styles.caption}>
                 <Text style={styles.captionTitle}>{caption}</Text>
                 <Text style={styles.captionDate}>Added {photoDate}</Text>
-                {showViewSeedButton && (
+
+                {useViewButton && showViewSeedButton && (
                   <Pressable
                     onPress={() => viewSeedDetails(seed)}
                     style={styles.viewSeedButton}
@@ -106,14 +106,16 @@ export default function GalleryModal({ visible, onRequestClose, selected, isSeed
   );
 }
 
+// ---- REFERENCES ----
 // https://reactnative.dev/docs/image#getsize
 // https://reactnative.dev/docs/usewindowdimensions
 // https://docs.expo.dev/versions/latest/sdk/safe-area-context/#after
 
+// ---- STYLES ----
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: colors.primary,
     flex: 1,
-    backgroundColor: '#0a0a0a',
   },
   safeArea: {
     flex: 1,
@@ -134,7 +136,7 @@ const styles = StyleSheet.create({
   },
   photo: {
     alignSelf: 'center',
-    backgroundColor: '#0a0a0a',
+    backgroundColor: colors.primary,
   },
   caption: {
     paddingHorizontal: 16,
@@ -143,13 +145,13 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   captionTitle: {
-    color: colors.white,
+    color: colors.alabaster,
     fontSize: 20,
     fontWeight: '700',
     letterSpacing: -0.3,
   },
   captionDate: {
-    color: 'rgba(255,255,255,0.5)',
+    color: colors.alabaster,
     fontSize: 14,
     marginTop: 4,
   },
@@ -159,10 +161,11 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   viewSeedText: {
-    color: colors.white,
+    borderBottomColor: colors.alabaster,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    color: colors.alabaster,
     fontSize: 15,
     fontWeight: '600',
-    textDecorationLine: 'underline',
-    textDecorationColor: 'rgba(255,255,255,0.45)',
+    paddingBottom: 2,
   },
 });

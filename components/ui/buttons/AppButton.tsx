@@ -108,7 +108,7 @@ const PADDING_MAP = {
   large: 12,
 };
 
-const BUTTON_COLOR_MAP = {
+export const BUTTON_COLOR_MAP = {
   primary: colors.greenMedium,
   secondary: colors.mediumGray,
   danger: colors.red,

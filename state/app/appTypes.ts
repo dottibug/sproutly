@@ -2,6 +2,7 @@
 export type Profile = {
   id: string;
   username: string;
+  createdAt: string | null;
 };
 
 export type ListTab = 'My Seeds' | 'Browse';

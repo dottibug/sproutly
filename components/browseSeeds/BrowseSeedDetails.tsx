@@ -18,12 +18,12 @@ const GROWING = 'Growing';
 const HARVEST = 'Harvest';
 const COMPANION_PLANTING = 'Companion Planting';
 
-type BrowseSeedProps = {
+type BrowseSeedDetailsProps = {
   readonly seed: BrowseSeed;
 };
 
 // BrowseSeed component displays the details of a single seed in the browse list
-export default function BrowseSeedScreen({ seed }: BrowseSeedProps) {
+export default function BrowseSeedDetails({ seed }: BrowseSeedDetailsProps) {
   const { addSeedFromBrowse, seeds: userSeeds } = useUserSeed();
 
   const inUserCollection = userSeeds.some((s: UserSeed) => s.catalogSeedId === seed.id);
@@ -84,11 +84,35 @@ export default function BrowseSeedScreen({ seed }: BrowseSeedProps) {
           <SeedQuickFacts maturesInDays={seed.maturesInDays} difficulty={seed.difficulty} />
         </View>
 
-        {showTiming && <Accordion title={TIMING} content={seed.timing} />}
-        {showStarting && <Accordion title={STARTING} content={seed.starting} />}
-        {showGrowing && <Accordion title={GROWING} content={seed.growing} />}
-        {showHarvest && <Accordion title={HARVEST} content={seed.harvest} />}
-        {showCompanionPlanting && <Accordion title={COMPANION_PLANTING} content={seed.companionPlanting} />}
+        {showTiming && (
+          <Accordion title={TIMING}>
+            <Text style={typography.textMedium}>{seed.timing}</Text>
+          </Accordion>
+        )}
+
+        {showStarting && (
+          <Accordion title={STARTING}>
+            <Text style={typography.textMedium}>{seed.starting}</Text>
+          </Accordion>
+        )}
+
+        {showGrowing && (
+          <Accordion title={GROWING}>
+            <Text style={typography.textMedium}>{seed.growing}</Text>
+          </Accordion>
+        )}
+
+        {showHarvest && (
+          <Accordion title={HARVEST}>
+            <Text style={typography.textMedium}>{seed.harvest}</Text>
+          </Accordion>
+        )}
+
+        {showCompanionPlanting && (
+          <Accordion title={COMPANION_PLANTING}>
+            <Text style={typography.textMedium}>{seed.companionPlanting}</Text>
+          </Accordion>
+        )}
       </View>
     </ScrollView>
   );

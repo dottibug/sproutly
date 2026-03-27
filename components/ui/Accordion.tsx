@@ -1,48 +1,55 @@
+import { View, StyleSheet } from 'react-native';
 import { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
-import { colors, typography } from '../../styles/theme';
+import { colors } from '../../styles/theme';
 
 type AccordionProps = {
   readonly title: string;
   readonly description?: string;
   readonly children?: React.ReactNode;
-  readonly content?: string | null;
   readonly openByDefault?: boolean;
 };
 
-// Accordion component that can be opened and closed
-export default function Accordion({ title, description, children, content, openByDefault = false }: AccordionProps) {
+// Accordion.tsx: Renders an accordion with a title, optional description, and children.
+export default function Accordion({ title, description, children, openByDefault = false }: AccordionProps) {
   const [expanded, setExpanded] = useState(openByDefault);
 
   const hasDescription = description !== undefined && description !== null && description.trim() !== '';
 
+  const color = colors.white;
+  const contentStyles = { gap: hasDescription ? 2 : 0 };
+  const descriptionText = hasDescription ? description : '';
+  const childrenBackgroundColor = colors.screenColor;
+
+  // Open or close the accordion
   const handlePress = () => setExpanded(!expanded);
 
   return (
     <List.Accordion
-      // containerStyle={{ backgroundColor: colors.white }}
-      contentStyle={{ gap: hasDescription ? 2 : 0, backgroundColor: colors.white }}
+      style={[styles.accordionContainer, { backgroundColor: color }]}
+      contentStyle={contentStyles}
+      rippleColor="transparent"
+      expanded={expanded}
+      accessibilityLabel={title}
       title={title}
       titleStyle={styles.title}
-      description={hasDescription ? description : ''}
+      description={descriptionText}
       descriptionStyle={styles.description}
-      style={styles.accordionContainer}
-      onPress={handlePress}
-      expanded={expanded}>
-      <View style={styles.content}>
-        {content && <Text style={typography.textMedium}>{content}</Text>}
-        {children}
-      </View>
+      onPress={handlePress}>
+      <View style={[styles.childrenContainer, { backgroundColor: childrenBackgroundColor }]}>{children}</View>
     </List.Accordion>
   );
 }
 
+// ---- REFERENCES ----
+// https://oss.callstack.com/react-native-paper/docs/components/List/ListAccordion
+
+// ---- STYLES ----
 const styles = StyleSheet.create({
   accordionContainer: {
-    // backgroundColor: colors.white,
-    borderTopWidth: 1,
-    borderColor: '#ccc',
+    backgroundColor: colors.alabaster,
+    borderColor: colors.lightGray,
+    borderTopWidth: StyleSheet.hairlineWidth,
   },
   title: {
     color: colors.primary,
@@ -54,9 +61,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontStyle: 'italic',
   },
-  content: {
-    flexDirection: 'column',
-    paddingHorizontal: 16,
-    gap: 16,
+  childrenContainer: {
+    padding: 16,
   },
 });

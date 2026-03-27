@@ -1,6 +1,6 @@
 import { supabase } from '../../app/supabase';
 import { UserSeedNote, NotePayload } from './noteTypes';
-import { getTimestamp } from '../../app/appUtils';
+import { getTimestamp } from '../../app/dateUtils';
 import { buildUserSeedNote } from './noteUtils';
 
 // Insert a new note into the user_seed_notes table

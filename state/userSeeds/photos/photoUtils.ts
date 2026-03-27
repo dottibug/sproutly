@@ -1,6 +1,6 @@
 import { UserSeed } from '../seeds/seedTypes';
 import { ImagePreview, UserSeedPhoto, GalleryCell } from './photoTypes';
-import { getTimestamp } from '../../app/appUtils';
+import { getTimestamp } from '../../app/dateUtils';
 import * as ImagePicker from 'expo-image-picker';
 
 export function buildUserSeedPhoto(id: string, userId: string, userSeedId: string, imageUri: string, createdAt: string): UserSeedPhoto {

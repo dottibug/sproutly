@@ -66,11 +66,35 @@ export default function UserSeedDetails({ seed, activeTab }: UserSeedDetailsProp
           </View>
         )}
 
-        {showTiming && <Accordion title={'Timing'} content={seed.timing} />}
-        {showStarting && <Accordion title={'Starting'} content={seed.starting} />}
-        {showGrowing && <Accordion title={'Growing'} content={seed.growing} />}
-        {showHarvest && <Accordion title={'Harvest'} content={seed.harvest} />}
-        {showCompanionPlanting && <Accordion title={'Companion Planting'} content={seed.companionPlanting} />}
+        {showTiming && (
+          <Accordion title={'Timing'}>
+            <Text style={typography.textMedium}>{seed.timing}</Text>
+          </Accordion>
+        )}
+
+        {showStarting && (
+          <Accordion title={'Starting'}>
+            <Text style={typography.textMedium}>{seed.starting}</Text>
+          </Accordion>
+        )}
+
+        {showGrowing && (
+          <Accordion title={'Growing'}>
+            <Text style={typography.textMedium}>{seed.growing}</Text>
+          </Accordion>
+        )}
+
+        {showHarvest && (
+          <Accordion title={'Harvest'}>
+            <Text style={typography.textMedium}>{seed.harvest}</Text>
+          </Accordion>
+        )}
+
+        {showCompanionPlanting && (
+          <Accordion title={'Companion Planting'}>
+            <Text style={typography.textMedium}>{seed.companionPlanting}</Text>
+          </Accordion>
+        )}
       </View>
 
       <View style={styles.dangerSection}>

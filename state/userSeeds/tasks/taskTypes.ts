@@ -1,3 +1,5 @@
+import { colors } from '../../../styles/theme';
+
 // ---- ACTIONS ----
 export type TaskAction =
   | { type: 'ADD_TASK'; payload: UserSeedTask & { tempId: string } }
@@ -56,4 +58,14 @@ export type AddTaskDraft = {
   notes: string;
 };
 
-export type TaskSectionMode = 'editable' | 'todayDone' | 'timeline';
+export type TaskSectionMode = 'editable' | 'todayDone' | 'timeline' | 'upcoming';
+
+// ---- COLOR MAP FOR TASK TYPE CHIPS ----
+export const TASK_TYPE_COLOR_MAP: Record<TaskType, string> = {
+  sow: colors.chocolate,
+  transplant: colors.tangerine,
+  fertilize: colors.coral,
+  prune: colors.amethyst,
+  harvest: colors.teal,
+  custom: colors.blue,
+};

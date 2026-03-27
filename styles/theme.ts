@@ -5,6 +5,14 @@ export type Color = 'primary' | 'secondary';
 export const colors = {
   primary: '#2F2F2F', // #2F2F2F
   secondary: '#666',
+  screenColor: '#F2F2F2', // #F2F2F2
+
+  alabaster: '#E6E8E7', // #E6E8E7
+  opaqueBlack: 'rgba(0,0,0,0.55)',
+  opaqueBlack45: 'rgba(0,0,0,0.45)',
+
+  graphite: '#5b5b5b',
+  grayMedium: '#7d7d7d',
 
   hunterGreen: '#2B624D', // #2B624D
   green: '#2B624D', // #2B624D
@@ -12,21 +20,27 @@ export const colors = {
   greenLight: '#79988C', // #79988C
   green90: '#2B624D90', // #2B624D80
 
+  chocolate: '#5F484F', // chocolate #5F484F (sow)
+  teal: '#4B927A', // teal #4B927A (harvest)
+  blue: '#669BBC', // blue #669BBC (custom)
+  amethyst: '#AD6FB3', // amethyst #AD6FB3 (prune)
+  tangerine: '#FAA26B', // tangerine #FAA26B (transplant)
+  coral: '#D57373', // coral #D57373 (fertilize)
+
+  lightGray: '#ccc',
+  grayLight: '#ccc',
+
   /////////// EDITING (colors above fold are keepers)
   // primary: '#000',
   white: '#FFF',
   gray: '#666',
   mediumGray: '#999',
-  lightGray: '#ccc',
-  blue: '#669BBC', // blue #669BBC
   dusk: '#445A9C', // dusk #445A9C
-  teal: '#4B927A', // teal #4B927A
   pink: '#F4608C', // pink #F4608C
   peach: '#f79d65', // peach #f79d65
   red: '#D65564', // red #D65564
   lavender: '#6D5379', // lavender #6D5379
   grapefruit: '#FB7A78', // grapefruit #FB7A78
-  amethyst: '#AD6FB3', // amethyst #AD6FB3
   grape: '#584778', // grape #584778
   yellow: '#F3C51F', // yellow2 #fcdc5d
 };
@@ -53,6 +67,12 @@ export const typography = StyleSheet.create({
 const SMALL_SPACING = 8;
 const MEDIUM_SPACING = 16;
 const LARGE_SPACING = 24;
+
+export const fonts = StyleSheet.create({
+  aladin: {
+    fontFamily: 'Aladin_400Regular',
+  },
+});
 
 export const appStyles = StyleSheet.create({
   card: {
@@ -102,8 +122,5 @@ export const appStyles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     width: '80%',
-  },
-  customSeedInputSection: {
-    gap: 8,
   },
 });

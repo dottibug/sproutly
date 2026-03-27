@@ -16,6 +16,7 @@ export default function Settings() {
   const [editingFilterOrder, setEditingFilterOrder] = useState<SearchFilter[]>(preferences.order);
   const [filterDragActive, setFilterDragActive] = useState(false);
 
+  // Sync the editing filter order with user preferences
   useEffect(() => {
     setEditingFilterOrder(preferences.order);
   }, [preferences.order]);
