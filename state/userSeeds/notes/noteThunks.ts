@@ -1,59 +1,78 @@
-// TODO: Never import from the context (circular dependency)
-// noteThunks.ts
-// thunks are used to handle async operations that interact with the database, as well as optimistic dispatch actions to the context reducer
-
 import { Dispatch } from 'react';
-import { UserSeedAction } from '../seeds/seedTypes';
-import { AddNoteDraft, UserSeedNote } from './noteTypes';
-import { buildNotePayload } from './noteUtils';
 import { insertNote, updateNote, deleteNote } from './noteQueries';
+import { createTempId } from '../../app/appUtils';
+import { getTimestamp } from '../../app/dateUtils';
+import { UserSeedAction } from '../seeds/seedTypes';
+import { NoteDraft, UserSeedNote } from './noteTypes';
 
-// Add a new note to state and database
-export async function runAddNote(dispatch: Dispatch<UserSeedAction>, userId: string, draft: AddNoteDraft) {
-  // Optimistic state update
-  const payload = buildNotePayload(userId, draft.userSeedId, draft.title, draft.note);
-  if (!payload) return;
+// noteThunks.ts: Thunks used to handle async operations that interact with the database, as well as optimistic state updates.
 
-  const { tempId } = payload;
-  dispatch({ type: 'ADD_NOTE', payload });
+// Creates a new note in the UI and database (optimistic update)
+export async function runAddNote(dispatch: Dispatch<UserSeedAction>, userId: string, draft: NoteDraft) {
+  const { userSeedId, title, note } = draft;
+  const now = getTimestamp();
+  const tempId = createTempId();
+
+  const newNote = {
+    id: tempId,
+    userId,
+    userSeedId,
+    title,
+    note,
+    createdAt: now,
+    updatedAt: now,
+  } as UserSeedNote;
+
+  dispatch({ type: 'ADD_NOTE', payload: { ...newNote, tempId } });
 
   try {
-    // Database insert
-    const dbNote = await insertNote(payload);
-    dispatch({ type: 'SYNC_NOTE_WITH_DB', payload: { ...dbNote, tempId } });
+    const insertedNote = await insertNote({
+      userId,
+      userSeedId,
+      title,
+      note,
+    });
+
+    dispatch({ type: 'SYNC_NOTE_WITH_DB', payload: { ...insertedNote, tempId } });
   } catch (error) {
-    // Rollback optimistic state update
     dispatch({ type: 'DELETE_NOTE', payload: tempId });
-    console.error('Error adding note to seed: ', error);
+    throw new Error(`Error adding note to seed: ${error}`);
   }
 }
 
-// Update a note in state and database
-export async function runUpdateNote(dispatch: Dispatch<UserSeedAction>, payload: UserSeedNote) {
-  const { id } = payload;
+// Updates an existing note in the UI and database (optimistic update)
+export async function runUpdateNote(dispatch: Dispatch<UserSeedAction>, note: UserSeedNote, draft: NoteDraft) {
+  if (note.id.startsWith('temp-')) return;
 
-  // Optimistic state update
-  if (id.startsWith('temp-')) return;
-  dispatch({ type: 'UPDATE_NOTE', payload });
+  const now = getTimestamp();
+  const updatedNote: UserSeedNote = {
+    ...note,
+    title: draft.title,
+    note: draft.note,
+    updatedAt: now,
+  };
+
+  dispatch({ type: 'UPDATE_NOTE', payload: updatedNote });
 
   try {
-    // Database update
-    await updateNote(payload);
+    await updateNote(updatedNote.userId, updatedNote);
   } catch (error) {
-    console.error('Error adding note to seed: ', error);
+    dispatch({ type: 'UPDATE_NOTE', payload: note });
+    throw new Error(`Error updating note: ${error}`);
   }
 }
 
-// Delete a note in state and database
-export async function runDeleteNote(dispatch: Dispatch<UserSeedAction>, userId: string, noteId: string) {
-  // Optimistic state update
-  if (noteId.startsWith('temp-')) return;
-  dispatch({ type: 'DELETE_NOTE', payload: noteId });
+// Deletes a note in the UI and database (optimistic update)
+export async function runDeleteNote(dispatch: Dispatch<UserSeedAction>, userId: string, note: UserSeedNote) {
+  if (note.id.startsWith('temp-')) return;
+  const noteToDelete = note;
+
+  dispatch({ type: 'DELETE_NOTE', payload: note.id });
 
   try {
-    // Database delete
-    await deleteNote(userId, noteId);
+    await deleteNote(userId, note.id);
   } catch (error) {
-    console.error('Error deleting note from seed: ', error);
+    dispatch({ type: 'RESTORE_NOTE_TO_SEED', payload: noteToDelete });
+    throw new Error(`Error deleting note from seed: ${error}`);
   }
 }

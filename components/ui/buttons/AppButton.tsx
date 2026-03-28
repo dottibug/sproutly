@@ -1,6 +1,7 @@
 import { Pressable, Text, StyleSheet } from 'react-native';
 import AppButtonIcon from './AppButtonIcon';
 import { colors } from '../../../styles/theme';
+import { BUTTON_COLOR_MAP } from './buttonConstants';
 
 type ButtonColor = 'primary' | 'secondary' | 'danger';
 type ButtonSize = 'xsmall' | 'small' | 'medium' | 'large';
@@ -108,11 +109,7 @@ const PADDING_MAP = {
   large: 12,
 };
 
-export const BUTTON_COLOR_MAP = {
-  primary: colors.greenMedium,
-  secondary: colors.mediumGray,
-  danger: colors.red,
-};
+export { BUTTON_COLOR_MAP } from './buttonConstants';
 
 const styles = StyleSheet.create({
   button: {

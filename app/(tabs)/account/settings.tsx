@@ -7,6 +7,7 @@ import Heading from '../../../components/ui/Heading';
 import DraggableFilters from '../../../components/filters/DraggableFilters';
 import AppButton from '../../../components/ui/buttons/AppButton';
 import { colors } from '../../../styles/theme';
+import ScreenOptions from '../../../components/ui/ScreenOptions';
 
 // Settings.tsx: Displays settings available for the user to customize the seed filters.
 export default function Settings() {
@@ -50,6 +51,7 @@ export default function Settings() {
       scrollEnabled={!filterDragActive}
       keyboardShouldPersistTaps="handled"
       contentContainerStyle={{ paddingBottom: 32 }}>
+      <ScreenOptions backButtonMode="generic" />
       {/* Seed filters */}
       <View style={styles.settingsSection}>
         <View style={styles.settingsSectionHeader}>

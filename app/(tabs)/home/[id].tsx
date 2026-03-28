@@ -7,6 +7,7 @@ import { UserSeed } from '../../../state/userSeeds/seeds/seedTypes';
 import UserSeedScreen from '../../../components/userSeeds/UserSeedScreen';
 import BrowseSeedDetails from '../../../components/browseSeeds/BrowseSeedDetails';
 import ScreenMessage from '../../../components/ui/ScreenMessage';
+import { colors } from '../../../styles/theme';
 
 // SeedDetailsScreen display the details of a single see – either one being browsed from the catalog or one in the user's own seed collection
 export default function SeedDetailsScreen() {
@@ -37,7 +38,13 @@ export default function SeedDetailsScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title: headerTitle, headerBackButtonDisplayMode: 'minimal' }} />
+      <Stack.Screen
+        options={{
+          title: headerTitle,
+          headerBackButtonDisplayMode: 'minimal',
+          headerTintColor: colors.greenMedium,
+        }}
+      />
 
       {isMySeedsTab ? <UserSeedScreen seed={seed as UserSeed} /> : <BrowseSeedDetails seed={seed as BrowseSeed} />}
     </>

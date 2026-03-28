@@ -10,7 +10,7 @@ type DatePickerSheetProps = {
   readonly showDatePicker: boolean;
   readonly setShowDatePicker: (show: boolean) => void;
   readonly taskDate: Date;
-  readonly setTaskDate: (date: Date) => void;
+  readonly setTaskDate: (dateISO: string) => void;
   readonly dateMinimum: Date | undefined;
 };
 
@@ -40,7 +40,7 @@ export default function DatePickerSheet({ showDatePicker, setShowDatePicker, tas
           accentColor={colors.greenMedium}
           onChange={(_, selected) => {
             setShowDatePicker(false);
-            if (selected) setTaskDate(selected);
+            if (selected) setTaskDate(selected.toISOString());
           }}
         />
       )}
@@ -64,7 +64,7 @@ export default function DatePickerSheet({ showDatePicker, setShowDatePicker, tas
                 accentColor={colors.greenMedium}
                 themeVariant="light"
                 onChange={(_, selected) => {
-                  if (selected) setTaskDate(selected);
+                  if (selected) setTaskDate(selected.toISOString());
                 }}
               />
             </View>

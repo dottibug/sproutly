@@ -1,37 +1,15 @@
 import { UserSeed } from '../seeds/seedTypes';
-import { UserSeedTask, TaskStatus, BuildTaskInput } from './taskTypes';
-import { getTimestamp, isSameDay, isDueToday, isISOToday, startOfDay } from '../../app/dateUtils';
+import { UserSeedTask, TaskStatus } from './taskTypes';
+import { getTimestamp, isISOToday, startOfDay } from '../../app/dateUtils';
 import * as Notifications from 'expo-notifications';
 
-/** Title and notes cannot both be empty — same idea as notes (need at least one). Applies to all task types including custom. */
-export function taskHasSaveableText(title: string | null | undefined, notes: string | null | undefined): boolean {
-  const titleTrim = title?.trim() ?? '';
-  const notesTrim = notes?.trim() ?? '';
-  return Boolean(titleTrim || notesTrim);
-}
+// taskUtils.ts: Contains utility functions for tasks
 
-export function buildUserSeedTask(input: BuildTaskInput): UserSeedTask {
-  return {
-    id: input.id,
-    userId: input.userId,
-    userSeedId: input.userSeedId,
-    taskType: input.taskType,
-    customTaskType: input.customTaskType,
-    title: input.title,
-    notes: input.notes,
-    status: input.status,
-    date: input.date,
-    createdAt: input.createdAt,
-    updatedAt: input.updatedAt,
-    completedAt: input.completedAt,
-  } as UserSeedTask;
-}
-
+// --------------- STATE UTILS ---------------
 // Create a task in the UI (optimistic update)
 export function createTask(seeds: UserSeed[], payload: UserSeedTask & { tempId: string }) {
   const seedsCopy = [...seeds];
-
-  const { userId, userSeedId, tempId, taskType, customTaskType, date, title, notes, status } = payload;
+  const { userId, userSeedId, tempId, taskType, customTaskType, date, notes, status } = payload;
 
   const updated = seedsCopy.map((s) => {
     if (s.id !== userSeedId) return s;
@@ -39,20 +17,19 @@ export function createTask(seeds: UserSeed[], payload: UserSeedTask & { tempId: 
     const currentTasks = s.tasks ?? [];
     const now = getTimestamp();
 
-    const newTask = buildUserSeedTask({
+    const newTask = {
       id: tempId,
       userId,
       userSeedId,
       taskType,
       customTaskType,
       date,
-      title,
       notes,
       status,
       createdAt: now,
       updatedAt: now,
       completedAt: null,
-    });
+    } as UserSeedTask;
 
     return { ...s, tasks: [...currentTasks, newTask] };
   });
@@ -132,30 +109,34 @@ export function applyTaskStatus(seeds: UserSeed[], payload: { userSeedId: string
   });
 }
 
-export function countDailyPendingTasks(seeds: UserSeed[]): number {
-  const numTasks = seeds.reduce((acc, seed) => {
+// --------------- COUNTING TASKS --------------
+// Checks if a task is overdue or due today
+function isPendingDueOnOrBeforeToday(task: UserSeedTask, now: Date): boolean {
+  if (task.status !== 'pending') return false;
+  const today = startOfDay(now);
+  const due = startOfDay(new Date(task.date));
+  return due <= today;
+}
+
+// Due date is today's calendar day (not overdue)
+function isDueDateToday(taskDateIso: string, now: Date): boolean {
+  return startOfDay(new Date(taskDateIso)) === startOfDay(now);
+}
+
+// Pending tasks for a single seed
+export function getPendingTodayCount(tasks: UserSeedTask[], now = new Date()): number {
+  return tasks.filter((task) => isPendingDueOnOrBeforeToday(task, now)).length;
+}
+
+// Pending tasks across all seeds
+export function countDailyPendingTasks(seeds: UserSeed[], now = new Date()): number {
+  return seeds.reduce((acc, seed) => {
     const tasks = seed.tasks ?? [];
-
-    const pendingTasks = tasks.filter((task) => task.status === 'pending' && isSameDay(new Date(task.date)));
-
-    return acc + pendingTasks.length;
+    return acc + tasks.filter((task) => isPendingDueOnOrBeforeToday(task, now)).length;
   }, 0);
-
-  return numTasks;
 }
 
-// Group tasks by userSeedId (key is userSeedId)
-export function groupTasksByUserSeedId(tasks: UserSeedTask[]): Map<string, UserSeedTask[]> {
-  const map = new Map<string, UserSeedTask[]>();
-
-  tasks.forEach((task) => {
-    if (!map.has(task.userSeedId)) map.set(task.userSeedId, []);
-    map.get(task.userSeedId)?.push(task);
-  });
-
-  return map;
-}
-
+// --------------- NOTIFICATION PERMISSION --------------
 // Request reminder permissions from the user
 export async function requestReminderPermissions(): Promise<boolean> {
   const settings = await Notifications.getPermissionsAsync();
@@ -164,9 +145,15 @@ export async function requestReminderPermissions(): Promise<boolean> {
   return requested.granted;
 }
 
-// Get the number of pending tasks due today
-export function getPendingTodayCount(tasks: UserSeedTask[], now = new Date()): number {
-  return tasks.filter((task) => task.status !== 'completed' && isDueToday(new Date(task.date), now)).length;
+// --------------- TASK SORTING UTILS --------------
+// Group tasks by userSeedId (key is userSeedId)
+export function groupTasksByUserSeedId(tasks: UserSeedTask[]): Map<string, UserSeedTask[]> {
+  const map = new Map<string, UserSeedTask[]>();
+  tasks.forEach((task) => {
+    if (!map.has(task.userSeedId)) map.set(task.userSeedId, []);
+    map.get(task.userSeedId)?.push(task);
+  });
+  return map;
 }
 
 // Sort the timeline by completedAt date (most recent first)
@@ -178,25 +165,26 @@ function sortTimeline(timeline: UserSeedTask[]) {
   });
 }
 
+// Split tasks into pending, completed today, upcoming, and timeline.
 export function splitTasks(tasks: UserSeedTask[]) {
   const pending: UserSeedTask[] = [];
   const completedToday: UserSeedTask[] = [];
   const upcoming: UserSeedTask[] = [];
   const timeline: UserSeedTask[] = [];
 
-  const today = startOfDay(new Date());
+  const now = new Date();
 
   tasks.forEach((task) => {
-    const due = startOfDay(new Date(task.date));
-
     if (task.status === 'pending') {
-      if (due > today) upcoming.push(task);
-      else pending.push(task);
+      if (isPendingDueOnOrBeforeToday(task, now)) pending.push(task);
+      else upcoming.push(task);
       return;
     }
 
     if (task.status === 'completed') {
-      if (task.completedAt && isISOToday(task.completedAt)) completedToday.push(task);
+      const markedDoneToday = Boolean(task.completedAt && isISOToday(task.completedAt));
+      const dueToday = isDueDateToday(task.date, now);
+      if (markedDoneToday && dueToday) completedToday.push(task);
       else timeline.push(task);
     }
   });
@@ -212,6 +200,7 @@ export function splitTasks(tasks: UserSeedTask[]) {
   };
 }
 
+// --------------- TASK SHEET UTILS ---------------
 // Check if the task is a user-defined custom task
 export function isCustomTask(task: UserSeedTask): boolean {
   return (
@@ -223,8 +212,9 @@ export function isCustomTask(task: UserSeedTask): boolean {
   );
 }
 
-// Get the title for the new task modal
-export function getNewTaskModalTitle(variety: string, plant: string) {
+// Helper function to create the title for the task sheet
+export function getTaskSheetTitle(isAnUpdate: boolean, variety: string, plant: string): string {
+  if (isAnUpdate) return 'Edit Task';
   if (variety !== '' && plant !== '') return `Create New Task for ${variety} ${plant}`;
   else return 'Create New Task';
 }

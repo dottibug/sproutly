@@ -2,73 +2,94 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
 import { Dispatch } from 'react';
 import { UserSeedAction } from '../seeds/seedTypes';
-import { UserSeedTask, TaskStatus, AddTaskDraft } from './taskTypes';
+import { UserSeedTask, TaskStatus, TaskDraft } from './taskTypes';
 import { createTempId } from '../../app/appUtils';
 import { getTimestamp } from '../../app/dateUtils';
 import { insertTask, deleteTask, updateTaskDetails, updateTaskStatus } from './taskQueries';
-import { buildUserSeedTask, requestReminderPermissions, taskHasSaveableText } from './taskUtils';
+import { requestReminderPermissions } from './taskUtils';
 
-export async function runAddTask(dispatch: Dispatch<UserSeedAction>, userId: string, draft: AddTaskDraft) {
-  if (!taskHasSaveableText(draft.title, draft.notes)) return;
+// taskThunks.ts: Thunks used to handle async operations that interact with the database, as well as optimistic state updates.
+
+// Creates a new task in the UI and database (optimistic update)
+export async function runAddTask(dispatch: Dispatch<UserSeedAction>, userId: string, draft: TaskDraft) {
+  const { userSeedId, taskType, customTaskType, date, notes } = draft;
 
   const now = getTimestamp();
-  const trimTitle = draft.title?.trim() || '';
-  const trimNotes = draft.notes.trim();
-
-  const { userSeedId, taskType, customTaskType, date } = draft;
   const taskDate = new Date(date).toISOString();
   const tempId = createTempId();
 
-  const newTask = buildUserSeedTask({
+  const newTask = {
     id: tempId,
     userId,
     userSeedId,
     taskType,
     customTaskType,
-    title: trimTitle,
-    notes: trimNotes,
+    notes,
     status: 'pending',
     date: taskDate,
     createdAt: now,
     updatedAt: now,
     completedAt: null,
-  });
+  } as UserSeedTask;
 
   dispatch({ type: 'ADD_TASK', payload: { ...newTask, tempId } });
 
   try {
-    // Database insert
     const insertedTask = await insertTask({
       userId,
       userSeedId,
       taskType,
       date: taskDate,
       customTaskType,
-      title: trimTitle,
-      notes: trimNotes,
+      notes,
       status: 'pending',
     });
 
     dispatch({ type: 'SYNC_TASK_WITH_DB', payload: { ...insertedTask, tempId } });
   } catch (error) {
     dispatch({ type: 'DELETE_TASK', payload: tempId });
-    console.error('Error adding task to seed: ', error);
+    throw new Error(`Error adding task to seed: ${error}`);
   }
 }
 
-export async function runDeleteTask(dispatch: Dispatch<UserSeedAction>, userId: string, taskId: string) {
-  // Optimistic state update
-  if (taskId.startsWith('temp-')) return;
-  dispatch({ type: 'DELETE_TASK', payload: taskId });
+// Delete a task from the UI and database (restores task to state on failure to delete from database)
+export async function runDeleteTask(dispatch: Dispatch<UserSeedAction>, userId: string, task: UserSeedTask) {
+  if (task.id.startsWith('temp-')) return;
+  const taskToDelete = task;
+  dispatch({ type: 'DELETE_TASK', payload: task.id });
+  try {
+    await deleteTask(userId, task.id);
+  } catch (error) {
+    dispatch({ type: 'RESTORE_TASK_TO_SEED', payload: taskToDelete });
+    throw new Error(`Error deleting task from seed: ${error}`);
+  }
+}
+
+// Update a task in the UI and database
+export async function runUpdateTask(dispatch: Dispatch<UserSeedAction>, userId: string, task: UserSeedTask, draft: TaskDraft) {
+  const updatedTask: UserSeedTask = {
+    ...task,
+    taskType: draft.taskType,
+    customTaskType: draft.customTaskType,
+    notes: draft.notes,
+    date: draft.date, // ISO string
+    updatedAt: new Date().toISOString(),
+  };
+
+  dispatch({ type: 'UPDATE_TASK', payload: updatedTask });
+
+  // Temp tasks don't exist in DB yet
+  if (task.id.startsWith('temp-')) return;
 
   try {
-    // Database delete
-    await deleteTask(userId, taskId);
+    await updateTaskDetails(userId, updatedTask);
   } catch (error) {
-    console.error('Error deleting task from seed: ', error);
+    dispatch({ type: 'UPDATE_TASK', payload: task }); // Rollback to original task
+    throw new Error(`Error updating task: ${error}`);
   }
 }
 
+// Toggle the status of a task in the UI and database
 export async function runToggleTaskStatus(dispatch: Dispatch<UserSeedAction>, userId: string, task: UserSeedTask, newStatus: TaskStatus) {
   if (task.id.startsWith('temp-')) return;
 
@@ -82,28 +103,13 @@ export async function runToggleTaskStatus(dispatch: Dispatch<UserSeedAction>, us
 
   dispatch({ type: 'TOGGLE_TASK_STATUS', payload });
   try {
-    // Database update
     await updateTaskStatus(userId, task.id, newStatus);
   } catch (error) {
     dispatch({
       type: 'TOGGLE_TASK_STATUS',
       payload: { ...payload, status: prevStatus },
     });
-    console.error('Error toggling task status: ', error);
-  }
-}
-
-export async function runUpdateTask(dispatch: Dispatch<UserSeedAction>, userId: string, task: UserSeedTask) {
-  // Optimistic state update
-  dispatch({ type: 'UPDATE_TASK', payload: task });
-
-  // Temp tasks don't exist in DB yet
-  if (task.id.startsWith('temp-')) return;
-
-  try {
-    await updateTaskDetails(userId, task);
-  } catch (error) {
-    console.error('Error updating task details: ', error);
+    throw new Error(`Error toggling task status: ${error}`);
   }
 }
 
@@ -127,6 +133,7 @@ function dateKey(date: Date): string {
   return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 }
 
+// Schedule a daily task notification if there are pending tasks due today
 export async function scheduleDailyTaskNotification(pendingTodayCount: number): Promise<void> {
   if (pendingTodayCount <= 0) return;
 

@@ -1,50 +1,46 @@
 import { supabase } from '../../app/supabase';
-import { UserSeedNote, NotePayload } from './noteTypes';
-import { getTimestamp } from '../../app/dateUtils';
-import { buildUserSeedNote } from './noteUtils';
+import { UserSeedNote, InsertNoteInput } from './noteTypes';
+
+// noteQueries.ts: Contains functions to interact with the database for notes
 
 // Insert a new note into the user_seed_notes table
-export async function insertNote(notePayload: NotePayload): Promise<UserSeedNote> {
-  const titleTrim = notePayload.title?.trim() || null;
-  const noteTrim = notePayload.note.trim();
-
-  if (!titleTrim && !noteTrim) throw new Error('Title and note cannot both be empty');
+export async function insertNote(input: InsertNoteInput): Promise<UserSeedNote> {
+  const { userId, userSeedId, title, note } = input;
 
   const { data, error } = await supabase
     .from('user_seed_notes')
     .insert({
-      user_id: notePayload.userId,
-      user_seed_id: notePayload.userSeedId,
-      title: titleTrim,
-      note: noteTrim || '',
+      user_id: userId,
+      user_seed_id: userSeedId,
+      title: title,
+      note: note,
     })
-    .select('id, user_seed_id, user_id, title, note, created_at, updated_at')
+    .select('*')
     .single();
 
   if (error) throw error;
-  const { id, user_seed_id, user_id, title, note, created_at, updated_at } = data;
 
-  return buildUserSeedNote(id, user_seed_id, user_id, title, note, created_at, updated_at);
+  return {
+    id: data.id,
+    userId: data.user_id,
+    userSeedId: data.user_seed_id,
+    title: data.title,
+    note: data.note,
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
+  } as UserSeedNote;
 }
 
 // Update a note in the user_seed_notes table
-export async function updateNote(userNote: UserSeedNote): Promise<void> {
-  const { id, title, note, userId } = userNote;
-
-  const titleTrim = title?.trim() || null;
-  const noteTrim = note?.trim() ?? '';
-
-  if (!titleTrim && !noteTrim) throw new Error('Title and note cannot both be empty');
-  const now = getTimestamp();
-
+export async function updateNote(userId: string, note: UserSeedNote): Promise<void> {
   const { error } = await supabase
     .from('user_seed_notes')
     .update({
-      title: titleTrim,
-      note: noteTrim || '',
-      updated_at: now,
+      title: note.title,
+      note: note.note,
+      updated_at: note.updatedAt,
     })
-    .eq('id', id)
+    .eq('id', note.id)
     .eq('user_id', userId);
 
   if (error) throw error;
@@ -68,9 +64,17 @@ export async function fetchNotesByUserSeedId(userSeedIds: string[]): Promise<Use
 
   if (error) throw error;
 
-  const notes = data?.map((note) =>
-    buildUserSeedNote(note.id, note.user_seed_id, note.user_id, note.title, note.note, note.created_at, note.updated_at),
-  );
+  const notes = data?.map((note) => {
+    return {
+      id: note.id,
+      userSeedId: note.user_seed_id,
+      userId: note.user_id,
+      title: note.title,
+      note: note.note,
+      createdAt: note.created_at,
+      updatedAt: note.updated_at,
+    } as UserSeedNote;
+  });
 
   return notes ?? ([] as UserSeedNote[]);
 }

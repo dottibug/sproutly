@@ -2,8 +2,7 @@ import { Text, StyleSheet, View } from 'react-native';
 import Timeline from 'react-native-timeline-flatlist';
 import type { Data } from 'react-native-timeline-flatlist';
 import { TaskType, UserSeedTask } from '../../../state/userSeeds/tasks/taskTypes';
-import { isCustomTask } from '../../../state/userSeeds/tasks/taskUtils';
-import { formatISODate, formatISOMonthDay, sortByDate } from '../../../state/app/dateUtils';
+import { isCustomTask, formatISOMonthDay, sortByDate } from '../../../state/barrels/utilsBarrel';
 import TimelineEvent from './TimelineEvent';
 import { colors } from '../../../styles/theme';
 
@@ -98,6 +97,7 @@ const styles = StyleSheet.create({
     color: colors.secondary,
     fontSize: 15,
     fontWeight: '600',
+    minWidth: 60,
     paddingTop: 2,
   },
 });

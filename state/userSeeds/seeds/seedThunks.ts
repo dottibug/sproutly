@@ -1,14 +1,14 @@
 import { Dispatch } from 'react';
 import { UserSeedAction, UserSeed, AddSeedFromBrowseResult } from './seedTypes';
 import { BrowseSeed } from '../../browseSeeds/browseTypes';
-import { CustomSeedPayload } from '../../customSeedForm/customSeedTypes';
+import { CustomSeedPayload } from '../../customSeed/customSeedTypes';
 import { ImagePreview } from '../photos/photoTypes';
 import { isDuplicateSeed } from './seedUtils';
-import { createOptimisticCustomSeed } from '../../customSeedForm/customSeedUtils';
+import { createOptimisticCustomSeed } from '../../customSeed/customSeedUtils';
 import { uploadImage, getSignedImageUrl } from '../photos/photoQueries';
 import { fetchSeedCollection } from './seedQueries';
 import { addBrowseSeedToCollection, deleteByCatalogId } from '../../browseSeeds/browseQueries';
-import { insertCustomSeed, deleteByCustomId } from '../../customSeedForm/customSeedQueries';
+import { insertCustomSeed, deleteByCustomId } from '../../customSeed/customSeedQueries';
 import { createTempId } from '../../app/appUtils';
 
 // Load user seed collection from the database

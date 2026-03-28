@@ -2,10 +2,10 @@ import { createContext, useReducer, useCallback, useMemo, useEffect, useContext 
 import { userSeedReducer } from './reducer';
 import { UserSeedState, UserSeedContextValue, UserSeed, AddSeedFromBrowseResult } from './seeds/seedTypes';
 import { BrowseSeed } from '../browseSeeds/browseTypes';
-import { CustomSeedPayload } from '../customSeedForm/customSeedTypes';
+import { CustomSeedPayload } from '../customSeed/customSeedTypes';
 import { ImagePreview, AddPhotoDraft } from './photos/photoTypes';
-import { UserSeedNote, AddNoteDraft } from './notes/noteTypes';
-import { UserSeedTask, TaskStatus, AddTaskDraft } from './tasks/taskTypes';
+import { UserSeedNote, NoteDraft } from './notes/noteTypes';
+import { UserSeedTask, TaskStatus, TaskDraft } from './tasks/taskTypes';
 import { useAuth } from '../auth/AuthContext';
 import { runLoadUserSeeds, runAddSeedFromBrowse, runAddCustomSeed, runDeleteByCatalogId, runDeleteByCustomId } from './seeds/seedThunks';
 import { runAddNote, runUpdateNote, runDeleteNote } from './notes/noteThunks';
@@ -86,19 +86,25 @@ export function UserSeedProvider({ children }: UserSeedProviderProps) {
   const deleteByCustomId = useCallback(async (seed: UserSeed) => await runDeleteByCustomId(dispatch, seed.customSeedId), [dispatch]);
 
   const addNote = useCallback(
-    async (draft: AddNoteDraft) => {
+    async (draft: NoteDraft) => {
       if (!userId) return;
       await runAddNote(dispatch, userId, draft);
     },
     [dispatch, userId],
   );
 
-  const updateNote = useCallback(async (payload: UserSeedNote) => await runUpdateNote(dispatch, payload), [dispatch, userId]);
+  const updateNote = useCallback(
+    async (note: UserSeedNote, draft: NoteDraft) => {
+      if (!userId) return;
+      await runUpdateNote(dispatch, note, draft);
+    },
+    [dispatch, userId],
+  );
 
   const deleteNote = useCallback(
-    async (noteId: string) => {
+    async (note: UserSeedNote) => {
       if (!userId) return;
-      await runDeleteNote(dispatch, userId, noteId);
+      await runDeleteNote(dispatch, userId, note);
     },
     [dispatch, userId],
   );
@@ -120,7 +126,7 @@ export function UserSeedProvider({ children }: UserSeedProviderProps) {
   );
 
   const addTask = useCallback(
-    async (draft: AddTaskDraft) => {
+    async (draft: TaskDraft) => {
       if (!userId) return;
       await runAddTask(dispatch, userId, draft);
     },
@@ -128,17 +134,17 @@ export function UserSeedProvider({ children }: UserSeedProviderProps) {
   );
 
   const updateTask = useCallback(
-    async (task: UserSeedTask) => {
+    async (task: UserSeedTask, draft: TaskDraft) => {
       if (!userId) return;
-      await runUpdateTask(dispatch, userId, task);
+      await runUpdateTask(dispatch, userId, task, draft);
     },
     [dispatch, userId],
   );
 
   const deleteTask = useCallback(
-    async (taskId: string) => {
+    async (task: UserSeedTask) => {
       if (!userId) return;
-      await runDeleteTask(dispatch, userId, taskId);
+      await runDeleteTask(dispatch, userId, task);
     },
     [dispatch, userId],
   );

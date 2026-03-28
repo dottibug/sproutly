@@ -1,7 +1,7 @@
-import { NoteAction, UserSeedNote, AddNoteDraft } from '../notes/noteTypes';
+import { NoteAction, UserSeedNote, NoteDraft } from '../notes/noteTypes';
 import { PhotoAction, ImagePreview, UserSeedPhoto, AddPhotoDraft } from '../photos/photoTypes';
-import { TaskAction, UserSeedTask, TaskStatus, AddTaskDraft } from '../tasks/taskTypes';
-import { CustomSeedPayload } from '../../customSeedForm/customSeedTypes';
+import { TaskAction, UserSeedTask, TaskStatus, TaskDraft } from '../tasks/taskTypes';
+import { CustomSeedPayload } from '../../customSeed/customSeedTypes';
 import { Category, Planting } from './seedInfoTypes';
 import { BrowseSeed } from '../../browseSeeds/browseTypes';
 
@@ -36,14 +36,14 @@ export type UserSeedContextValue = {
   addCustomSeed: (preview: ImagePreview | null, payload: CustomSeedPayload) => Promise<void>;
   deleteByCatalogId: (seed: UserSeed) => Promise<void>;
   deleteByCustomId: (seed: UserSeed) => Promise<void>;
-  addNote: (draft: AddNoteDraft) => Promise<void>;
-  updateNote: (payload: UserSeedNote) => Promise<void>;
-  deleteNote: (noteId: string) => Promise<void>;
+  addNote: (draft: NoteDraft) => Promise<void>;
+  updateNote: (note: UserSeedNote, draft: NoteDraft) => Promise<void>;
+  deleteNote: (note: UserSeedNote) => Promise<void>;
   addPhoto: (draft: AddPhotoDraft) => Promise<void>;
   deletePhoto: (photoId: string) => Promise<void>;
-  addTask: (draft: AddTaskDraft) => Promise<void>;
-  updateTask: (task: UserSeedTask) => Promise<void>;
-  deleteTask: (taskId: string) => Promise<void>;
+  addTask: (draft: TaskDraft) => Promise<void>;
+  updateTask: (task: UserSeedTask, draft: TaskDraft) => Promise<void>;
+  deleteTask: (task: UserSeedTask) => Promise<void>;
   toggleTaskStatus: (task: UserSeedTask, newStatus: TaskStatus) => Promise<void>;
 };
 

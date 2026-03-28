@@ -1,8 +1,8 @@
 import { UserSeedState, UserSeedAction } from './seeds/seedTypes';
 import { createUserSeedFromBrowse } from '../browseSeeds/browseUtils';
 import { filterByCatalogId, replaceUISeed } from './seeds/seedUtils';
-import { filterByCustomId } from '../customSeedForm/customSeedUtils';
-import { createNote, editNote, replaceUINote, deleteByNoteId } from './notes/noteUtils';
+import { filterByCustomId } from '../customSeed/customSeedUtils';
+import { createNote, editNote, replaceUINote, deleteByNoteId, restoreNote } from './notes/noteUtils';
 import { createPhoto, replaceUIPhoto, deleteByPhotoId, restorePhoto } from './photos/photoUtils';
 import { createTask, editTask, deleteByTaskId, replaceUITask, restoreTask, applyTaskStatus } from './tasks/taskUtils';
 
@@ -46,6 +46,9 @@ export function userSeedReducer(state: UserSeedState, action: UserSeedAction): U
 
     case 'DELETE_NOTE':
       return { ...state, seeds: deleteByNoteId(state.seeds, payload) };
+
+    case 'RESTORE_NOTE_TO_SEED':
+      return { ...state, seeds: restoreNote(state.seeds, payload) };
 
     case 'ADD_PHOTO':
       return { ...state, seeds: createPhoto(state.seeds, payload) };

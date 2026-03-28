@@ -1,10 +1,8 @@
 import { View, Text, StyleSheet, Pressable, Platform } from 'react-native';
 import { UserSeedTask, TASK_TYPE_COLOR_MAP } from '../../../state/userSeeds/tasks/taskTypes';
-import { isCustomTask } from '../../../state/userSeeds/tasks/taskUtils';
-import { formatISODate } from '../../../state/app/dateUtils';
+import { isCustomTask, formatISODate } from '../../../state/barrels/utilsBarrel';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import Heading from '../../ui/Heading';
 import { colors } from '../../../styles/theme';
 
 type TaskCardProps = {
@@ -20,20 +18,8 @@ type TaskCardProps = {
 export default function TaskCard({ task, showToggle, showEdit, onEdit, onToggle, onDelete }: TaskCardProps) {
   const isCustom = isCustomTask(task);
   const taskType = task.customTaskType?.trim() || task.taskType;
-
   const taskLabelColor = isCustom ? TASK_TYPE_COLOR_MAP.custom : TASK_TYPE_COLOR_MAP[task.taskType];
-
   const taskStatusIcon = task.status === 'completed' ? 'checkbox-marked' : 'checkbox-blank-outline';
-
-  const taskTitle =
-    task.status === 'completed' ? (
-      <Heading size="xsmall" customStyles={styles.taskDone}>
-        {task.title}
-      </Heading>
-    ) : (
-      <Heading size="xsmall">{task.title}</Heading>
-    );
-
   const hasNotes = Boolean(task.notes?.trim());
 
   const dateText = task.status === 'pending' ? `Due ${formatISODate(task.date)}` : `Completed ${formatISODate(task.completedAt ?? '')}`;
@@ -57,8 +43,9 @@ export default function TaskCard({ task, showToggle, showEdit, onEdit, onToggle,
       </View>
 
       <View style={styles.info}>
-        {taskTitle}
-        {hasNotes && <Text style={styles.notes}>{task.notes?.trim()}</Text>}
+        <Text style={[styles.notes, { fontStyle: hasNotes ? 'normal' : 'italic', color: hasNotes ? colors.primary : colors.secondary }]}>
+          {hasNotes ? task.notes?.trim() : 'No task notes'}
+        </Text>
       </View>
 
       <View style={styles.cardBottomRow}>
@@ -116,15 +103,15 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   info: {
-    flexDirection: 'column',
-    gap: 8,
+    marginBottom: 4,
+    marginTop: 6,
   },
   taskDone: {
     textDecorationLine: 'line-through',
     textDecorationColor: colors.opaqueBlack45,
   },
   notes: {
-    fontSize: 15,
+    fontSize: 16,
   },
   cardBottomRow: {
     alignItems: 'center',

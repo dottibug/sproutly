@@ -18,7 +18,7 @@ export default function Tab({ label, active, onPress, badgeCount }: TabProps) {
         <Text style={[styles.tab, active ? styles.activeTab : styles.inactiveTab]}>{label}</Text>
         {showBadge && (
           <View style={styles.badge}>
-            <Text style={styles.badgeCount}>{badgeCount > 99 ? '99+' : badgeCount}</Text>
+            <Text style={styles.badgeCount}>88{/* {badgeCount > 99 ? '99+' : badgeCount} */}</Text>
           </View>
         )}
       </View>
@@ -31,6 +31,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
+
+    // borderWidth: 1,
+    borderColor: 'red',
+
+    position: 'relative',
   },
   tab: {
     fontSize: 16,
@@ -45,22 +50,23 @@ const styles = StyleSheet.create({
   },
   activeTab: {
     borderBottomWidth: 3,
-    borderColor: colors.hunterGreen,
-    color: colors.hunterGreen,
+    borderColor: colors.greenMedium,
+    color: colors.greenMedium,
   },
   badge: {
-    minWidth: 18,
-    height: 18,
-    borderRadius: 9,
-    backgroundColor: colors.red,
     alignItems: 'center',
+    backgroundColor: colors.greenMedium,
+    borderRadius: 100,
+    height: 24,
     justifyContent: 'center',
-    paddingHorizontal: 4,
-    marginBottom: 8,
+    position: 'absolute',
+    right: -30,
+    top: -3,
+    width: 24,
   },
   badgeCount: {
     color: colors.white,
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '700',
   },
 });

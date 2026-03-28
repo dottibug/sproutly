@@ -1,6 +1,6 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import type { ComponentProps } from 'react';
-import { BUTTON_COLOR_MAP } from './AppButton';
+import { BUTTON_COLOR_MAP } from './buttonConstants';
 
 const iconSizeMap = {
   xsmall: 14,

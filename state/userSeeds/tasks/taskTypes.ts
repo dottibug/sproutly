@@ -1,6 +1,6 @@
 import { colors } from '../../../styles/theme';
 
-// ---- ACTIONS ----
+// ---- CONTEXT: UserSeedsContext actions related to tasks ----
 export type TaskAction =
   | { type: 'ADD_TASK'; payload: UserSeedTask & { tempId: string } }
   | { type: 'SYNC_TASK_WITH_DB'; payload: UserSeedTask & { tempId: string } }
@@ -19,24 +19,7 @@ export type UserSeedTask = {
   userSeedId: string;
   taskType: TaskType;
   customTaskType: string | null;
-  title: string | null;
   notes: string;
-  status: TaskStatus;
-  date: string;
-  createdAt: string;
-  updatedAt: string;
-  completedAt: string | null;
-};
-
-// ---- BUILD TASK INPUT ----
-export type BuildTaskInput = {
-  id: string;
-  userId: string;
-  userSeedId: string;
-  taskType: TaskType;
-  customTaskType: string | null;
-  title: string | null;
-  notes: string | null;
   status: TaskStatus;
   date: string;
   createdAt: string;
@@ -47,17 +30,6 @@ export type BuildTaskInput = {
 // ---- TASK INFO ----
 export type TaskType = 'sow' | 'transplant' | 'fertilize' | 'harvest' | 'prune' | 'custom';
 export type TaskStatus = 'pending' | 'completed';
-
-// ---- DRAFT (what the user types in the modal) ----
-export type AddTaskDraft = {
-  userSeedId: string;
-  taskType: TaskType;
-  customTaskType: string | null;
-  date: string;
-  title: string | null;
-  notes: string;
-};
-
 export type TaskSectionMode = 'editable' | 'todayDone' | 'timeline' | 'upcoming';
 
 // ---- COLOR MAP FOR TASK TYPE CHIPS ----
@@ -69,3 +41,24 @@ export const TASK_TYPE_COLOR_MAP: Record<TaskType, string> = {
   harvest: colors.teal,
   custom: colors.blue,
 };
+
+// ---- TASK SHEET TYPES ----
+// User-defined input values
+export type TaskDraft = {
+  userSeedId: string;
+  taskType: TaskType;
+  customTaskType: string | null;
+  date: string;
+  notes: string;
+};
+
+export type CleanTask = {
+  taskType: TaskType;
+  customTaskType: string | null;
+  notes: string;
+  date: string;
+};
+
+export const TASK_FIELDS = ['taskType', 'customTaskType', 'title', 'notes', 'date'] as const;
+export type TaskFields = (typeof TASK_FIELDS)[number];
+export type TaskErrors = Partial<Record<TaskFields, string>>;

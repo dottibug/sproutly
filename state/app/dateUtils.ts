@@ -1,5 +1,14 @@
 // dateUtils.ts: Contains various date utility functions for the app
 
+// ---- DATE CREATION ----
+
+// Convert an ISO string to a Date object
+export function isoToDate(iso: string): Date {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) throw new TypeError(`Invalid ISO string: ${iso}`);
+  return date;
+}
+
 // Create a default date at noon
 export function createNoonDate(): Date {
   const date = new Date();

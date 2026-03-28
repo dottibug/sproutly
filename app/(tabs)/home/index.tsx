@@ -8,6 +8,7 @@ import { colors } from '../../../styles/theme';
 import Tabs from '../../../components/ui/Tabs';
 import { ListTab, LIST_TABS } from '../../../state/app/appTypes';
 import { useBrowseSeed } from '../../../state/browseSeeds/BrowseSeedContext';
+import { Stack } from 'expo-router';
 
 // Seed Catalog screen
 // TODO: top/bottom scroll buttons to quick scroll to the top/bottom of the list
@@ -22,6 +23,7 @@ export default function HomeScreen() {
   if (error) return <ScreenMessage message={error} />;
 
   // Render the seed list (user collection or browse) based on the active tab
+
   return (
     <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: colors.white }}>
       <Tabs tabs={LIST_TABS} activeTab={activeTab} onTabPress={(tab: string) => handleTabPress(tab as ListTab)} />

@@ -1,6 +1,6 @@
 import { BeanType, Category } from '../../../state/userSeeds/seeds/seedInfoTypes';
 
-import { CustomSeedFormErrors, CustomSeedFormFields } from '../../../state/customSeedForm/customSeedTypes';
+import { CustomSeedFormErrors, CustomSeedFormFields } from '../../../state/customSeed/customSeedTypes';
 
 // Only fields that need validation. Note: category does not need validation, but is needed to validate beanType
 type ValidateInput = {

@@ -260,7 +260,7 @@ export function CustomSeedProvider({ children }: CustomSeedProviderProps) {
 }
 
 // ---- CUSTOM HOOK (use in components to access the filter context) ----
-export function useCustomSeedForm() {
+export function useCustomSeed() {
   const context = useContext(CustomSeedContext);
   if (!context) throw new Error('useCustomSeed must be used within a CustomSeedProvider');
   return context;

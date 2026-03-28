@@ -1,7 +1,7 @@
 import { Menu } from 'react-native-paper';
 import { View, Text, TextInput } from 'react-native';
 import { useState } from 'react';
-import { useCustomSeedForm } from '../../state/customSeedForm/CustomSeedFormContext';
+import { useCustomSeedForm } from '../../state/customSeed/CustomSeedContext';
 import { VEGETABLES, FLOWERS, FRUITS, HERBS } from '../../state/userSeeds/seeds/seedInfoTypes';
 import { appStyles } from '../../styles/theme';
 import Heading from '../ui/Heading';

@@ -1,8 +1,12 @@
-import { BrowseSeedProvider } from '../browseSeeds/BrowseSeedContext';
-import { UserSeedProvider } from '../userSeeds/UserSeedsContext';
-import { FilterProvider } from '../filters/FiltersContext';
 import { PaperProvider } from 'react-native-paper';
-import { CustomSeedProvider } from '../customSeedForm/CustomSeedFormContext';
+import {
+  UserSeedProvider,
+  CustomSeedProvider,
+  TaskProvider,
+  FilterProvider,
+  BrowseSeedProvider,
+  NoteProvider,
+} from '../barrels/contextBarrel';
 
 type AppProvidersProps = {
   readonly children: React.ReactNode;
@@ -15,7 +19,11 @@ export function AppProviders({ children }: AppProvidersProps) {
       <BrowseSeedProvider>
         <UserSeedProvider>
           <CustomSeedProvider>
-            <FilterProvider>{children}</FilterProvider>
+            <TaskProvider>
+              <NoteProvider>
+                <FilterProvider>{children}</FilterProvider>
+              </NoteProvider>
+            </TaskProvider>
           </CustomSeedProvider>
         </UserSeedProvider>
       </BrowseSeedProvider>

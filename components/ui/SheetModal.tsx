@@ -1,6 +1,5 @@
-import { Pressable, View, Text, StyleSheet, Modal, ScrollView, useWindowDimensions } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import { Pressable, View, Text, StyleSheet, Modal, ScrollView, useWindowDimensions, KeyboardAvoidingView, Platform } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '../../styles/theme';
 import IconButton from './buttons/IconButton';
 import Heading from './Heading';
@@ -33,8 +32,38 @@ export default function SheetModal({
   const sheetMaxHeight = windowHeight * SHEET_MAX_RATIO;
   const scrollMaxHeight = Math.max(160, sheetMaxHeight - SHEET_HEADER_AREA - Math.max(16, insets.bottom));
 
+  const sheetContent = (
+    <SafeAreaView
+      style={[
+        styles.sheet,
+        {
+          maxHeight: sheetMaxHeight,
+        },
+      ]}
+      edges={['bottom']}>
+      <View style={styles.sheetHeaderRow}>
+        <Heading size="small">{title}</Heading>
+        <Pressable onPress={onRequestClose} hitSlop={12} accessibilityRole="button" accessibilityLabel="Done">
+          <IconButton icon="close" size={24} onPress={onRequestClose} />
+        </Pressable>
+      </View>
+
+      <ScrollView
+        style={[styles.sheetScroll, { maxHeight: scrollMaxHeight }]}
+        contentContainerStyle={styles.sheetScrollContent}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
+        automaticallyAdjustKeyboardInsets={Platform.OS === 'ios'}
+        contentInsetAdjustmentBehavior="never"
+        showsVerticalScrollIndicator={false}>
+        <View style={styles.content}>{children}</View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+
   return (
     <>
+      {/* MODAL TRIGGER (if shown) */}
       {showTrigger && (
         <Pressable
           accessibilityRole="button"
@@ -46,36 +75,17 @@ export default function SheetModal({
         </Pressable>
       )}
 
-      <Modal visible={open} transparent animationType="slide" onRequestClose={onRequestClose}>
+      {/* MODAL */}
+      <Modal visible={open} transparent animationType="slide" presentationStyle="overFullScreen" onRequestClose={onRequestClose}>
         <View style={styles.modalRoot}>
-          <Pressable style={StyleSheet.absoluteFill} onPress={onRequestClose} accessibilityLabel="Dismiss filters" />
-          <View
-            style={[
-              styles.sheet,
-              {
-                paddingBottom: Math.max(16, insets.bottom),
-                maxHeight: sheetMaxHeight,
-              },
-            ]}>
-            <View style={styles.sheetHeader}>
-              <Heading size="small">{title}</Heading>
-            </View>
-            <Pressable
-              style={styles.closeButton}
-              onPress={onRequestClose}
-              hitSlop={12}
-              accessibilityRole="button"
-              accessibilityLabel="Done">
-              <IconButton icon="close" size={24} onPress={onRequestClose} />
-            </Pressable>
-            <ScrollView
-              style={[styles.sheetScroll, { maxHeight: scrollMaxHeight }]}
-              contentContainerStyle={styles.sheetScrollContent}
-              keyboardShouldPersistTaps="handled"
-              showsVerticalScrollIndicator>
-              <View style={styles.content}>{children}</View>
-            </ScrollView>
-          </View>
+          <Pressable style={StyleSheet.absoluteFill} onPress={onRequestClose} accessibilityLabel="Dismiss sheet" />
+          {Platform.OS === 'android' ? (
+            <KeyboardAvoidingView style={styles.kav} behavior="height">
+              {sheetContent}
+            </KeyboardAvoidingView>
+          ) : (
+            sheetContent
+          )}
         </View>
       </Modal>
     </>
@@ -103,11 +113,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.opaqueBlack,
     position: 'relative',
   },
-  closeButton: {
-    position: 'absolute',
-    right: 16,
-    top: 16,
-    zIndex: 1000,
+  kav: {
+    width: '100%',
+    justifyContent: 'flex-end',
   },
   sheet: {
     width: '100%',
@@ -117,20 +125,25 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderWidth: 1,
     borderBottomWidth: 0,
-    paddingTop: 42,
+    paddingTop: 16,
     paddingHorizontal: 16,
+    overflow: 'hidden',
   },
-  sheetHeader: {
-    flexDirection: 'row',
-    maxWidth: '85%',
+  sheetHeaderRow: {
     minHeight: 44,
+    marginBottom: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   doneButton: {
     color: colors.hunterGreen,
     fontSize: 16,
     fontWeight: '600',
   },
-  sheetScroll: {},
+  sheetScroll: {
+    // Intentionally not flex:1 to support variable-height sheets.
+  },
   sheetScrollContent: {
     paddingBottom: 8,
   },

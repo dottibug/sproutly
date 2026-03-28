@@ -1,7 +1,6 @@
 import { TextStyle, View, StyleSheet, Text } from 'react-native';
 import { UserSeedTask, TASK_TYPE_COLOR_MAP } from '../../../state/userSeeds/tasks/taskTypes';
 import { isCustomTask } from '../../../state/userSeeds/tasks/taskUtils';
-import Heading from '../../ui/Heading';
 import { colors } from '../../../styles/theme';
 
 type TimelineEventProps = {
@@ -19,6 +18,7 @@ export default function TimelineEvent({ task }: TimelineEventProps) {
 
   const noteTextStyle: TextStyle = {
     fontStyle: hasNotes ? 'normal' : 'italic',
+    color: hasNotes ? colors.primary : colors.secondary,
   };
 
   return (
@@ -27,7 +27,6 @@ export default function TimelineEvent({ task }: TimelineEventProps) {
         <Text style={styles.taskTypeText}>{typeLabel}</Text>
       </View>
       <View style={styles.notesContainer}>
-        <Heading size="small">{task.title}</Heading>
         <Text style={[styles.notes, noteTextStyle]}>{hasNotes ? notes : 'No task notes'}</Text>
       </View>
     </View>
@@ -60,7 +59,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   notes: {
-    fontSize: 14,
+    fontSize: 16,
     color: colors.secondary,
   },
 });

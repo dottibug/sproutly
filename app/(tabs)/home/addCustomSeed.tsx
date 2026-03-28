@@ -5,7 +5,7 @@ import Button from '../../../components/ui/buttons/AppButton';
 import { colors } from '../../../styles/theme';
 
 import { useAuth } from '../../../state/auth/AuthContext';
-import { useCustomSeedForm } from '../../../state/customSeedForm/CustomSeedFormContext';
+import { useCustomSeed } from '../../../state/customSeed/CustomSeedContext';
 import { useUserSeed } from '../../../state/userSeeds/UserSeedsContext';
 import { ImagePreview } from '../../../state/userSeeds/photos/photoTypes';
 import ImagePicker from '../../../components/customSeeds/ImagePicker';
@@ -13,10 +13,10 @@ import Heading from '../../../components/ui/Heading';
 
 // import PlantInput from '../../../components/customSeeds/PlantInput';
 
-import { createCustomSeedPayload } from '../../../state/customSeedForm/customSeedUtils';
+import { createCustomSeedPayload } from '../../../state/customSeed/customSeedUtils';
 
 import Input from '../../../components/ui/form/Input';
-import { CustomSeedFormErrors } from '../../../state/customSeedForm/customSeedTypes';
+import { CustomSeedFormErrors } from '../../../state/customSeed/customSeedTypes';
 import { cleanCustomSeedForm, isValid, validateCustomSeedForm } from '../../../components/customSeeds/helpers/validateCustomSeedForm';
 import ButtonSelector from '../../../components/ui/form/ButtonSelector';
 import { BeanType, Category, Difficulty, DIFFICULTY, Exposure, EXPOSURE } from '../../../state/userSeeds/seeds/seedInfoTypes';
@@ -51,7 +51,7 @@ const COMPANION_PLANTING_PLACEHOLDER =
 export default function AddCustomSeedScreen() {
   const { profile } = useAuth();
   const router = useRouter();
-  const customSeed = useCustomSeedForm();
+  const customSeed = useCustomSeed();
   const { addCustomSeed } = useUserSeed();
   const [preview, setPreview] = useState<ImagePreview | null>(null);
 
@@ -77,7 +77,6 @@ export default function AddCustomSeedScreen() {
   }, []);
 
   const handleAddSeed = () => {
-    console.log('handleAddSeed called');
     if (!profile?.id) return;
 
     const errors = validateCustomSeedForm({

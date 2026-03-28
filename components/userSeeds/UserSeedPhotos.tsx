@@ -1,17 +1,18 @@
-import { View, Text, Alert, Pressable, StyleSheet, Image, FlatList, Dimensions } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Image, FlatList, Dimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useMemo, useState } from 'react';
 import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
-import { FAB_MARGIN_RIGHT, UserSeedTab } from '../../state/app/appTypes';
+import { UserSeedTab } from '../../state/app/appTypes';
 import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
 import { GalleryCell } from '../../state/userSeeds/photos/photoTypes';
 import { flattenPhotos } from '../../state/userSeeds/photos/photoUtils';
-import { FAB as PaperFAB } from 'react-native-paper';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Loading from '../ui/Loading';
 import ScreenMessage from '../ui/ScreenMessage';
 import GalleryModal from '../gallery/GalleryModal';
 import { colors } from '../../styles/theme';
+import FABButton from '../ui/buttons/FABButton';
+import AlertDialog from '../ui/AlertDialog';
 
 type UserSeedPhotosProps = {
   readonly activeTab: UserSeedTab;
@@ -35,16 +36,13 @@ export default function UserSeedPhotos({ seed, activeTab }: UserSeedPhotosProps)
   };
 
   const handleDeletePhoto = (photoId: string) => {
-    Alert.alert(DELETE_PHOTO_TITLE, DELETE_PHOTO_MESSAGE, [
-      { text: CANCEL, style: 'cancel' },
-      {
-        text: DELETE,
-        style: 'destructive',
-        onPress: () => {
-          deletePhoto(photoId).catch((error) => console.error('Error deleting photo:', error));
-        },
+    AlertDialog({
+      title: DELETE_PHOTO_TITLE,
+      message: DELETE_PHOTO_MESSAGE,
+      onPress: () => {
+        deletePhoto(photoId).catch((error) => console.error('Error deleting photo:', error));
       },
-    ]);
+    });
   };
 
   // Render item for the FlatList
@@ -75,20 +73,7 @@ export default function UserSeedPhotos({ seed, activeTab }: UserSeedPhotosProps)
 
       <GalleryModal visible={selected !== null} onRequestClose={() => setSelected(null)} selected={selected} useViewButton={false} />
 
-      <PaperFAB
-        accessibilityLabel="Add photo"
-        icon={photosFabIcon}
-        style={[
-          styles.fab,
-          {
-            backgroundColor: colors.hunterGreen,
-            bottom: insets.bottom,
-            right: FAB_MARGIN_RIGHT,
-          },
-        ]}
-        color={colors.white}
-        onPress={handleAddPhoto}
-      />
+      <FABButton iconName="camera" iconSize={24} accessibilityLabel="Add photo" bottomInset={insets.bottom} onPress={handleAddPhoto} />
     </View>
   );
 }
@@ -102,8 +87,6 @@ function photosFabIcon({ size, color }: { size: number; color: string }) {
 const NO_PHOTOS_MESSAGE = 'No photos yet. Add photos to track the progress of your seeds.';
 const DELETE_PHOTO_TITLE = 'Delete photo?';
 const DELETE_PHOTO_MESSAGE = 'This cannot be undone.';
-const CANCEL = 'Cancel';
-const DELETE = 'Delete';
 const GAP = 8;
 const COLS = 2;
 const SCREEN_WIDTH = Dimensions.get('window').width;

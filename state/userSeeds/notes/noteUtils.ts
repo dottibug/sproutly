@@ -1,96 +1,30 @@
 import { UserSeed } from '../seeds/seedTypes';
-import { NotePayload, UserSeedNote } from './noteTypes';
-import { createTempId } from '../../app/appUtils';
+import { UserSeedNote } from './noteTypes';
 import { getTimestamp } from '../../app/dateUtils';
 
-/** True if at least one of title or body has non-whitespace content. */
-export function noteHasContent(title: string | null | undefined, note: string | null | undefined): boolean {
-  const t = title?.trim() ?? '';
-  const n = note?.trim() ?? '';
-  return Boolean(t || n);
-}
+// noteUtils.ts: Contains utility functions for notes
 
-// Build a note payload for adding a new note to a seed
-export function buildNotePayload(userId: string, userSeedId: string, title: string | null, note: string): NotePayload | null {
-  const trimTitle = title?.trim() ? title.trim() : null;
-  const trimNote = note.trim();
-  if (!noteHasContent(trimTitle, trimNote)) return null;
-  const tempId = createTempId();
-
-  return {
-    userId,
-    userSeedId,
-    tempId,
-    title: trimTitle,
-    note: trimNote,
-  } as NotePayload;
-}
-
-export function buildUserSeedNote(
-  id: string,
-  userSeedId: string,
-  userId: string,
-  title: string | null,
-  note: string | null,
-  createdAt: string,
-  updatedAt: string,
-): UserSeedNote {
-  return {
-    id,
-    userSeedId,
-    userId,
-    title,
-    note,
-    createdAt,
-    updatedAt,
-  } as UserSeedNote;
-}
-
-// Create a note in state
-export function createNote(seeds: UserSeed[], payload: NotePayload) {
+// --------------- STATE UTILS ---------------
+// Create a note in the UI (optimistic update)
+export function createNote(seeds: UserSeed[], payload: UserSeedNote & { tempId: string }) {
   const seedsCopy = [...seeds];
-
   const { userId, userSeedId, tempId, title, note } = payload;
 
-  return seedsCopy.map((s) => {
+  const updated = seedsCopy.map((s) => {
     if (s.id !== userSeedId) return s;
-
     const currentNotes = s.notes ?? [];
     const now = getTimestamp();
 
-    const newNote = buildUserSeedNote(tempId, userSeedId, userId, title, note, now, now);
-
+    const newNote = {
+      id: tempId,
+      userId,
+      userSeedId,
+      title,
+      note,
+      createdAt: now,
+      updatedAt: now,
+    } as UserSeedNote;
     return { ...s, notes: [newNote, ...currentNotes] };
-  });
-}
-
-// Edit a note in state
-export function editNote(seeds: UserSeed[], payload: UserSeedNote) {
-  const seedsCopy = [...seeds];
-  const now = getTimestamp();
-
-  const updated = seedsCopy.map((s) => {
-    if (s.id !== payload.userSeedId) return s;
-
-    const currentNotes = s.notes ?? [];
-
-    const noteToUpdate = currentNotes.find((n) => n.id === payload.id);
-    if (!noteToUpdate) return s;
-
-    const updatedNote = buildUserSeedNote(
-      noteToUpdate.id,
-      noteToUpdate.userSeedId,
-      noteToUpdate.userId,
-      payload.title,
-      payload.note,
-      now,
-      now,
-    );
-
-    return {
-      ...s,
-      notes: currentNotes.map((n) => (n.id === payload.id ? updatedNote : n)),
-    };
   });
 
   return updated;
@@ -110,7 +44,22 @@ export function replaceUINote(seeds: UserSeed[], payload: UserSeedNote & { tempI
   return updated;
 }
 
-// Delete a note in state
+// Edit a note in the UI (optimistic update)
+export function editNote(seeds: UserSeed[], payload: UserSeedNote) {
+  const seedsCopy = [...seeds];
+  const now = getTimestamp();
+  const updated = seedsCopy.map((seed) => {
+    if (seed.id !== payload.userSeedId) return seed;
+    const currentNotes = seed.notes ?? [];
+    return {
+      ...seed,
+      notes: currentNotes.map((note) => (note.id === payload.id ? ({ ...payload, updatedAt: now } as UserSeedNote) : note)),
+    } as UserSeed;
+  });
+  return updated;
+}
+
+// Delete a note in the UI (optimistic update)
 export function deleteByNoteId(seeds: UserSeed[], noteId: string) {
   const seedsCopy = [...seeds];
   const updated = seedsCopy.map((s) => {
@@ -123,14 +72,32 @@ export function deleteByNoteId(seeds: UserSeed[], noteId: string) {
   return updated;
 }
 
+// Restore a note in the UI (if it failed to be successfully deleted in the DB)
+export function restoreNote(seeds: UserSeed[], note: UserSeedNote) {
+  const seedsCopy = [...seeds];
+  const updated = seedsCopy.map((s) => {
+    if (s.id !== note.userSeedId) return s;
+    const currentNotes = s.notes ?? [];
+    return { ...s, notes: [note, ...currentNotes] } as UserSeed;
+  });
+  return updated;
+}
+
+// --------------- NOTE SORTING UTILS ---------------
 // Group notes by userSeedId (key is userSeedId)
 export function groupNotesByUserSeedId(notes: UserSeedNote[]): Map<string, UserSeedNote[]> {
   const map = new Map<string, UserSeedNote[]>();
-
   notes.forEach((note) => {
     if (!map.has(note.userSeedId)) map.set(note.userSeedId, []);
     map.get(note.userSeedId)?.push(note);
   });
-
   return map;
+}
+
+// --------------- NOTE SHEET UTILS ---------------
+// Helper function to create the title for the note sheet
+export function getNoteSheetTitle(isAnUpdate: boolean, variety: string, plant: string): string {
+  if (isAnUpdate) return `Update Note for ${variety} ${plant}`;
+  if (variety !== '' && plant !== '') return `Create New Note for ${variety} ${plant}`;
+  else return 'Create New Note';
 }
