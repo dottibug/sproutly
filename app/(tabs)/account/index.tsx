@@ -54,7 +54,7 @@ export default function Account() {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    backgroundColor: colors.alabaster,
+    backgroundColor: colors.gray100,
     flex: 1,
     paddingHorizontal: 16,
   },

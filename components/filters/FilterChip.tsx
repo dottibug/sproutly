@@ -29,7 +29,7 @@ export default function FilterChip({ filter, option }: FilterChipProps) {
 const styles = StyleSheet.create({
   chip: {
     backgroundColor: colors.white,
-    borderColor: colors.mediumGray,
+    borderColor: colors.gray500,
     borderRadius: 24,
     borderWidth: 1,
     flexDirection: 'row',

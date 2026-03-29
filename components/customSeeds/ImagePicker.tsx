@@ -1,6 +1,6 @@
 import { View, Image, StyleSheet, Pressable, Text } from 'react-native';
 import { selectImage } from '../../state/userSeeds/photos/photoUtils';
-import { appStyles, colors } from '../../styles/theme';
+import { appStyles, colors, inputStyles } from '../../styles/theme';
 import Heading from '../ui/Heading';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { ImagePreview } from '../../state/userSeeds/photos/photoTypes';
@@ -32,7 +32,7 @@ export default function ImagePicker({ profileId, preview, setPreview }: ImagePic
   };
 
   return (
-    <View style={appStyles.customSeedInputSection}>
+    <View style={inputStyles.inputSection}>
       <Heading size="xsmall">Photo</Heading>
 
       {preview === null ? (
@@ -85,13 +85,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.white,
     borderWidth: 2,
-    borderColor: colors.lightGray,
+    borderColor: colors.gray300,
     padding: 2,
     width: 96,
   },
   imagePlaceholder: {
     alignItems: 'center',
-    backgroundColor: colors.lightGray,
+    backgroundColor: colors.gray300,
     borderRadius: 9,
     height: 300,
     justifyContent: 'center',

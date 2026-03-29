@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   },
   taskDone: {
     textDecorationLine: 'line-through',
-    textDecorationColor: colors.opaqueBlack45,
+    textDecorationColor: colors.blackSheer45,
   },
   notes: {
     fontSize: 16,
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   actionButton: {
-    backgroundColor: colors.alabaster,
+    backgroundColor: colors.gray200,
     borderRadius: 100,
     width: 32,
     height: 32,

@@ -1,11 +1,11 @@
 import { View, Alert, ScrollView, StyleSheet } from 'react-native';
 import { useState, useMemo, useEffect } from 'react';
-import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useNote, useUserSeed } from '../../../state/barrels/contextBarrel';
 import { UserSeedNote, NoteErrors } from '../../../state/userSeeds/notes/noteTypes';
 import { getNoteSheetTitle } from '../../../state/userSeeds/notes/noteUtils';
 import { validateNote } from '../../../components/userSeeds/notes/validateNotes';
-import { Heading, Input, AppButton } from '../../../components/uiComponentBarrel';
+import { Heading, Input, AppButton, ScreenOptions } from '../../../components/uiComponentBarrel';
 
 type NoteSheetParams = {
   userSeedId: string;
@@ -33,8 +33,6 @@ export default function NoteSheet() {
   const [errors, setErrors] = useState<NoteErrors | null>(null);
 
   const sheetTitle = useMemo(() => getNoteSheetTitle(isUpdate, variety, plant), [isUpdate, variety, plant]);
-
-  const headerTitle = useMemo(() => (isUpdate ? 'Update Note' : 'Create Note'), [isUpdate]);
 
   // Set default values for the note form. Runs on mount and when editing the note.
   useEffect(() => {
@@ -91,10 +89,12 @@ export default function NoteSheet() {
   };
 
   return (
-    <ScrollView style={styles.screen}>
-      <Stack.Screen options={{ headerTitle: headerTitle }} />
+    <ScrollView style={styles.screen} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
+      <ScreenOptions backButtonMode="generic" />
       <View style={styles.contentContainer}>
-        <Heading size="medium">{sheetTitle}</Heading>
+        <Heading size="small" customStyles={styles.sheetTitle}>
+          {sheetTitle}
+        </Heading>
 
         <View style={styles.inputs}>
           <View style={styles.inputSection}>
@@ -151,5 +151,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginVertical: 16,
+  },
+  sheetTitle: {
+    fontSize: 17,
+    textAlign: 'center',
   },
 });

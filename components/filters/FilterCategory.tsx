@@ -1,9 +1,9 @@
 import { View, StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
-import { colors } from '../../styles/theme';
-import FilterOption from './FilterOption';
 import { useFilters } from '../../state/filters/FiltersContext';
 import { type SearchFilter } from '../../state/filters/filterTypes';
+import FilterOption from './FilterOption';
+import { colors } from '../../styles/theme';
 
 type FilterCategoryProps = {
   readonly title: string;
@@ -11,6 +11,7 @@ type FilterCategoryProps = {
   readonly filter: SearchFilter;
 };
 
+// FilterCategory.tsx: Renders a filter category for the filters sheet modal
 export default function FilterCategory({ title, options, filter }: FilterCategoryProps) {
   const { openFilters, setOpenFilters } = useFilters();
   const isOpen = openFilters[filter];
@@ -60,7 +61,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
-    paddingHorizontal: 16,
+    paddingLeft: 16,
+    marginRight: 46,
     paddingBottom: 24,
   },
 });

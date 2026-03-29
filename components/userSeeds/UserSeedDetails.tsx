@@ -2,7 +2,7 @@ import { ScrollView, View, Text, StyleSheet } from 'react-native';
 import SeedImage from '../seeds/SeedImage';
 import SeedHeader from '../seeds/SeedHeader';
 import Heading from '../ui/Heading';
-import { typography } from '../../styles/theme';
+import { text } from '../../styles/theme';
 import SeedQuickFacts from '../seeds/SeedQuickFacts';
 import Accordion from '../ui/Accordion';
 import Button from '../ui/buttons/AppButton';
@@ -61,38 +61,38 @@ export default function UserSeedDetails({ seed, activeTab }: UserSeedDetailsProp
         {showDescription && (
           <View style={styles.description}>
             <Heading size="medium">Description</Heading>
-            <Text style={typography.textMedium}>{seed.description}</Text>
+            <Text style={text.medium}>{seed.description}</Text>
             <SeedQuickFacts maturesInDays={seed.maturesInDays} difficulty={seed.difficulty} />
           </View>
         )}
 
         {showTiming && (
           <Accordion title={'Timing'}>
-            <Text style={typography.textMedium}>{seed.timing}</Text>
+            <Text style={text.medium}>{seed.timing}</Text>
           </Accordion>
         )}
 
         {showStarting && (
           <Accordion title={'Starting'}>
-            <Text style={typography.textMedium}>{seed.starting}</Text>
+            <Text style={text.medium}>{seed.starting}</Text>
           </Accordion>
         )}
 
         {showGrowing && (
           <Accordion title={'Growing'}>
-            <Text style={typography.textMedium}>{seed.growing}</Text>
+            <Text style={text.medium}>{seed.growing}</Text>
           </Accordion>
         )}
 
         {showHarvest && (
           <Accordion title={'Harvest'}>
-            <Text style={typography.textMedium}>{seed.harvest}</Text>
+            <Text style={text.medium}>{seed.harvest}</Text>
           </Accordion>
         )}
 
         {showCompanionPlanting && (
           <Accordion title={'Companion Planting'}>
-            <Text style={typography.textMedium}>{seed.companionPlanting}</Text>
+            <Text style={text.medium}>{seed.companionPlanting}</Text>
           </Accordion>
         )}
       </View>

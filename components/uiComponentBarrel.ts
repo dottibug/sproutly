@@ -1,7 +1,7 @@
 // componentBarrel.ts: Contains barrel exports for all UI components
 
 export { default as AppButton } from './ui/buttons/AppButton';
-export { default as FABButton } from './ui/buttons/FABButton';
+export { default as FABButton } from './ui/buttons/FabButton';
 export { default as IconButton } from './ui/buttons/IconButton';
 export { default as ButtonSelector } from './ui/form/ButtonSelector';
 export { default as Input } from './ui/form/Input';

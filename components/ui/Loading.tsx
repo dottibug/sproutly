@@ -12,7 +12,7 @@ type LoadingProps = {
 export default function Loading({ message }: LoadingProps) {
   return (
     <SafeAreaView>
-      <ActivityIndicator size="large" color={colors.hunterGreen} />
+      <ActivityIndicator size="large" color={colors.greenDark} />
       <Text>{message}</Text>
     </SafeAreaView>
   );

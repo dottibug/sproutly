@@ -1,17 +1,19 @@
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, StyleProp, TextStyle } from 'react-native';
 import { useState } from 'react';
 import { List } from 'react-native-paper';
 import { colors } from '../../styles/theme';
+import { headingSizeMap } from '../../styles/theme';
 
 type AccordionProps = {
   readonly title: string;
   readonly description?: string;
   readonly children?: React.ReactNode;
   readonly openByDefault?: boolean;
+  readonly titleSize?: 'xsmall' | 'small' | 'medium' | 'large';
 };
 
 // Accordion.tsx: Renders an accordion with a title, optional description, and children.
-export default function Accordion({ title, description, children, openByDefault = false }: AccordionProps) {
+export default function Accordion({ title, description, children, openByDefault = false, titleSize = 'medium' }: AccordionProps) {
   const [expanded, setExpanded] = useState(openByDefault);
 
   const hasDescription = description !== undefined && description !== null && description.trim() !== '';
@@ -19,10 +21,12 @@ export default function Accordion({ title, description, children, openByDefault 
   const color = colors.white;
   const contentStyles = { gap: hasDescription ? 2 : 0 };
   const descriptionText = hasDescription ? description : '';
-  const childrenBackgroundColor = colors.screenColor;
+  const childrenBackgroundColor = colors.gray100;
 
   // Open or close the accordion
   const handlePress = () => setExpanded(!expanded);
+
+  const headingStyles = StyleSheet.flatten([headingSizeMap[titleSize], { color: colors.primary }]);
 
   return (
     <List.Accordion
@@ -32,7 +36,7 @@ export default function Accordion({ title, description, children, openByDefault 
       expanded={expanded}
       accessibilityLabel={title}
       title={title}
-      titleStyle={styles.title}
+      titleStyle={headingStyles}
       description={descriptionText}
       descriptionStyle={styles.description}
       onPress={handlePress}>
@@ -47,8 +51,8 @@ export default function Accordion({ title, description, children, openByDefault 
 // ---- STYLES ----
 const styles = StyleSheet.create({
   accordionContainer: {
-    backgroundColor: colors.alabaster,
-    borderColor: colors.lightGray,
+    backgroundColor: colors.gray200,
+    borderColor: colors.gray300,
     borderTopWidth: StyleSheet.hairlineWidth,
   },
   title: {
@@ -59,7 +63,8 @@ const styles = StyleSheet.create({
   description: {
     color: colors.secondary,
     fontSize: 14,
-    fontStyle: 'italic',
+    // fontStyle: 'italic',
+    marginTop: 3,
   },
   childrenContainer: {
     padding: 16,

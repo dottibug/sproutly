@@ -34,20 +34,24 @@ const styles = StyleSheet.create({
     columnGap: 8,
   },
   taskChip: {
-    backgroundColor: colors.alabaster,
+    backgroundColor: colors.gray200,
     alignSelf: 'flex-start',
     borderRadius: 100,
     marginVertical: 6,
     paddingHorizontal: 12,
     paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.10)',
   },
   taskChipSelected: {
     backgroundColor: colors.greenLight,
+    borderWidth: 1,
+    borderColor: colors.greenLight,
   },
   taskChipText: {
-    color: colors.opaqueBlack,
+    color: colors.blackSheer55,
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '600',
     textTransform: 'uppercase',
   },
   taskChipTextSelected: {

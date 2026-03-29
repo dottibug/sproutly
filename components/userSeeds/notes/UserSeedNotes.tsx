@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { useUserSeed } from '../../../state/userSeeds/UserSeedsContext';
 import { UserSeedTab, UserSeed, UserSeedNote } from '../../../state/barrels/typesBarrel';
 import Note from './Note';
-import FABButton from '../../ui/buttons/FABButton';
+import FABButton from '../../ui/buttons/FabButton';
 import { colors } from '../../../styles/theme';
 
 type UserSeedNotesProps = {

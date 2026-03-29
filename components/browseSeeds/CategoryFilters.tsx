@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     borderColor: 'purple',
   },
   filterText: {
-    color: colors.gray,
+    color: colors.primary,
     fontSize: 14,
     fontWeight: 'bold',
   },

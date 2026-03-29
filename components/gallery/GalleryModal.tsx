@@ -68,7 +68,7 @@ export default function GalleryModal({ visible, onRequestClose, selected, isSeed
             onPress={onRequestClose}
             accessibilityRole="button"
             accessibilityLabel="Close">
-            <FontAwesome6 name="xmark" size={26} color={colors.alabaster} />
+            <FontAwesome6 name="xmark" size={26} color={colors.gray200} />
           </Pressable>
 
           <ScrollView
@@ -145,13 +145,13 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   captionTitle: {
-    color: colors.alabaster,
+    color: colors.gray200,
     fontSize: 20,
     fontWeight: '700',
     letterSpacing: -0.3,
   },
   captionDate: {
-    color: colors.alabaster,
+    color: colors.gray200,
     fontSize: 14,
     marginTop: 4,
   },
@@ -161,9 +161,9 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   viewSeedText: {
-    borderBottomColor: colors.alabaster,
+    borderBottomColor: colors.gray200,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    color: colors.alabaster,
+    color: colors.gray200,
     fontSize: 15,
     fontWeight: '600',
     paddingBottom: 2,

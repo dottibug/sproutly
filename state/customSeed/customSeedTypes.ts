@@ -41,27 +41,34 @@ export type CustomSeedPayload = {
   image: string | null;
 };
 
-export type CustomSeedFormFields = {
+// ---- CUSTOM SEED SHEET  ----
+// User-defined input values
+export type CustomSeedDraft = CleanCustomSeed & {
+  userSeedId: string;
+  maturesUnderDays: number | null;
+  // planting: Planting[] | null; // removed temporarily
+};
+
+export type CleanCustomSeed = {
   variety: string;
   category: Category;
   plant: string;
-  beanType: BeanType;
+  beanType: BeanType | null;
   latin: string | null;
   difficulty: Difficulty | null;
   exposure: Exposure | null;
   maturesInDays: number | null;
-  maturesUnderDays: number | null;
   description: string | null;
   timing: string | null;
   starting: string | null;
   growing: string | null;
   harvest: string | null;
   companionPlanting: string | null;
-  image: string | null;
+  image: string;
   // planting: Planting[] | null; // removed temporarily
 };
 
-export const CUSTOM_SEED_FORM_FIELDS = [
+export const CUSTOM_SEED_FIELDS = [
   'image',
   'variety',
   'plant',
@@ -70,7 +77,20 @@ export const CUSTOM_SEED_FORM_FIELDS = [
   // 'planting' -- removed temporarily
 ] as const;
 
-export type CustomSeedFormField = (typeof CUSTOM_SEED_FORM_FIELDS)[number];
+export type CustomSeedFields = (typeof CUSTOM_SEED_FIELDS)[number];
+export type CustomSeedErrors = Partial<Record<CustomSeedFields, string>>;
 
-// No error message means no error in the field
-export type CustomSeedFormErrors = Partial<Record<CustomSeedFormField, string>>;
+export type CustomSeedSheetParams = {
+  userSeedId: string;
+};
+
+export type InfoModalType =
+  | 'difficulty'
+  | 'exposure'
+  | 'maturesInDays'
+  | 'description'
+  | 'timing'
+  | 'starting'
+  | 'growing'
+  | 'harvest'
+  | 'companionPlanting';

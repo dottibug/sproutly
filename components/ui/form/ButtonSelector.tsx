@@ -1,8 +1,11 @@
 import { View, StyleSheet } from 'react-native';
+import { useState } from 'react';
 import { SegmentedButtons } from 'react-native-paper';
 import Heading from '../Heading';
-import { colors } from '../../../styles/theme';
 import IconButton from '../buttons/IconButton';
+import { colors } from '../../../styles/theme';
+
+// ButtonSelector.tsx: Segmented button selector used to select an option from a list of options. Used in CustomSeedSheet.tsx when creating a custom seed. Should only be used for 2 to 4 options.
 
 type SelectorProps = {
   readonly disabled?: boolean;
@@ -12,6 +15,7 @@ type SelectorProps = {
   readonly onValueChange: (value: string) => void;
   readonly showInfoIcon?: boolean;
   readonly onIconPress?: () => void;
+  readonly initialValue: string;
 };
 
 export default function Selector({
@@ -22,12 +26,33 @@ export default function Selector({
   onValueChange,
   showInfoIcon = false,
   onIconPress,
+  initialValue,
 }: SelectorProps) {
+  const [selected, setSelected] = useState(initialValue);
+
+  const buttonStyle = (optionValue: string) =>
+    StyleSheet.flatten([
+      {
+        backgroundColor: selected === optionValue && !disabled ? colors.greenDark90 : colors.white,
+      },
+      styles.buttonStyle,
+    ]);
+
   const buttons = options.map((option) => {
-    return { value: option.value, label: option.label, disabled: disabled };
+    return {
+      value: option.value,
+      label: option.label,
+      disabled: disabled,
+      accessibilityLabel: option.label,
+      checkedColor: colors.white,
+      uncheckedColor: colors.gray700,
+      showSelectedCheck: !disabled,
+      onPress: () => setSelected(option.value),
+      style: buttonStyle(option.value),
+    };
   });
 
-  const headingStyles = disabled ? { color: colors.lightGray } : { color: colors.primary };
+  const headingStyles = disabled ? { color: colors.gray300 } : { color: colors.primary };
 
   return (
     <View style={styles.selectorContainer}>
@@ -37,7 +62,7 @@ export default function Selector({
         </Heading>
         {showInfoIcon && <IconButton icon="info" onPress={onIconPress || (() => {})} />}
       </View>
-      <SegmentedButtons value={value} onValueChange={onValueChange} buttons={buttons} />
+      <SegmentedButtons value={value} onValueChange={onValueChange} buttons={buttons} density="small" />
     </View>
   );
 }
@@ -45,5 +70,9 @@ export default function Selector({
 const styles = StyleSheet.create({
   selectorContainer: {
     gap: 8,
+  },
+  buttonStyle: {
+    borderWidth: 1,
+    borderColor: colors.gray300,
   },
 });

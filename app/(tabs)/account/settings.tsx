@@ -66,7 +66,7 @@ export default function Settings() {
         </View>
       </View>
 
-      <Divider theme={{ colors: { primary: colors.lightGray } }} bold={true} style={styles.divider} />
+      <Divider theme={{ colors: { primary: colors.gray300 } }} bold={true} style={styles.divider} />
 
       {/* Default open filters */}
       <View style={styles.settingsSection}>
@@ -78,7 +78,11 @@ export default function Settings() {
           {SEARCH_FILTER_NAMES.map((filter: SearchFilter) => (
             <View key={filter} style={styles.switchRow}>
               <View style={styles.switchContainer}>
-                <Switch value={openByDefault.includes(filter)} onValueChange={() => toggleOpenByDefault(filter)} color={colors.green90} />
+                <Switch
+                  value={openByDefault.includes(filter)}
+                  onValueChange={() => toggleOpenByDefault(filter)}
+                  color={colors.greenDark90}
+                />
               </View>
               <Text style={styles.switchLabel}>{FILTER_NAME_MAP[filter]}</Text>
             </View>

@@ -63,7 +63,7 @@ export default function BrowseSeeds({ activeTab }: BrowseSeedsProps) {
       <SearchBar placeholder="Search seeds..." searchQuery={searchQuery} handleSearchQuery={setSearchQuery} />
 
       <View style={styles.seedListContainer}>
-        <Heading size="medium" marginVertical={18} uppercase>
+        <Heading size="medium" customStyles={{ marginVertical: 18 }} uppercase>
           {seedListHeading()}
         </Heading>
 

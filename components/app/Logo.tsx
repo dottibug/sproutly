@@ -59,12 +59,12 @@ const styles = StyleSheet.create({
   },
   logoIconContainer: {
     alignItems: 'center',
-    backgroundColor: colors.hunterGreen,
+    backgroundColor: colors.greenDark,
     borderRadius: 100,
     justifyContent: 'center',
   },
   logoText: {
-    color: colors.hunterGreen,
+    color: colors.greenDark,
     fontWeight: 'bold',
     textAlign: 'center',
   },

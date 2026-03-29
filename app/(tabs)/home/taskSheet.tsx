@@ -1,10 +1,10 @@
 import { StyleSheet, View, Alert, ScrollView } from 'react-native';
 import { useMemo, useState, useEffect } from 'react';
-import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useUserSeed, useTask } from '../../../state/barrels/contextBarrel';
 import { TaskType, TaskErrors, UserSeedTask } from '../../../state/barrels/typesBarrel';
 import { startOfToday, getTaskSheetTitle } from '../../../state/barrels/utilsBarrel';
-import { AppButton, Input, DatePickerSheet, Heading } from '../../../components/uiComponentBarrel';
+import { AppButton, Input, DatePickerSheet, Heading, ScreenOptions } from '../../../components/uiComponentBarrel';
 import TaskChips from '../../../components/userSeeds/tasks/TaskChips';
 import { validateTask } from '../../../components/userSeeds/tasks/validateTask';
 
@@ -46,8 +46,6 @@ export default function TaskSheet() {
   }, [isUpdate, task.date]);
 
   const sheetTitle = useMemo(() => getTaskSheetTitle(isUpdate, variety, plant), [isUpdate, variety, plant]);
-
-  const heeaderTitle = useMemo(() => (isUpdate ? 'Update Task' : 'Create Task'), [isUpdate]);
 
   // Set default values for task type, custom task type, title, notes, and date. Runs on mount and when editing the task.
   useEffect(() => {
@@ -120,10 +118,12 @@ export default function TaskSheet() {
   };
 
   return (
-    <ScrollView style={styles.screen}>
-      <Stack.Screen options={{ headerTitle: heeaderTitle }} />
+    <ScrollView style={styles.screen} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
+      <ScreenOptions backButtonMode="generic" />
       <View style={styles.contentContainer}>
-        <Heading size="medium">{sheetTitle}</Heading>
+        <Heading size="small" customStyles={styles.sheetTitle}>
+          {sheetTitle}
+        </Heading>
 
         <View style={styles.inputs}>
           <View style={styles.inputSection}>
@@ -183,6 +183,10 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
   },
+  sheetTitle: {
+    fontSize: 17,
+    textAlign: 'center',
+  },
   contentContainer: {
     gap: 18,
     marginTop: 32,
@@ -190,7 +194,7 @@ const styles = StyleSheet.create({
   },
   inputs: {
     gap: 18,
-    marginTop: 16,
+    marginTop: 8,
   },
   inputSection: {
     gap: 12,

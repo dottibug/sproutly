@@ -110,9 +110,9 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   signInLinkText: {
-    color: colors.hunterGreen,
+    color: colors.greenDark,
     fontSize: 16,
-    textDecorationColor: colors.hunterGreen,
+    textDecorationColor: colors.greenDark,
     textDecorationLine: 'underline',
   },
 });

@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   actionButton: {
-    backgroundColor: colors.alabaster,
+    backgroundColor: colors.gray200,
     borderRadius: 100,
     width: 32,
     height: 32,

@@ -1,10 +1,10 @@
 import { View, StyleSheet, ScrollView, Text } from 'react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
 import { useFilters } from '../../state/filters/FiltersContext';
 import { applyFilters, getNumberOfSelectedFilters } from '../../state/filters/filterUtils';
 import { searchSeeds } from '../../state/app/appUtils';
-import { FAB_MARGIN_RIGHT, ListTab } from '../../state/app/appTypes';
+import { ListTab } from '../../state/app/appTypes';
 import UserSeedList from './UserSeedList';
 import Loading from '../ui/Loading';
 import ScreenMessage from '../ui/ScreenMessage';
@@ -12,10 +12,13 @@ import Filters from '../filters/Filters';
 import FilterChips from '../filters/FilterChips';
 import SearchBar from '../ui/SearchBar';
 import { colors, appStyles } from '../../styles/theme';
-import { FAB as PaperFAB } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AddSeedModal from './AddSeedModal';
 import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
+import SheetModal from '../ui/SheetModal';
+import { AppSnackbar, FABButton, ScreenOptions } from '../uiComponentBarrel';
+import FabActions from '../ui/buttons/FabActionButtons';
+import { usePathname, useRouter } from 'expo-router';
 
 const LOAD_MESSAGE = 'Loading your seeds…';
 const EMPTY_SEEDS_LIST = 'Your collection is empty. Add seeds to get started.';
@@ -29,11 +32,16 @@ type UserSeedsProps = {
 // UserSeeds component displays the user's seed collection and a floating action button to add a new seed
 
 export default function UserSeeds({ activeTab, onGoToBrowse }: UserSeedsProps) {
+  const router = useRouter();
+  const pathname = usePathname();
   const insets = useSafeAreaInsets();
+
+  const showFabActions = activeTab === 'My Seeds' && pathname === '/home';
+
   // State
   const [openFilterMenu, setOpenFilterMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [addSeedModalVisible, setAddSeedModalVisible] = useState(false);
+  const [fabOpen, setFabOpen] = useState(false);
 
   // Context
   const { seeds, loading, error } = useUserSeed();
@@ -53,10 +61,13 @@ export default function UserSeeds({ activeTab, onGoToBrowse }: UserSeedsProps) {
 
   const handleSearchQuery = (query: string) => setSearchQuery(query);
 
-  const handleAddSeed = () => setAddSeedModalVisible(true);
+  const onAddCustomSeed = () => {
+    router.push({
+      pathname: '/home/customSeedSheet',
+    });
+  };
 
-  const handleGoToBrowse = () => {
-    setAddSeedModalVisible(false);
+  const onBrowse = () => {
     onGoToBrowse();
   };
 
@@ -77,16 +88,15 @@ export default function UserSeeds({ activeTab, onGoToBrowse }: UserSeedsProps) {
           </View>
         </View>
       </ScrollView>
-      <PaperFAB
-        accessibilityLabel="Add seed"
-        icon="plus"
-        style={[styles.addSeedFab, { backgroundColor: colors.hunterGreen, bottom: insets.bottom, right: FAB_MARGIN_RIGHT }]}
-        color={colors.white}
-        onPress={handleAddSeed}
+
+      <FabActions
+        open={fabOpen}
+        setFabOpen={setFabOpen}
+        onAddCustomSeed={onAddCustomSeed}
+        onBrowse={onBrowse}
+        bottomInset={insets.bottom}
+        showFabActions={showFabActions}
       />
-      {addSeedModalVisible && (
-        <AddSeedModal visible={addSeedModalVisible} onRequestClose={() => setAddSeedModalVisible(false)} onGoToBrowse={handleGoToBrowse} />
-      )}
     </View>
   );
 }
@@ -110,4 +120,10 @@ const styles = StyleSheet.create({
   addSeedFab: {
     position: 'absolute',
   },
+  snackbarContent: {
+    flexDirection: 'row',
+    gap: 32,
+  },
+
+  fabActions: {},
 });

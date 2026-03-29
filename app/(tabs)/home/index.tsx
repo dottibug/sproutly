@@ -1,28 +1,23 @@
-import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Loading from '../../../components/ui/Loading';
-import ScreenMessage from '../../../components/ui/ScreenMessage';
+import { useState } from 'react';
+import { useBrowseSeed } from '../../../state/browseSeeds/BrowseSeedContext';
 import UserSeeds from '../../../components/userSeeds/UserSeeds';
 import BrowseSeeds from '../../../components/browseSeeds/BrowseSeeds';
-import { colors } from '../../../styles/theme';
-import Tabs from '../../../components/ui/Tabs';
+import { Loading, ScreenMessage, Tabs } from '../../../components/uiComponentBarrel';
 import { ListTab, LIST_TABS } from '../../../state/app/appTypes';
-import { useBrowseSeed } from '../../../state/browseSeeds/BrowseSeedContext';
-import { Stack } from 'expo-router';
+import { colors } from '../../../styles/theme';
 
-// Seed Catalog screen
 // TODO: top/bottom scroll buttons to quick scroll to the top/bottom of the list
 
-const LOAD_MESSAGE = 'Loading…';
-
+// (tabs)/home/index.tsx: Home screen for the app. Users can switch between their own seed collection and the seed catalog, as well as click the floating action button to add a new seed.
 export default function HomeScreen() {
   const { loading, error } = useBrowseSeed();
   const [activeTab, setActiveTab] = useState<ListTab>('My Seeds');
-  const handleTabPress = (tab: ListTab) => setActiveTab(tab);
-  if (loading) return <Loading message={LOAD_MESSAGE} />;
-  if (error) return <ScreenMessage message={error} />;
 
-  // Render the seed list (user collection or browse) based on the active tab
+  const handleTabPress = (tab: ListTab) => setActiveTab(tab);
+
+  if (loading) return <Loading message="Loading seeds..." />;
+  if (error) return <ScreenMessage message={error} />;
 
   return (
     <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: colors.white }}>

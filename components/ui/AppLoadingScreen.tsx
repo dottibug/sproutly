@@ -9,7 +9,7 @@ export default function AppLoadingScreen() {
     <SafeAreaView style={styles.container}>
       <Logo size="large" />
       <View style={styles.loadingMessageContainer}>
-        <ActivityIndicator size="large" color={colors.hunterGreen} />
+        <ActivityIndicator size="large" color={colors.greenDark} />
         <Text style={styles.message}>Germinating seeds...</Text>
       </View>
     </SafeAreaView>
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     marginTop: 64,
   },
   message: {
-    color: colors.hunterGreen,
+    color: colors.greenDark,
     fontSize: 20,
   },
 });

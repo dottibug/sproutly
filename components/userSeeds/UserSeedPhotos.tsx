@@ -11,7 +11,7 @@ import Loading from '../ui/Loading';
 import ScreenMessage from '../ui/ScreenMessage';
 import GalleryModal from '../gallery/GalleryModal';
 import { colors } from '../../styles/theme';
-import FABButton from '../ui/buttons/FABButton';
+import FABButton from '../ui/buttons/FabButton';
 import AlertDialog from '../ui/AlertDialog';
 
 type UserSeedPhotosProps = {
@@ -50,7 +50,7 @@ export default function UserSeedPhotos({ seed, activeTab }: UserSeedPhotosProps)
     <Pressable style={styles.tile} onPress={() => setSelected(item)}>
       <Image source={{ uri: item.photo.imageUri }} style={styles.thumb} resizeMode="cover" />
       <Pressable style={styles.deleteButton} onPress={() => handleDeletePhoto(item.photo.id)}>
-        <FontAwesome5 name="trash-alt" size={20} color={colors.alabaster} />
+        <FontAwesome5 name="trash-alt" size={20} color={colors.gray200} />
       </Pressable>
     </Pressable>
   );
@@ -96,7 +96,7 @@ const CELL_SIZE = (SCREEN_WIDTH - PADDING * 2 - GAP) / COLS;
 // ---- STYLES ----
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.alabaster,
+    backgroundColor: colors.gray200,
     flex: 1,
     paddingTop: PADDING,
     position: 'relative',
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: PADDING,
   },
   thumb: {
-    backgroundColor: colors.lightGray,
+    backgroundColor: colors.gray300,
     borderRadius: 18,
     height: CELL_SIZE,
     width: CELL_SIZE,
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 8,
     right: 8,
-    backgroundColor: colors.opaqueBlack,
+    backgroundColor: colors.blackSheer55,
     borderRadius: 999,
     padding: 7,
     zIndex: 2,

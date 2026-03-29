@@ -5,7 +5,7 @@ import { Alert, ScrollView, View, Text, StyleSheet, Pressable, Platform } from '
 import SeedImage from '../seeds/SeedImage';
 import SeedHeader from '../seeds/SeedHeader';
 import Heading from '../ui/Heading';
-import { typography, colors } from '../../styles/theme';
+import { text, colors } from '../../styles/theme';
 import SeedQuickFacts from '../seeds/SeedQuickFacts';
 import Accordion from '../ui/Accordion';
 import { Exposure } from '../../state/userSeeds/seeds/seedInfoTypes';
@@ -60,7 +60,7 @@ export default function BrowseSeedDetails({ seed }: BrowseSeedDetailsProps) {
             style={({ pressed }) => [styles.addOnImage, pressed && styles.addOnImagePressed]}
             accessibilityRole="button"
             accessibilityLabel="Add to my seeds">
-            <Ionicons name="add" size={22} color={colors.hunterGreen} />
+            <Ionicons name="add" size={22} color={colors.greenDark} />
             <Text style={styles.addOnImageText}>Add to my seeds</Text>
           </Pressable>
         )}
@@ -80,37 +80,37 @@ export default function BrowseSeedDetails({ seed }: BrowseSeedDetailsProps) {
 
         <View style={styles.description}>
           <Heading size="medium">{DESCRIPTION}</Heading>
-          <Text style={typography.textMedium}>{seed.description}</Text>
+          <Text style={text.medium}>{seed.description}</Text>
           <SeedQuickFacts maturesInDays={seed.maturesInDays} difficulty={seed.difficulty} />
         </View>
 
         {showTiming && (
           <Accordion title={TIMING}>
-            <Text style={typography.textMedium}>{seed.timing}</Text>
+            <Text style={text.medium}>{seed.timing}</Text>
           </Accordion>
         )}
 
         {showStarting && (
           <Accordion title={STARTING}>
-            <Text style={typography.textMedium}>{seed.starting}</Text>
+            <Text style={text.medium}>{seed.starting}</Text>
           </Accordion>
         )}
 
         {showGrowing && (
           <Accordion title={GROWING}>
-            <Text style={typography.textMedium}>{seed.growing}</Text>
+            <Text style={text.medium}>{seed.growing}</Text>
           </Accordion>
         )}
 
         {showHarvest && (
           <Accordion title={HARVEST}>
-            <Text style={typography.textMedium}>{seed.harvest}</Text>
+            <Text style={text.medium}>{seed.harvest}</Text>
           </Accordion>
         )}
 
         {showCompanionPlanting && (
           <Accordion title={COMPANION_PLANTING}>
-            <Text style={typography.textMedium}>{seed.companionPlanting}</Text>
+            <Text style={text.medium}>{seed.companionPlanting}</Text>
           </Accordion>
         )}
       </View>
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   addOnImageText: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.hunterGreen,
+    color: colors.greenDark,
     letterSpacing: 0.2,
   },
   description: {

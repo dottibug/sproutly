@@ -28,7 +28,7 @@ export default function DatePickerSheet({ showDatePicker, setShowDatePicker, tas
         style={styles.dateInputRow}
         onPress={() => setShowDatePicker(true)}>
         <Text style={styles.dateInputText}>{formatDate(taskDate)}</Text>
-        <Ionicons name="calendar-outline" size={22} color={colors.gray} />
+        <Ionicons name="calendar-outline" size={22} color={colors.gray500} />
       </Pressable>
 
       {Platform.OS === 'android' && showDatePicker && (
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
   dateInputRow: {
     alignItems: 'center',
     backgroundColor: colors.white,
-    borderColor: colors.opaqueBlack45,
+    borderColor: colors.blackSheer45,
     borderRadius: 9,
     borderWidth: 1,
     flexDirection: 'row',
@@ -94,12 +94,12 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   dateInputText: {
-    color: colors.opaqueBlack,
+    color: colors.blackSheer55,
     flex: 1,
     fontSize: 16,
   },
   pickerBackdrop: {
-    backgroundColor: colors.opaqueBlack,
+    backgroundColor: colors.blackSheer55,
     flex: 1,
     justifyContent: 'flex-end',
   },

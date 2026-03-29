@@ -4,7 +4,7 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { colors } from '../../../styles/theme';
 
 type FABButtonProps = {
-  readonly iconName: 'calendar-plus' | 'sticky-note' | 'camera';
+  readonly iconName: 'calendar-plus' | 'sticky-note' | 'camera' | 'plus';
   readonly iconSize: number;
   readonly accessibilityLabel: string;
   readonly bottomInset: number;
@@ -23,7 +23,7 @@ export default function FABButton({ iconName, iconSize, accessibilityLabel, bott
       style={[
         styles.fab,
         {
-          backgroundColor: colors.opaqueBlack45,
+          backgroundColor: colors.blackSheer45,
           bottom: bottomInset,
           right: 16,
         },

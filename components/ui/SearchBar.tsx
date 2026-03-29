@@ -18,7 +18,7 @@ export default function SearchBar({ placeholder, searchQuery, handleSearchQuery,
         value={searchQuery}
         onChangeText={handleSearchQuery}
         placeholder={placeholder}
-        placeholderTextColor={colors.mediumGray}
+        placeholderTextColor={colors.gray500}
         autoFocus={autofocus}
       />
     </View>

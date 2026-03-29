@@ -71,7 +71,7 @@ const NO_PHOTOS_MESSAGE = `No photos yet. Add photos in the 'Photos' tab of a se
 // ---- STYLES ----
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.alabaster,
+    backgroundColor: colors.gray200,
     flex: 1,
     paddingTop: PADDING,
   },
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     width: CELL_SIZE,
   },
   thumb: {
-    backgroundColor: colors.lightGray,
+    backgroundColor: colors.gray300,
     borderRadius: 18,
     height: CELL_SIZE,
     width: CELL_SIZE,

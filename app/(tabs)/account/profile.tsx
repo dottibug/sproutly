@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { useAuth } from '../../../state/auth/AuthContext';
 import { useUserSeed } from '../../../state/userSeeds/UserSeedsContext';
-// import { formatMemberSince } from '../../../state/app/appUtils';
 import { formatMemberSince } from '../../../state/app/dateUtils';
 import { countDailyPendingTasks } from '../../../state/userSeeds/tasks/taskUtils';
 import Logo from '../../../components/app/Logo';

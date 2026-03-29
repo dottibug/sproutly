@@ -78,7 +78,7 @@ export default function SeedCard({
                     onPress={onAddFromBrowse}
                     accessibilityRole="button"
                     accessibilityLabel="Add seed to collection">
-                    <Ionicons name="add-outline" size={18} color={colors.hunterGreen} />
+                    <Ionicons name="add-outline" size={18} color={colors.greenDark} />
                   </Pressable>
                 )
               )}
