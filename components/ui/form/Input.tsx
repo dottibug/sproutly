@@ -59,9 +59,7 @@ export default function Input({
   note = '',
 }: InputProps) {
   const [focused, setFocused] = useState(false);
-
   const headingCustomStyles = disabled ? { color: colors.gray500, opacity: 0.78 } : {};
-
   const placeholderColor = disabled ? colors.gray300 : colors.gray400;
 
   const inputStyles = StyleSheet.flatten([

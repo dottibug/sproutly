@@ -114,7 +114,9 @@ export async function signPhotos(seed: UserSeed): Promise<UserSeed> {
 
   // Get the signed URL for any custom seed images
   let image = seed.image;
-  if (seed.customSeedId !== null) image = await getSignedImageUrl(seed.image);
+  if (seed.customSeedId !== null && seed.image) {
+    image = await getSignedImageUrl(seed.image);
+  }
 
   return {
     ...seed,

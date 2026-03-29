@@ -16,10 +16,6 @@ type FiltersProps = {
 export default function Filters({ open, setOpen }: FiltersProps) {
   const { applyOpenFilters, preferences } = useFilters();
 
-  console.log('--------------------------------');
-  console.log('preferences', preferences);
-  console.log('--------------------------------');
-
   const handlePressTrigger = () => {
     if (open) {
       setOpen(false);

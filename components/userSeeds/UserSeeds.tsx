@@ -18,7 +18,9 @@ import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
 import SheetModal from '../ui/SheetModal';
 import { AppSnackbar, FABButton, ScreenOptions } from '../uiComponentBarrel';
 import FabActions from '../ui/buttons/FabActionButtons';
-import { usePathname, useRouter } from 'expo-router';
+// import { usePathname, useRouter } from 'expo-router';
+import { useCallback } from 'react';
+import { usePathname, useRouter, useFocusEffect } from 'expo-router';
 
 const LOAD_MESSAGE = 'Loading your seeds…';
 const EMPTY_SEEDS_LIST = 'Your collection is empty. Add seeds to get started.';
@@ -42,6 +44,7 @@ export default function UserSeeds({ activeTab, onGoToBrowse }: UserSeedsProps) {
   const [openFilterMenu, setOpenFilterMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [fabOpen, setFabOpen] = useState(false);
+  const [deleteIsOpenForId, setDeleteIsOpenForId] = useState<string | null>(null);
 
   // Context
   const { seeds, loading, error } = useUserSeed();
@@ -55,10 +58,6 @@ export default function UserSeeds({ activeTab, onGoToBrowse }: UserSeedsProps) {
   const numberOfSelectedFilters = getNumberOfSelectedFilters(selected);
   const showFilterChips = !openFilterMenu && numberOfSelectedFilters > 0;
 
-  // Loading or error messages
-  if (loading) return <Loading message={LOAD_MESSAGE} />;
-  if (error) return <ScreenMessage message={error} />;
-
   const handleSearchQuery = (query: string) => setSearchQuery(query);
 
   const onAddCustomSeed = () => {
@@ -71,23 +70,41 @@ export default function UserSeeds({ activeTab, onGoToBrowse }: UserSeedsProps) {
     onGoToBrowse();
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      return () => setDeleteIsOpenForId(null);
+    }, []),
+  );
+
+  // Tab switch (Browse) does not blur the route, so useFocusEffect does not run — clear delete UI when My Seeds is hidden
+  useEffect(() => {
+    if (activeTab !== 'My Seeds') setDeleteIsOpenForId(null);
+  }, [activeTab]);
+
+  // Loading or error messages
+  if (loading) return <Loading message={LOAD_MESSAGE} />;
+  if (error) return <ScreenMessage message={error} />;
+
   return (
     <View style={[styles.userSeedsContainer, { display: activeTab === 'My Seeds' ? 'flex' : 'none' }]}>
-      <ScrollView style={styles.userSeedsContainer}>
-        <Filters open={openFilterMenu} setOpen={setOpenFilterMenu} />
+      {/* <ScrollView style={styles.userSeedsContainer}> */}
+      <SearchBar placeholder="Search seeds..." searchQuery={searchQuery} handleSearchQuery={handleSearchQuery} />
+      <Filters open={openFilterMenu} setOpen={setOpenFilterMenu} />
 
-        {showFilterChips && <FilterChips />}
+      {showFilterChips && <FilterChips />}
 
-        <SearchBar placeholder="Search seeds..." searchQuery={searchQuery} handleSearchQuery={handleSearchQuery} />
-
-        <View style={styles.userSeedsContent}>
-          {!emptySeedsList && <Text style={styles.deleteHint}>Long press to delete a seed</Text>}
-          <View style={appStyles.resultsList}>
-            {emptySeedsList && <ScreenMessage message={userCollectionSize > 0 ? NO_RESULTS_MESSAGE : EMPTY_SEEDS_LIST} />}
-            <UserSeedList seeds={displayedSeeds as UserSeed[]} />
-          </View>
+      <View style={styles.userSeedsContent}>
+        {!emptySeedsList && <Text style={styles.deleteHint}>Long press to delete a seed</Text>}
+        <View style={appStyles.resultsList}>
+          {emptySeedsList && <ScreenMessage message={userCollectionSize > 0 ? NO_RESULTS_MESSAGE : EMPTY_SEEDS_LIST} />}
+          <UserSeedList
+            seeds={displayedSeeds as UserSeed[]}
+            deleteIsOpenForId={deleteIsOpenForId}
+            setDeleteIsOpenForId={setDeleteIsOpenForId}
+          />
         </View>
-      </ScrollView>
+      </View>
+      {/* </ScrollView> */}
 
       <FabActions
         open={fabOpen}
@@ -124,6 +141,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 32,
   },
-
   fabActions: {},
 });

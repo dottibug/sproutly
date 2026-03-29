@@ -24,7 +24,7 @@ export function userSeedReducer(state: UserSeedState, action: UserSeedAction): U
       return { ...state, seeds: [...state.seeds, createUserSeedFromBrowse(payload)] };
 
     case 'ADD_CUSTOM_SEED':
-      return { ...state, seeds: [...state.seeds, payload] };
+      return { ...state, seeds: [payload, ...state.seeds] };
 
     case 'SYNC_CUSTOM_SEED_WITH_DB':
       return { ...state, seeds: replaceUISeed(state.seeds, payload) };

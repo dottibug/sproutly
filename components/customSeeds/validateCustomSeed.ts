@@ -1,13 +1,13 @@
 import { BeanType, Category, Difficulty, Exposure } from '../../state/userSeeds/seeds/seedInfoTypes';
 
-import { CustomSeedErrors, CustomSeedFields, CustomSeedDraft, CleanCustomSeed } from '../../state/customSeed/customSeedTypes';
+import { CustomSeedErrors, CustomSeedDraft, CleanCustomSeed } from '../../state/customSeed/customSeedTypes';
 
 // Only fields that need validation. Note: category does not need validation, but is needed to validate beanType
 type CustomSeedInput = {
   variety: string;
   category: Category;
   plant: string;
-  beanType: BeanType;
+  beanType: BeanType | null;
   latin: string | null;
   difficulty: Difficulty | null;
   exposure: Exposure | null;
@@ -31,11 +31,15 @@ type ValidResult = {
 export function validateCustomSeed(input: CustomSeedInput, userSeedId: string): ValidResult {
   const errors: CustomSeedErrors = {};
 
-  if (!input.image) errors.image = '';
   if (!input.variety) errors.variety = 'Variety is required';
   if (!input.plant) errors.plant = 'Plant is required';
 
-  if (isBean(input.category, input.plant) && !input.beanType) errors.beanType = 'Bean type is required';
+  const plantClean = input.plant.trim().toLowerCase();
+  if (plantClean === 'bean' && input.category !== 'Vegetable') {
+    errors.plant = 'Plant type "bean" can only be used with the "Veggie" category.';
+  }
+
+  if (isBeanCategoryAndPlant(input.category, input.plant) && !input.beanType) errors.beanType = 'Bean type is required';
 
   if (!isValid(errors)) return { isValid: false, errors: errors, customSeedDraft: null };
 
@@ -66,17 +70,17 @@ function createCustomSeedDraft(input: CustomSeedInput, userSeedId: string): Cust
   };
 }
 
-// Helper function to check if the plant is a bean
-function isBean(category: Category, plant: string): boolean {
-  return category === 'Vegetable' && plant.toLowerCase() === 'bean';
+// Bean type can only be applied if category is 'Vegetable' and plant is 'bean'
+export function isBeanCategoryAndPlant(category: Category, plant: string): boolean {
+  return category === 'Vegetable' && plant.trim().toLowerCase() === 'bean';
 }
 
 // Helper function to trim extra whitespace from the custom seed form values
 export function cleanCustomSeed(customSeed: CustomSeedInput): CleanCustomSeed {
-  const plantIsBean = customSeed.plant.trim().toLowerCase() === 'bean';
-  const beanType = customSeed.category === 'Vegetable' && plantIsBean ? customSeed.beanType : null;
+  const beanType = isBeanCategoryAndPlant(customSeed.category, customSeed.plant) ? customSeed.beanType : null;
 
-  const image = customSeed.image ? customSeed.image : 'assets/icons/sprout.png';
+  const trimmed = customSeed.image?.trim();
+  const image = trimmed ? trimmed : null;
 
   return {
     variety: customSeed.variety.trim(),

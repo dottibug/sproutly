@@ -1,8 +1,8 @@
 import { View, StyleSheet } from 'react-native';
-import Heading from '../Heading';
 import { RadioButton } from 'react-native-paper';
-import { colors } from '../../../styles/theme';
 import IconButton from '../buttons/IconButton';
+import Heading from '../Heading';
+import { colors } from '../../../styles/theme';
 
 // ListSelector.tsx: Radio button list used to select an option from a list of options. Used in CustomSeedSheet.tsx when creating a custom seed.
 

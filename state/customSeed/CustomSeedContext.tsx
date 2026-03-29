@@ -1,10 +1,9 @@
 import { createContext, useReducer, useCallback, useMemo, useContext } from 'react';
-import { Category, Difficulty, Exposure, Planting } from '../userSeeds/seeds/seedInfoTypes';
+import { Category, Difficulty, Exposure } from '../userSeeds/seeds/seedInfoTypes';
 import { CustomSeed } from './customSeedTypes';
 
 // Handles the form state for adding a custom seed
 // TODO: Structure similiar to user seed context
-// TODO: Set up planting data
 
 // ---- TYPES ----
 export type CustomSeedAction =
@@ -24,7 +23,6 @@ export type CustomSeedAction =
   | { type: 'SET_HARVEST'; payload: string | null }
   | { type: 'SET_COMPANION_PLANTING'; payload: string | null }
   | { type: 'SET_IMAGE_PATH'; payload: string | null }
-  | { type: 'SET_PLANTING'; payload: Planting[] | null | undefined }
   | { type: 'RESET_CUSTOM_SEED' };
 
 // ---- INITIAL STATE SETUP ----
@@ -46,7 +44,6 @@ type CustomSeedState = {
   // harvest: string | null;
   // companionPlanting: string | null;
   // imagePath: string | null;
-  // planting: Planting[] | null;
 };
 
 const initialState: CustomSeedState = {
@@ -57,8 +54,8 @@ const initialState: CustomSeedState = {
     beanType: null,
     plant: '',
     latin: null,
-    difficulty: null,
-    exposure: null,
+    difficulty: 'Easy',
+    exposure: 'Full sun',
     maturesInDays: null,
     maturesUnderDays: null,
     description: null,
@@ -68,7 +65,6 @@ const initialState: CustomSeedState = {
     harvest: null,
     companionPlanting: null,
     image: '',
-    // planting: null,
   },
 };
 
@@ -107,8 +103,6 @@ function customSeedReducer(state: CustomSeedState, action: CustomSeedAction): Cu
       return { ...state, seed: { ...state.seed, companionPlanting: action.payload } };
     case 'SET_IMAGE_PATH':
       return { ...state, seed: { ...state.seed, image: action.payload || '' } };
-    // case 'SET_PLANTING':
-    //   return { ...state, seed: { ...state.seed, planting: action.payload || null } };
     case 'RESET_CUSTOM_SEED':
       return {
         ...initialState,
@@ -120,8 +114,8 @@ function customSeedReducer(state: CustomSeedState, action: CustomSeedAction): Cu
           beanType: null,
           plant: '',
           latin: null,
-          difficulty: null,
-          exposure: null,
+          difficulty: 'Easy',
+          exposure: 'Full sun',
           maturesInDays: null,
           maturesUnderDays: null,
           description: null,
@@ -156,7 +150,6 @@ type CustomSeedContextValue = CustomSeedState & {
   setHarvest: (harvest: string | null) => void;
   setCompanionPlanting: (companionPlanting: string | null) => void;
   setImagePath: (imagePath: string | null) => void;
-  // setPlanting: (planting: Planting[] | null) => void;
   resetCustomSeed: () => void;
 };
 
@@ -207,8 +200,6 @@ export function CustomSeedProvider({ children }: CustomSeedProviderProps) {
 
   const setImagePath = useCallback((image: string | null) => dispatch({ type: 'SET_IMAGE_PATH', payload: image }), []);
 
-  const setPlanting = useCallback((planting: Planting[] | null) => dispatch({ type: 'SET_PLANTING', payload: planting }), []);
-
   const resetCustomSeed = useCallback(() => dispatch({ type: 'RESET_CUSTOM_SEED' }), []);
 
   const value = useMemo(
@@ -230,7 +221,6 @@ export function CustomSeedProvider({ children }: CustomSeedProviderProps) {
       setHarvest,
       setCompanionPlanting,
       setImagePath,
-      setPlanting,
       resetCustomSeed,
     }),
     [
@@ -251,7 +241,6 @@ export function CustomSeedProvider({ children }: CustomSeedProviderProps) {
       setHarvest,
       setCompanionPlanting,
       setImagePath,
-      setPlanting,
       resetCustomSeed,
     ],
   );

@@ -1,4 +1,3 @@
-import { ImagePreview } from '../userSeeds/photos/photoTypes';
 import { BeanType, Difficulty, Exposure, Category } from '../userSeeds/seeds/seedInfoTypes';
 
 export type CustomSeed = {
@@ -18,8 +17,7 @@ export type CustomSeed = {
   growing: string | null;
   harvest: string | null;
   companionPlanting: string | null;
-  image: string;
-  // planting: Planting[] | null;
+  image: string | null;
 };
 
 export type CustomSeedPayload = {
@@ -46,7 +44,6 @@ export type CustomSeedPayload = {
 export type CustomSeedDraft = CleanCustomSeed & {
   userSeedId: string;
   maturesUnderDays: number | null;
-  // planting: Planting[] | null; // removed temporarily
 };
 
 export type CleanCustomSeed = {
@@ -64,8 +61,7 @@ export type CleanCustomSeed = {
   growing: string | null;
   harvest: string | null;
   companionPlanting: string | null;
-  image: string;
-  // planting: Planting[] | null; // removed temporarily
+  image: string | null;
 };
 
 export const CUSTOM_SEED_FIELDS = [
@@ -74,7 +70,6 @@ export const CUSTOM_SEED_FIELDS = [
   'plant',
   'beanType',
   'maturesInDays',
-  // 'planting' -- removed temporarily
 ] as const;
 
 export type CustomSeedFields = (typeof CUSTOM_SEED_FIELDS)[number];

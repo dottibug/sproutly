@@ -1,31 +1,52 @@
-import { Image, StyleSheet } from 'react-native';
-
-const DEFAULT_SEED_IMAGE = require('../../assets/icons/sprout.png');
+import { View, Image, StyleSheet } from 'react-native';
+import Logo from '../app/Logo';
+import { colors } from '../../styles/theme';
 
 type SeedImageProps = {
   readonly imageUri: string;
-  readonly size: 'small' | 'large';
+  readonly size: 'small' | 'medium' | 'large';
+  readonly resizeMode?: 'cover' | 'contain' | 'stretch' | 'repeat' | 'center';
 };
 
-// SeedImage component displays the image of a seed
-export default function SeedImage({ imageUri, size }: SeedImageProps) {
-  return (
-    <Image
-      source={imageUri ? { uri: imageUri } : DEFAULT_SEED_IMAGE}
-      resizeMode="cover"
-      style={size === 'small' ? styles.smallImage : styles.largeImage}
-    />
-  );
+export default function SeedImage({ imageUri, size, resizeMode = 'cover' }: SeedImageProps) {
+  const frame = StyleSheet.flatten([
+    size === 'small' && styles.smallImage,
+    size === 'medium' && styles.mediumImage,
+    size === 'large' && styles.largeImage,
+  ]);
+
+  if (!imageUri?.trim()) {
+    return (
+      <View style={[frame, styles.photoFrame]}>
+        <Logo size={size} showText={false} />
+      </View>
+    );
+  }
+
+  return <Image source={{ uri: imageUri }} resizeMode={resizeMode} style={frame} />;
 }
 
 const styles = StyleSheet.create({
   smallImage: {
-    borderRadius: 14,
-    height: 96,
-    width: 96,
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
+    borderTopLeftRadius: 14,
+    borderBottomLeftRadius: 14,
+    height: 120,
+    width: 120,
+  },
+  mediumImage: {
+    height: 300,
+    width: '100%',
   },
   largeImage: {
     height: 400,
     width: '100%',
+  },
+  photoFrame: {
+    alignItems: 'center',
+    backgroundColor: colors.gray200,
+    justifyContent: 'center',
+    overflow: 'hidden',
   },
 });

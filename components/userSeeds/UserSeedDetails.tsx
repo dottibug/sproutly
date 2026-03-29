@@ -44,7 +44,7 @@ export default function UserSeedDetails({ seed, activeTab }: UserSeedDetailsProp
 
   return (
     <ScrollView style={[styles.scrollStyle, { display: activeTab === 'Seed' ? 'flex' : 'none' }]}>
-      <SeedImage imageUri={seed.image} size="large" />
+      <SeedImage imageUri={seed.image} size="large" resizeMode="cover" />
 
       <View>
         <SeedHeader

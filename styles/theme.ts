@@ -148,7 +148,6 @@ export const appStyles = StyleSheet.create({
   card: {
     backgroundColor: colors.white,
     borderRadius: 22,
-    padding: 14,
     ...Platform.select({
       ios: {
         shadowColor: '#000',

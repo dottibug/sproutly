@@ -1,12 +1,12 @@
 import { UserSeed } from '../seeds/seedTypes';
-import { UserSeedNote } from './noteTypes';
+import { InsertNoteInput, UserSeedNote } from './noteTypes';
 import { getTimestamp } from '../../app/dateUtils';
 
 // noteUtils.ts: Contains utility functions for notes
 
 // --------------- STATE UTILS ---------------
 // Create a note in the UI (optimistic update)
-export function createNote(seeds: UserSeed[], payload: UserSeedNote & { tempId: string }) {
+export function createNote(seeds: UserSeed[], payload: InsertNoteInput & { tempId: string }) {
   const seedsCopy = [...seeds];
   const { userId, userSeedId, tempId, title, note } = payload;
 

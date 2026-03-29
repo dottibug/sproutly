@@ -4,10 +4,11 @@ import { colors } from '../../styles/theme';
 type ScreenOptionsProps = {
   readonly backButtonMode?: 'minimal' | 'generic';
   readonly title?: string;
+  readonly backTitle?: string;
 };
 
 // ScreenOptions.tsx: Drop-in component for setting screen options where needed.
-export default function ScreenOptions({ backButtonMode = 'minimal', title = '' }: ScreenOptionsProps) {
+export default function ScreenOptions({ backButtonMode = 'minimal', title = '', backTitle = 'Back' }: ScreenOptionsProps) {
   return (
     <Stack.Screen
       options={{
@@ -15,6 +16,7 @@ export default function ScreenOptions({ backButtonMode = 'minimal', title = '' }
         headerBackButtonDisplayMode: backButtonMode,
         headerBackTitleStyle: { fontSize: 16 },
         title: title || '',
+        headerBackTitle: backTitle || '',
       }}
     />
   );

@@ -6,71 +6,63 @@ import { appStyles } from '../../styles/theme';
 import ScreenMessage from '../ui/ScreenMessage';
 import Loading from '../ui/Loading';
 import { useBrowseSeed } from '../../state/browseSeeds/BrowseSeedContext';
-import { filterBrowseSeeds } from '../../state/filters/filterUtils';
+import { applyFilters, filterBrowseSeeds, getNumberOfSelectedFilters } from '../../state/filters/filterUtils';
 import { searchSeeds } from '../../state/app/appUtils';
 import SearchBar from '../ui/SearchBar';
 import BrowseSeedList from './BrowseSeedList';
 import { ListTab } from '../../state/app/appTypes';
 import { type CategoryFilter } from '../../state/filters/filterTypes';
+import Filters from '../filters/Filters';
+import { useFilters } from '../../state/filters/FiltersContext';
+import FilterChips from '../filters/FilterChips';
+import { BrowseSeed } from '../../state/browseSeeds/browseTypes';
 
-// TODO: Styling of browse seeds screen
-
-const NO_SEEDS_MATCH = 'No seeds match your filters or search';
+const NO_RESULTS_MESSAGE = 'No seeds match your filters or search';
 const LOAD_MESSAGE = 'Loading catalog…';
 
 type BrowseSeedsProps = {
   readonly activeTab: ListTab;
+  readonly onGoToMySeeds: () => void;
 };
 
-export default function BrowseSeeds({ activeTab }: BrowseSeedsProps) {
+export default function BrowseSeeds({ activeTab, onGoToMySeeds }: BrowseSeedsProps) {
   // Context
   const { seeds, loading, error } = useBrowseSeed();
 
   // State
-  const [selectedFilters, setSelectedFilters] = useState<Set<CategoryFilter>>(new Set());
+  const [openFilterMenu, setOpenFilterMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Context
+  const { selected } = useFilters();
+
   // Filter and search seeds
-  const filteredSeeds = filterBrowseSeeds(seeds, selectedFilters);
+  const filteredSeeds = applyFilters(seeds, selected);
   const displayedSeeds = searchQuery.trim() === '' ? filteredSeeds : searchSeeds(filteredSeeds, searchQuery);
   const emptySeedResults: boolean = displayedSeeds.length === 0;
+  const numberOfSelectedFilters = getNumberOfSelectedFilters(selected);
+  const showFilterChips = !openFilterMenu && numberOfSelectedFilters > 0;
 
-  const seedListHeading = () => {
-    if (searchQuery !== '') return 'Search Results';
-    if (selectedFilters.size > 0) return 'Filtered Seeds';
-    return 'All Seeds';
-  };
-
-  // Toggle filters on/off
-  function toggleFilter(category: CategoryFilter) {
-    setSelectedFilters((prev) => {
-      const filterSet = new Set(prev);
-      // Toggle filter off
-      if (filterSet.has(category)) filterSet.delete(category);
-      // Toggle filter on
-      else filterSet.add(category);
-      return filterSet;
-    });
-  }
-
+  // Loading or error messages
   if (loading) return <Loading message={LOAD_MESSAGE} />;
   if (error) return <ScreenMessage message={error} />;
 
+  const handleSearchQuery = (query: string) => setSearchQuery(query);
+
+  // const onGoToMySeeds = () => {
+  //   onGoToMySeeds();
+  // };
+
   return (
     <View style={[styles.browseContainer, { display: activeTab === 'Browse' ? 'flex' : 'none' }]}>
-      <CategoryFilters selectedFilters={selectedFilters} onToggleFilter={toggleFilter} />
-
-      <SearchBar placeholder="Search seeds..." searchQuery={searchQuery} handleSearchQuery={setSearchQuery} />
-
+      <Filters open={openFilterMenu} setOpen={setOpenFilterMenu} />
+      {showFilterChips && <FilterChips />}
+      <SearchBar placeholder="Search seeds..." searchQuery={searchQuery} handleSearchQuery={handleSearchQuery} />
       <View style={styles.seedListContainer}>
-        <Heading size="medium" customStyles={{ marginVertical: 18 }} uppercase>
-          {seedListHeading()}
-        </Heading>
-
-        <ScrollView style={appStyles.resultsList}>
-          {emptySeedResults && <ScreenMessage message={NO_SEEDS_MATCH} />}
-          <BrowseSeedList seeds={displayedSeeds} />
-        </ScrollView>
+        <View style={appStyles.resultsList}>
+          {emptySeedResults && <ScreenMessage message={NO_RESULTS_MESSAGE} />}
+          <BrowseSeedList seeds={displayedSeeds as BrowseSeed[]} />
+        </View>
       </View>
     </View>
   );

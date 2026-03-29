@@ -1,5 +1,4 @@
 import { View, StyleSheet } from 'react-native';
-import { useState } from 'react';
 import { SegmentedButtons } from 'react-native-paper';
 import Heading from '../Heading';
 import IconButton from '../buttons/IconButton';
@@ -15,7 +14,6 @@ type SelectorProps = {
   readonly onValueChange: (value: string) => void;
   readonly showInfoIcon?: boolean;
   readonly onIconPress?: () => void;
-  readonly initialValue: string;
 };
 
 export default function Selector({
@@ -26,31 +24,25 @@ export default function Selector({
   onValueChange,
   showInfoIcon = false,
   onIconPress,
-  initialValue,
 }: SelectorProps) {
-  const [selected, setSelected] = useState(initialValue);
-
   const buttonStyle = (optionValue: string) =>
     StyleSheet.flatten([
       {
-        backgroundColor: selected === optionValue && !disabled ? colors.greenDark90 : colors.white,
+        backgroundColor: value === optionValue && !disabled ? colors.greenDark90 : colors.white,
       },
       styles.buttonStyle,
     ]);
 
-  const buttons = options.map((option) => {
-    return {
-      value: option.value,
-      label: option.label,
-      disabled: disabled,
-      accessibilityLabel: option.label,
-      checkedColor: colors.white,
-      uncheckedColor: colors.gray700,
-      showSelectedCheck: !disabled,
-      onPress: () => setSelected(option.value),
-      style: buttonStyle(option.value),
-    };
-  });
+  const buttons = options.map((option) => ({
+    value: option.value,
+    label: option.label,
+    disabled,
+    accessibilityLabel: option.label,
+    checkedColor: colors.white,
+    uncheckedColor: colors.gray700,
+    showSelectedCheck: !disabled,
+    style: buttonStyle(option.value),
+  }));
 
   const headingStyles = disabled ? { color: colors.gray300 } : { color: colors.primary };
 

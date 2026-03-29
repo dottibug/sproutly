@@ -30,7 +30,7 @@ export async function updateUserFilterPreferences(profileId: string, preferences
 }
 
 // Apply filters to a list of seeds
-export function applyFilters(seeds: UserSeed[], selectedFilters: SelectedFilters) {
+export function applyFilters(seeds: UserSeed[] | BrowseSeed[], selectedFilters: SelectedFilters) {
   let list = seeds;
 
   for (const filter of SEARCH_FILTER_NAMES) {
@@ -48,7 +48,7 @@ export function applyFilters(seeds: UserSeed[], selectedFilters: SelectedFilters
         case 'difficulty':
           return seed?.difficulty && selected.includes(seed.difficulty);
         case 'season':
-          return seed.planting.some((p) => p.seasons.some((s) => selected.includes(s)));
+          return seed.planting.some((p) => p.seasons.some((s) => selected.some((sel) => sel.toLowerCase() === String(s).toLowerCase())));
         case 'month':
           return filterByMonth(seed, selected);
         case 'readyToHarvest':
@@ -61,7 +61,7 @@ export function applyFilters(seeds: UserSeed[], selectedFilters: SelectedFilters
   return list;
 }
 
-export function filterByStarting(seed: UserSeed, selected: string[]) {
+export function filterByStarting(seed: UserSeed | BrowseSeed, selected: string[]) {
   // Get the planting actions for the seed
   const seedActions = new Set(seed.planting.map((p) => p.action));
   // Check if the selected actions include any of the seed's planting actions
@@ -71,7 +71,7 @@ export function filterByStarting(seed: UserSeed, selected: string[]) {
   });
 }
 
-export function filterByMonth(seed: UserSeed, selected: string[]) {
+export function filterByMonth(seed: UserSeed | BrowseSeed, selected: string[]) {
   // Get the planting months for the seed (as array of numbers)
   const seedMonths = seed.planting.map((p) => p.months);
   // Check if the selected months include any of the seed's planting months
@@ -81,7 +81,7 @@ export function filterByMonth(seed: UserSeed, selected: string[]) {
   });
 }
 
-export function filterByReadyToHarvest(seed: UserSeed, selected: string[]) {
+export function filterByReadyToHarvest(seed: UserSeed | BrowseSeed, selected: string[]) {
   const days = seed.maturesUnderDays;
   if (days === null) return false;
   return selected.some((s) => {

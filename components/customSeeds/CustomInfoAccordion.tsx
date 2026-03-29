@@ -4,7 +4,6 @@ import { Input, Accordion } from '../uiComponentBarrel';
 import { inputStyles } from '../../styles/theme';
 
 // CustomInfoAccordion.tsx: Additional form fields in collapsible accordion section for adding a custom seed on CustomSeedSheet.tsx
-
 const TIMING_PLACEHOLDER = 'e.g. Start indoors in early spring over bottom heat';
 const STARTING_PLACEHOLDER = 'e.g. Sow seeds 5 mm to 1cm deep';
 const GROWING_PLACEHOLDER = 'e.g. Requires full sun and lots of heat';

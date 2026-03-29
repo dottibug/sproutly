@@ -1,15 +1,15 @@
-import { useCustomSeed } from '../../state/customSeed/CustomSeedContext';
-import { DIFFICULTY, Difficulty, EXPOSURE, Exposure } from '../../state/userSeeds/seeds/seedInfoTypes';
-import { ListSelector } from '../uiComponentBarrel';
-import { InfoModalType } from '../../state/customSeed/customSeedTypes';
-import { appStyles, inputStyles } from '../../styles/theme';
 import { View } from 'react-native';
+import { useCustomSeed } from '../../state/customSeed/CustomSeedContext';
+import { DIFFICULTY, Difficulty, EXPOSURE, Exposure, InfoModalType } from '../../state/barrels/typesBarrel';
+import { ListSelector } from '../uiComponentBarrel';
+import { appStyles, inputStyles } from '../../styles/theme';
+
+// ListSelectors.tsx: List selectors for difficulty and exposure. Used in CustomSeedSheet.tsx when creating a custom seed.
 
 type ListSelectorsProps = {
   readonly showInfoModal: (infoType: InfoModalType) => void;
 };
 
-// ListSelectors.tsx: List selectors for difficulty and exposure. Used in CustomSeedSheet.tsx when creating a custom seed.
 export default function ListSelectors({ showInfoModal }: ListSelectorsProps) {
   const customSeed = useCustomSeed();
 

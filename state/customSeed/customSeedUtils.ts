@@ -1,4 +1,4 @@
-import { CustomSeed, CustomSeedFormFields, CustomSeedPayload } from './customSeedTypes';
+import { CustomSeed, CustomSeedPayload } from './customSeedTypes';
 import { UserSeed } from '../userSeeds/seeds/seedTypes';
 import { ImagePreview } from '../userSeeds/photos/photoTypes';
 import { buildUserSeed } from '../userSeeds/seeds/seedUtils';
@@ -34,7 +34,7 @@ export function buildCustomSeed(input: CustomSeedPayload & { id: string }): Cust
 }
 
 // Create a custom seed payload object
-export function createCustomSeedPayload(form: CustomSeedFormFields): CustomSeedPayload {
+export function createCustomSeedPayload(form: Omit<CustomSeed, 'id'>): CustomSeedPayload {
   return {
     variety: form.variety,
     category: form.category,
@@ -77,7 +77,7 @@ export function createOptimisticCustomSeed(tempId: string, payload: CustomSeedPa
     growing: payload.growing,
     harvest: payload.harvest,
     companionPlanting: payload.companionPlanting,
-    image: preview?.uri || payload.image || '',
+    image: preview?.uri || (payload.image ?? '') || '',
     planting: [],
     notes: [],
     photos: [],

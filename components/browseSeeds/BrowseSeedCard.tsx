@@ -33,7 +33,7 @@ export default function BrowseSeedCard({ seed }: BrowseSeedCardProps) {
     })();
   };
 
-  const handlePress = () =>
+  const handleViewSeed = () =>
     router.push({
       pathname: `/home/${seed.id}`,
       params: {
@@ -47,7 +47,7 @@ export default function BrowseSeedCard({ seed }: BrowseSeedCardProps) {
       cardType="browse"
       seed={seed}
       inUserCollection={inUserCollection}
-      onPress={handlePress}
+      onViewSeed={handleViewSeed}
       onAddFromBrowse={handleAddFromBrowse}
     />
   );

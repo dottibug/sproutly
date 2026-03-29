@@ -192,7 +192,11 @@ const clearSelectedHelper = (state: FilterState, action: FilterAction & { type: 
 };
 
 const clearAllSelectedHelper = (state: FilterState, action: FilterAction & { type: 'CLEAR_ALL_SELECTED' }) => {
-  return { ...state, selected: initialSelected };
+  return {
+    ...state,
+    selected: initialSelected,
+    openFilters: getOpenFilters(initialSelected, state.preferences),
+  };
 };
 
 const setOpenFiltersHelper = (state: FilterState, action: FilterAction & { type: 'SET_OPEN_FILTERS' }) => {
