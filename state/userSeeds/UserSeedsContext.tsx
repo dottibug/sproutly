@@ -59,7 +59,7 @@ export function UserSeedProvider({ children }: UserSeedProviderProps) {
     if (!userId) return;
     const pendingTodayCount = countDailyPendingTasks(state.seeds);
     scheduleDailyTaskNotification(pendingTodayCount).catch((err) => {
-      throw new Error(`Failed to schedule daily task summary: ${err}`);
+      console.error('Failed to schedule daily task summary:', err);
     });
   }, [userId, state.seeds]);
 

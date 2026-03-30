@@ -133,10 +133,11 @@ export async function scheduleDailyTaskNotification(pendingTodayCount: number): 
   if (pendingTodayCount <= 0) return;
 
   const now = new Date();
-  const morning = new Date().setHours(9, 0, 0, 0);
+  const morning = new Date(now);
+  morning.setHours(9, 0, 0, 0);
 
   // Schedule the notification only if it's before morning trigger time
-  if (now.getTime() > morning) return;
+  if (now.getTime() > morning.getTime()) return;
 
   // Check if the user has granted permission to receive notifications
   const hasPermission = await requestReminderPermissions();
