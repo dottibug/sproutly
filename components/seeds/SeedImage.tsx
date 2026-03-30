@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   },
   photoFrame: {
     alignItems: 'center',
-    backgroundColor: colors.gray200,
+    backgroundColor: colors.gray300,
     justifyContent: 'center',
     overflow: 'hidden',
   },
