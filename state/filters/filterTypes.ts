@@ -1,5 +1,7 @@
 import { DIFFICULTY, EXPOSURE, STARTING, SEASON, MONTH, READY_TO_HARVEST, CATEGORIES } from '../userSeeds/seeds/seedInfoTypes';
 
+// filterTypes.ts: Contains types for filters
+
 export type SearchFilter = 'category' | 'starting' | 'exposure' | 'season' | 'month' | 'readyToHarvest' | 'difficulty';
 export type CategoryFilter = 'Veggie' | 'Flower' | 'Fruit' | 'Herb';
 

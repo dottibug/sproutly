@@ -1,8 +1,10 @@
 import { View, StyleSheet } from 'react-native';
-import Heading from '../ui/Heading';
 import { Category, Exposure } from '../../state/userSeeds/seeds/seedInfoTypes';
+import Heading from '../ui/Heading';
 import SeedSKU from './SeedSku';
 import SeedBadges from './SeedBadges';
+
+// SeedHeader.tsx: Displays the header of the 'Seed Details' screen
 
 type SeedHeaderProps = {
   readonly variety: string;
@@ -15,7 +17,6 @@ type SeedHeaderProps = {
   readonly exposure: Exposure;
 };
 
-// SeedHeader component displays the header of a single seed in the user's collection or the browse list
 export default function SeedHeader({
   variety,
   plant,
@@ -37,6 +38,7 @@ export default function SeedHeader({
   );
 }
 
+// ---- STYLES ----
 const styles = StyleSheet.create({
   edgePadding: {
     padding: 16,

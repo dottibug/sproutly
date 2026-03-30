@@ -3,6 +3,8 @@ import { ImagePreview, UserSeedPhoto, GalleryCell } from './photoTypes';
 import { getTimestamp } from '../../app/dateUtils';
 import * as ImagePicker from 'expo-image-picker';
 
+// photoUtils.ts: Contains utility functions for photos
+
 export function buildUserSeedPhoto(id: string, userId: string, userSeedId: string, imageUri: string, createdAt: string): UserSeedPhoto {
   return { id, userId, userSeedId, imageUri, createdAt } as UserSeedPhoto;
 }

@@ -1,12 +1,13 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { colors, text } from '../../styles/theme';
 
+// InfoModalListItem.tsx: Used to display a list item in InfoModal.tsx
+
 type InfoModalListItemProps = {
   readonly subheading: string;
   readonly text: string;
 };
 
-// InfoModalListItem.tsx: Used to display a list item in InfoModal.tsx
 export default function InfoModalListItem({ subheading, text }: InfoModalListItemProps) {
   return (
     <View style={styles.listItem}>
@@ -16,6 +17,7 @@ export default function InfoModalListItem({ subheading, text }: InfoModalListIte
   );
 }
 
+// ---- STYLES ----
 const styles = StyleSheet.create({
   listItem: {
     width: '100%',

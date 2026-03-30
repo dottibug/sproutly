@@ -6,12 +6,13 @@ import { isCustomTask, formatISOMonthDay, sortByDate } from '../../../state/barr
 import TimelineEvent from './TimelineEvent';
 import { colors } from '../../../styles/theme';
 
+// TaskTimeline.tsx: Renders a timeline of completed tasks for a seed
+
 type TaskTimelineProps = {
   readonly tasks: UserSeedTask[];
   readonly emptyMessage: string;
 };
 
-// TaskTimeline.tsx: Renders a timeline of completed tasks for a seed
 export default function TaskTimeline({ tasks, emptyMessage }: TaskTimelineProps) {
   if (tasks.length == 0) return <Text style={styles.empty}>{emptyMessage}</Text>;
   const data = mapTasksToTimelineData(tasks);

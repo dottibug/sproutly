@@ -2,12 +2,13 @@ import { Pressable, Text, StyleSheet, View } from 'react-native';
 import { TaskType } from '../../../state/userSeeds/tasks/taskTypes';
 import { colors } from '../../../styles/theme';
 
+// TaskChips.tsx: Renders a list of task types as chips.
+
 type TaskChipsProps = {
   readonly thisTaskType: TaskType;
   readonly onSelectTaskType: (type: TaskType) => void;
 };
 
-// TaskChips.tsx: Renders a list of task types as chips.
 export default function TaskChips({ thisTaskType, onSelectTaskType }: TaskChipsProps) {
   return (
     <View style={styles.taskChips}>
@@ -44,9 +45,9 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0, 0, 0, 0.10)',
   },
   taskChipSelected: {
-    backgroundColor: colors.greenLight,
+    backgroundColor: colors.greenDark90,
     borderWidth: 1,
-    borderColor: colors.greenLight,
+    borderColor: colors.greenDark90,
   },
   taskChipText: {
     color: colors.blackSheer55,

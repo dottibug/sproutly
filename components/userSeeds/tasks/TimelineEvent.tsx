@@ -3,11 +3,12 @@ import { UserSeedTask, TASK_TYPE_COLOR_MAP } from '../../../state/userSeeds/task
 import { isCustomTask } from '../../../state/userSeeds/tasks/taskUtils';
 import { colors } from '../../../styles/theme';
 
+// TimelineEvent.tsx: Renders a single task event for the timeline component (Timeline.tsx)
+
 type TimelineEventProps = {
   readonly task: UserSeedTask;
 };
 
-// TimelineEvent.tsx: Renders a single task event for the timeline component (Timeline.tsx)
 export default function TimelineEvent({ task }: TimelineEventProps) {
   const isCustom = isCustomTask(task);
   const typeLabel = isCustom ? 'custom' : task.taskType;

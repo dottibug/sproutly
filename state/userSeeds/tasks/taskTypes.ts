@@ -1,5 +1,7 @@
 import { colors } from '../../../styles/theme';
 
+// taskTypes.ts: Contains types for tasks
+
 // ---- CONTEXT: UserSeedsContext actions related to tasks ----
 export type TaskAction =
   | { type: 'ADD_TASK'; payload: UserSeedTask & { tempId: string } }

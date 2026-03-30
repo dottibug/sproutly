@@ -17,6 +17,7 @@ export default function CategorySelectors({ onDismissPlantError }: CategorySelec
 
   const showBeanTypeSelector = isBeanCategoryAndPlant(customSeed.seed.category, customSeed.seed.plant);
 
+  // Set the default bean type to 'Broad' if the category is 'Vegetable' and the bean type is not set
   useEffect(() => {
     if (isBeanCategoryAndPlant(customSeed.seed.category, customSeed.seed.plant) && customSeed.seed.beanType === null) {
       customSeed.setBeanType('Broad');
@@ -37,7 +38,6 @@ export default function CategorySelectors({ onDismissPlantError }: CategorySelec
   return (
     <View style={[inputStyles.inputsWrapper, appStyles.screenPadding]}>
       <ButtonSelector title="Category" options={categoryOptions} value={customSeed.seed.category} onValueChange={onCategoryChange} />
-
       <ButtonSelector
         disabled={!showBeanTypeSelector}
         title="Bean Type"
@@ -49,6 +49,7 @@ export default function CategorySelectors({ onDismissPlantError }: CategorySelec
   );
 }
 
+// ---- CONSTANTS ----
 const categoryOptions = [
   { value: 'Vegetable', label: 'Veggie' },
   { value: 'Flower', label: 'Flower' },

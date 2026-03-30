@@ -2,15 +2,14 @@ import { Text, StyleSheet, FlatList, Pressable, Image, Dimensions, View } from '
 import { useState, useMemo, useCallback } from 'react';
 import { Stack } from 'expo-router';
 import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
-import { GalleryCell } from '../../state/userSeeds/photos/photoTypes';
-import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
+import { GalleryCell, UserSeed } from '../../state/barrels/typesBarrel';
 import { flattenPhotos } from '../../state/userSeeds/photos/photoUtils';
-import Loading from '../../components/ui/Loading';
-import ScreenMessage from '../../components/ui/ScreenMessage';
+import { Loading, ScreenMessage } from '../../components/uiComponentBarrel';
 import GalleryModal from '../../components/gallery/GalleryModal';
 import { colors } from '../../styles/theme';
 
 // GalleryScreen.tsx: Displays all the user's photos in a 2x2 grid
+
 export default function GalleryScreen() {
   const { seeds, loading, error } = useUserSeed();
   const [selected, setSelected] = useState<GalleryCell | null>(null);
@@ -22,7 +21,7 @@ export default function GalleryScreen() {
   // Check if a seed is in the user's collection
   const isSeedInCollection = useCallback((userSeedId: string) => (seeds as UserSeed[]).some((seed) => seed.id === userSeedId), [seeds]);
 
-  if (loading) return <Loading message="Loading photos…" />;
+  if (loading) return <Loading />;
   if (error) return <ScreenMessage message={error} />;
 
   // Render item for the FlatList
@@ -36,9 +35,7 @@ export default function GalleryScreen() {
     <View style={styles.container}>
       <Stack.Screen options={{ title: 'Photo Gallery', headerShown: true }} />
       <Text style={styles.subtitle}>Tap a photo for a larger view</Text>
-
       {!hasPhotos && <ScreenMessage message={NO_PHOTOS_MESSAGE} />}
-
       {hasPhotos && (
         <FlatList
           data={cells}
@@ -49,7 +46,6 @@ export default function GalleryScreen() {
           renderItem={photoCell}
         />
       )}
-
       <GalleryModal
         visible={selected !== null}
         onRequestClose={() => setSelected(null)}

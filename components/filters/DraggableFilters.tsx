@@ -4,22 +4,22 @@ import { SearchFilter, FILTER_NAME_MAP } from '../../state/filters/filterTypes';
 import DragList, { DragListRenderItemInfo } from 'react-native-draglist';
 import { colors } from '../../styles/theme';
 
+/** DraggableFilters.tsx: This component displays the list of seed filters in a draggable list that can be reordered by the user. Used to customize the order of filters that appears in the filter sheet of the 'My Seeds' tab on the Home screen.
+ * Uses the react-native-draglist package
+ * Reference: https://www.npmjs.com/package/react-native-draglist
+ */
+
 type FilterItem = {
   key: string;
   label: string;
 };
 
-// onDragActiveChange used to disable scroll in the parent ScrollView when dragging a list item
 type DraggableFiltersProps = {
   readonly order: SearchFilter[];
   readonly onOrderChange: (order: SearchFilter[]) => void;
   readonly onDragActiveChange?: (active: boolean) => void;
 };
 
-/** DraggableFilters.tsx: This component displays the list of seed filters in a draggable list that can be reordered by the user. Used to customize the order of filters that appears in the filter sheet of the 'My Seeds' tab on the Home screen.
- * Uses the react-native-draglist package
- * Reference: https://www.npmjs.com/package/react-native-draglist
- */
 export default function DraggableFilters({ order, onOrderChange, onDragActiveChange }: DraggableFiltersProps) {
   const [data, setData] = useState<FilterItem[]>(() => order.map((filter) => ({ key: filter, label: FILTER_NAME_MAP[filter] })));
 
@@ -77,6 +77,7 @@ export default function DraggableFilters({ order, onOrderChange, onDragActiveCha
   );
 }
 
+// ---- STYLES ----
 const styles = StyleSheet.create({
   dragListContainer: {
     height: 380,

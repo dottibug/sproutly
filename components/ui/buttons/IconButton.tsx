@@ -3,7 +3,7 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { colors } from '../../../styles/theme';
 
-// IconButton.tsx: Reusable icon button component. Currently has info, close, and close circle icons.
+// IconButton.tsx: Reusable icon button component.
 
 type IconButtonProps = {
   readonly icon: 'info' | 'close' | 'closeCircle' | 'plus' | 'pencil' | 'xmark' | 'chevronRight' | 'heart' | 'heartOutline';
@@ -22,8 +22,8 @@ export default function IconButton({ icon, size = 24, color = colors.primary, on
       {icon === 'pencil' && <FontAwesome6 name="pencil" size={size} color={color} />}
       {icon === 'xmark' && <FontAwesome6 name="xmark" size={size} color={color} />}
       {icon === 'chevronRight' && <FontAwesome6 name="chevron-right" size={size} color={color} />}
-      {icon === 'heart' && <MaterialCommunityIcons name="cards-heart" size={24} color={color} />}
-      {icon === 'heartOutline' && <MaterialCommunityIcons name="cards-heart-outline" size={24} color={color} />}
+      {icon === 'heart' && <MaterialCommunityIcons name="cards-heart" size={size} color={color} />}
+      {icon === 'heartOutline' && <MaterialCommunityIcons name="cards-heart-outline" size={size} color={color} />}
     </Pressable>
   );
 }

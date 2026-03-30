@@ -185,6 +185,8 @@ create table if not exists public.user_seed_collection (
     catalog_seed_id uuid references public.seed_catalog(id) on delete restrict,
     custom_seed_id uuid references public.custom_seeds(id) on delete cascade,
 
+    is_favorite boolean not null default false,
+
     notes text,
     
     -- Only one of the two can be not null
@@ -213,6 +215,10 @@ create unique index if not exists user_seed_collection_unique_catalog
 create unique index if not exists user_seed_collection_unique_custom
   on public.user_seed_collection (user_id, custom_seed_id)
   where custom_seed_id is not null;
+
+-- Existing databases: add column (idempotent). New installs get it from CREATE TABLE above.
+alter table public.user_seed_collection
+  add column if not exists is_favorite boolean not null default false;
 
   alter table public.user_seed_collection enable row level security;
 

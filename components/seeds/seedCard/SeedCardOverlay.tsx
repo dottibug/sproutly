@@ -1,30 +1,50 @@
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Platform, Text, ActivityIndicator } from 'react-native';
+import { colors } from '../../../styles/theme';
 
-type SeedCardOverlayProps = {
-  readonly children: React.ReactNode;
-};
+// SeedCardOverlay.tsx: Displays an overlay on a seed card when it is being saved to the database.
 
-// SeedCardOverlay component displays the overlay for a single seed in the user's collection or the browse list. Used on long press of a seed in the user's collection.
-export default function SeedCardOverlay({ children }: SeedCardOverlayProps) {
+export default function SeedCardOverlay() {
   return (
     <View style={styles.card}>
-      <View style={styles.content}>{children}</View>
+      <View style={styles.content}>
+        <View style={styles.indicatorContainer}>
+          <ActivityIndicator size="small" color={colors.primary} />
+        </View>
+        <Text style={styles.savingText}>Saving to your collection...</Text>
+      </View>
     </View>
   );
 }
 
+// ---- STYLES ----
 const styles = StyleSheet.create({
   card: {
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-    flexDirection: 'row',
-    marginBottom: 12,
-    padding: 8,
-    paddingBottom: 16,
-    width: '100%',
+    backgroundColor: colors.blackSheer15,
+    borderRadius: 22,
+    alignItems: 'center',
+
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 5 },
+        shadowOpacity: 0.13,
+        shadowRadius: 14,
+      },
+      android: {
+        elevation: 5,
+      },
+    }),
   },
   content: {
-    height: 96,
-    justifyContent: 'space-around',
+    flexDirection: 'row',
+    height: 120, // must match SeedImage height
+    alignItems: 'center',
+    gap: 18,
+  },
+  indicatorContainer: {},
+  savingText: {
+    fontSize: 16,
+    fontWeight: 500,
+    color: colors.gray600,
   },
 });

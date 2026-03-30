@@ -8,6 +8,8 @@ import { calculatePhotoAspectRatio, formatPhotoDate, getPhotoCaption } from '../
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { colors } from '../../styles/theme';
 
+// GalleryModal.tsx: Displays an enlarged view of a photo from the photo gallery. Includes the photo, a caption, photo date, and a link to the associated seed.
+
 type GalleryModalProps = {
   readonly visible: boolean;
   readonly onRequestClose: () => void;
@@ -16,7 +18,6 @@ type GalleryModalProps = {
   readonly useViewButton?: boolean;
 };
 
-// GalleryModal.tsx: Displays an enlarged view of a photo from the photo gallery. Includes the photo, a caption, photo date, and a link to the associated seed.
 export default function GalleryModal({ visible, onRequestClose, selected, isSeedInCollection, useViewButton = true }: GalleryModalProps) {
   const router = useRouter();
 
@@ -39,7 +40,6 @@ export default function GalleryModal({ visible, onRequestClose, selected, isSeed
   useEffect(() => {
     setAspect(null);
     if (!uri) return; // No photo to display
-
     Image.getSize(
       uri,
       (width, height) => setAspect(calculatePhotoAspectRatio(width, height)),
@@ -70,7 +70,6 @@ export default function GalleryModal({ visible, onRequestClose, selected, isSeed
             accessibilityLabel="Close">
             <FontAwesome6 name="xmark" size={26} color={colors.gray200} />
           </Pressable>
-
           <ScrollView
             style={styles.scroll}
             contentContainerStyle={styles.scrollContent}
@@ -83,11 +82,9 @@ export default function GalleryModal({ visible, onRequestClose, selected, isSeed
 
               {/* Avoid layout shift before the photo is loaded by displaying a placeholder */}
               {!aspectRatioReady && <View style={[styles.photo, { width: windowWidth, aspectRatio: 1 }]} />}
-
               <View style={styles.caption}>
                 <Text style={styles.captionTitle}>{caption}</Text>
                 <Text style={styles.captionDate}>Added {photoDate}</Text>
-
                 {useViewButton && showViewSeedButton && (
                   <Pressable
                     onPress={() => viewSeedDetails(seed)}

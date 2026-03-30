@@ -2,9 +2,7 @@ import { UserSeed } from '../userSeeds/seeds/seedTypes';
 import { BrowseSeed } from '../browseSeeds/browseTypes';
 import { getTimestamp } from './dateUtils';
 
-/**
- * appUtils.ts: Contains utility functions for the app
- */
+//appUtils.ts: Contains utility functions for the app
 
 // ---- TEMP ID ----
 export function createTempId() {

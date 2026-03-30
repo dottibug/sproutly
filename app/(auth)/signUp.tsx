@@ -1,6 +1,6 @@
 import { Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, Pressable, View, useWindowDimensions } from 'react-native';
-import { useRouter } from 'expo-router';
 import { useState } from 'react';
+import { useRouter } from 'expo-router';
 import { useAuth } from '../../state/auth/AuthContext';
 import { validateSignUp } from '../../state/auth/authUtils';
 import Logo from '../../components/app/Logo';
@@ -21,12 +21,10 @@ export default function SignUp() {
 
   const handleSignUp = async () => {
     const error = validateSignUp(username);
-
     if (error) {
       Alert.alert(error);
       return;
     }
-
     try {
       setSubmitting(true);
       await signUp(username);
@@ -43,24 +41,18 @@ export default function SignUp() {
   return (
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <Logo size="medium" />
-
       <View style={styles.formContainer}>
         <Text style={styles.description}>{SUBTITLE}</Text>
-
         <View style={styles.inputContainer}>
-          {/* Username Input */}
           <Input label="Username" placeholder="Username" value={username} onChangeText={(text) => setUsername(text)} />
         </View>
-
         <View style={styles.buttonContainer}>
-          {/* Create Account button */}
           <AppButton
             text={submitting ? CREATING_ACCOUNT : CREATE_ACCOUNT}
             onPress={handleSignUp}
             disabled={submitting}
             width={buttonWidth}
           />
-          {/* Sign in link */}
           <Pressable style={styles.signInLink} onPress={handleSignIn}>
             <Text style={styles.signInLinkText}>{SIGN_IN}</Text>
           </Pressable>

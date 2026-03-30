@@ -12,7 +12,6 @@ type ListSelectorsProps = {
 
 export default function ListSelectors({ showInfoModal }: ListSelectorsProps) {
   const customSeed = useCustomSeed();
-
   const difficultyOptions = DIFFICULTY.map((difficulty) => ({ value: difficulty, label: difficulty }));
   const exposureOptions = EXPOSURE.map((exposure) => ({ value: exposure, label: exposure }));
 
@@ -26,7 +25,6 @@ export default function ListSelectors({ showInfoModal }: ListSelectorsProps) {
         showInfoIcon={true}
         onIconPress={() => showInfoModal('difficulty')}
       />
-
       <ListSelector
         title="Exposure"
         value={customSeed.seed.exposure}

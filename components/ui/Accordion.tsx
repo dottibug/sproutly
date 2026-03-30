@@ -1,8 +1,9 @@
-import { View, StyleSheet, StyleProp, TextStyle } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useState } from 'react';
 import { List } from 'react-native-paper';
-import { colors } from '../../styles/theme';
-import { headingSizeMap } from '../../styles/theme';
+import { colors, headingSizeMap } from '../../styles/theme';
+
+// Accordion.tsx: Renders an accordion with a title, optional description, and children.
 
 type AccordionProps = {
   readonly title: string;
@@ -12,18 +13,14 @@ type AccordionProps = {
   readonly titleSize?: 'xsmall' | 'small' | 'medium' | 'large';
 };
 
-// Accordion.tsx: Renders an accordion with a title, optional description, and children.
 export default function Accordion({ title, description, children, openByDefault = false, titleSize = 'medium' }: AccordionProps) {
   const [expanded, setExpanded] = useState(openByDefault);
-
   const hasDescription = description !== undefined && description !== null && description.trim() !== '';
-
   const color = colors.white;
   const contentStyles = { gap: hasDescription ? 2 : 0 };
   const descriptionText = hasDescription ? description : '';
   const childrenBackgroundColor = colors.gray100;
 
-  // Open or close the accordion
   const handlePress = () => setExpanded(!expanded);
 
   const headingStyles = StyleSheet.flatten([headingSizeMap[titleSize], { color: colors.primary }]);

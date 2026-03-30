@@ -4,11 +4,6 @@ import { Input, Accordion } from '../uiComponentBarrel';
 import { inputStyles } from '../../styles/theme';
 
 // CustomInfoAccordion.tsx: Additional form fields in collapsible accordion section for adding a custom seed on CustomSeedSheet.tsx
-const TIMING_PLACEHOLDER = 'e.g. Start indoors in early spring over bottom heat';
-const STARTING_PLACEHOLDER = 'e.g. Sow seeds 5 mm to 1cm deep';
-const GROWING_PLACEHOLDER = 'e.g. Requires full sun and lots of heat';
-const HARVEST_PLACEHOLDER = 'e.g. Pick tomatoes in the breaker stage';
-const COMPANION_PLANTING_PLACEHOLDER = 'e.g. Basil, chives, nasturtium, and peppers';
 
 export default function CustomInfoAccordion() {
   const customSeed = useCustomSeed();
@@ -25,7 +20,6 @@ export default function CustomInfoAccordion() {
               onChangeText={(text) => customSeed.setLatin(text)}
             />
           </View>
-
           <View style={inputStyles.inputSection}>
             <Input
               label="Days to Maturity"
@@ -38,7 +32,6 @@ export default function CustomInfoAccordion() {
           </View>
         </View>
       </Accordion>
-
       <Accordion title="Germinating" titleSize="small" description="How and when to start the seed">
         <View style={styles.accordionContent}>
           <View style={inputStyles.inputSection}>
@@ -50,7 +43,6 @@ export default function CustomInfoAccordion() {
               onChangeText={(text) => customSeed.setTiming(text)}
             />
           </View>
-
           <View style={inputStyles.inputSection}>
             <Input
               multiline
@@ -62,7 +54,6 @@ export default function CustomInfoAccordion() {
           </View>
         </View>
       </Accordion>
-
       <Accordion title="Plant Care" titleSize="small" description="Tips for growing the plant">
         <View style={styles.accordionContent}>
           <View style={inputStyles.inputSection}>
@@ -74,7 +65,6 @@ export default function CustomInfoAccordion() {
               onChangeText={(text) => customSeed.setGrowing(text)}
             />
           </View>
-
           <View style={inputStyles.inputSection}>
             <Input
               multiline
@@ -84,7 +74,6 @@ export default function CustomInfoAccordion() {
               onChangeText={(text) => customSeed.setHarvest(text)}
             />
           </View>
-
           <View style={inputStyles.inputSection}>
             <Input
               multiline
@@ -99,6 +88,13 @@ export default function CustomInfoAccordion() {
     </View>
   );
 }
+
+// ---- CONSTANTS ----
+const TIMING_PLACEHOLDER = 'e.g. Start indoors in early spring over bottom heat';
+const STARTING_PLACEHOLDER = 'e.g. Sow seeds 5 mm to 1cm deep';
+const GROWING_PLACEHOLDER = 'e.g. Requires full sun and lots of heat';
+const HARVEST_PLACEHOLDER = 'e.g. Pick tomatoes in the breaker stage';
+const COMPANION_PLANTING_PLACEHOLDER = 'e.g. Basil, chives, nasturtium, and peppers';
 
 // ---- STYLES ----
 const styles = StyleSheet.create({

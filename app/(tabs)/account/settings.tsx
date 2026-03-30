@@ -3,17 +3,14 @@ import { useState, useCallback, useEffect } from 'react';
 import { useFilters } from '../../../state/filters/FiltersContext';
 import { SearchFilter, SEARCH_FILTER_NAMES, FILTER_NAME_MAP } from '../../../state/filters/filterTypes';
 import { Switch, Divider } from 'react-native-paper';
-import Heading from '../../../components/ui/Heading';
+import { AppButton, Heading, ScreenOptions } from '../../../components/uiComponentBarrel';
 import DraggableFilters from '../../../components/filters/DraggableFilters';
-import AppButton from '../../../components/ui/buttons/AppButton';
 import { colors } from '../../../styles/theme';
-import ScreenOptions from '../../../components/ui/ScreenOptions';
 
 // Settings.tsx: Displays settings available for the user to customize the seed filters.
 export default function Settings() {
   const { preferences, setFilterPreferences, saveFilterPreferences } = useFilters();
   const { openByDefault } = preferences;
-
   const [editingFilterOrder, setEditingFilterOrder] = useState<SearchFilter[]>(preferences.order);
   const [filterDragActive, setFilterDragActive] = useState(false);
 
@@ -52,7 +49,6 @@ export default function Settings() {
       keyboardShouldPersistTaps="handled"
       contentContainerStyle={{ paddingBottom: 32 }}>
       <ScreenOptions backButtonMode="generic" />
-      {/* Seed filters */}
       <View style={styles.settingsSection}>
         <View style={styles.settingsSectionHeader}>
           <Heading size="small">{SEED_FILTERS_TITLE}</Heading>

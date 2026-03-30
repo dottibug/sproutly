@@ -11,7 +11,6 @@ import type { Profile } from './authUtils';
  */
 
 // ---- TYPES ----
-
 type AuthState = {
   session: Session | null;
   user: User | null;

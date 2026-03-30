@@ -6,6 +6,8 @@ import { buildUserSeedPhoto, selectImage } from './photoUtils';
 import { uploadImage, getSignedImageUrl, insertPhoto, deletePhoto } from './photoQueries';
 import { AddPhotoDraft } from './photoTypes';
 
+// photoThunks.tsx: Contains thunks (functions that dispatch actions to the photo reducer and interact with the database)
+
 // Add a photo to state and database
 export async function runAddPhoto(dispatch: Dispatch<UserSeedAction>, userId: string, draft: AddPhotoDraft) {
   const { userSeedId, preview } = draft;

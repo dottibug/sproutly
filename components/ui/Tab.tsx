@@ -1,6 +1,8 @@
 import { StyleSheet, Pressable, Text, View } from 'react-native';
 import { colors } from '../../styles/theme';
 
+// Tab.tsx: Single tab within a list of tabs. Adds a bottom border to the active tab. Used in the Home screen to render the 'My Seeds' and 'Browse' tabs. Also used in the 'Seed Details' screen to render the 'Notes', 'Photos', 'Reminders', and 'History' tabs.
+
 type TabProps = {
   readonly label: string;
   readonly active: boolean;
@@ -8,7 +10,6 @@ type TabProps = {
   readonly badgeCount?: number;
 };
 
-// Single tab within a list of tabs. Adds a bottom border to the active tab.
 export default function Tab({ label, active, onPress, badgeCount }: TabProps) {
   const showBadge = typeof badgeCount === 'number' && badgeCount > 0;
 
@@ -18,7 +19,7 @@ export default function Tab({ label, active, onPress, badgeCount }: TabProps) {
         <Text style={[styles.tab, active ? styles.activeTab : styles.inactiveTab]}>{label}</Text>
         {showBadge && (
           <View style={styles.badge}>
-            <Text style={styles.badgeCount}>88{/* {badgeCount > 99 ? '99+' : badgeCount} */}</Text>
+            <Text style={styles.badgeCount}>{badgeCount > 99 ? '99+' : badgeCount}</Text>
           </View>
         )}
       </View>
@@ -26,15 +27,12 @@ export default function Tab({ label, active, onPress, badgeCount }: TabProps) {
   );
 }
 
+// ---- STYLES ----
 const styles = StyleSheet.create({
   tabRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-
-    // borderWidth: 1,
-    borderColor: 'red',
-
     position: 'relative',
   },
   tab: {

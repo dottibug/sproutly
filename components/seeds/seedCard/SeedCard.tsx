@@ -1,36 +1,27 @@
 import { View, StyleSheet, Pressable, Platform } from 'react-native';
 import { BrowseSeed } from '../../../state/browseSeeds/browseTypes';
 import { UserSeed } from '../../../state/userSeeds/seeds/seedTypes';
+import SeedCardDeleteOverlay from './SeedCardDeleteOverlay';
 import SeedCardInfo from './SeedCardInfo';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import SeedImage from '../../seeds/SeedImage';
 import { appStyles, colors } from '../../../styles/theme';
-import IconButton from '../../ui/buttons/IconButton';
+
+// SeedCard.tsx: Displays seed information for a user's seed or a browse seed.
 
 type SeedCardProps = {
   readonly cardType: 'user' | 'browse';
   readonly seed: UserSeed | BrowseSeed;
   readonly onViewSeed: () => void;
-  /** My Seeds only: long-press delete flow (not used on browse cards). */
-  readonly onLongPress?: () => void;
-  readonly delayLongPress?: number;
+  readonly onLongPress?: () => void; // user cards only
+  readonly delayLongPress?: number; // user cards only
   readonly inUserCollection?: boolean;
-  /** Browse list: add this catalog seed to the user collection (not custom seed flow). */
-  readonly onAddFromBrowse?: () => void;
-  /** My Seeds only: cancel delete flow (not used on browse cards). */
-  readonly onCancel?: () => void;
-  /** My Seeds only: delete seed from collection (not used on browse cards). */
-  readonly onDelete?: () => void;
-  /** My Seeds only: show delete confirmation (not used on browse cards). */
-  readonly showDeleteConfirmation?: boolean;
+  readonly onAddFromBrowse?: () => void; // browse cards only
+  readonly onCancel?: () => void; // user cards only
+  readonly onDelete?: () => void; // user cards only
+  readonly showDeleteConfirmation?: boolean; // user cards only
+  readonly onFavoriteSeed?: () => void; // user cards only
 };
 
-const CORNER_BTN = 28;
-/** Matches `Badge` type="card" opacity for owned mark. */
-const OWNED_OPACITY = 0.8;
-const ownedAccent = colors.dusk;
-
-// SeedCard component displays a single seed in the user's collection or the browse list
 export default function SeedCard({
   cardType,
   seed,
@@ -42,10 +33,11 @@ export default function SeedCard({
   onCancel,
   onDelete,
   showDeleteConfirmation,
+  onFavoriteSeed,
 }: SeedCardProps) {
-  const showBrowseAction = cardType === 'browse' && (inUserCollection || onAddFromBrowse);
   const seedLabel = `${seed.variety} ${seed.plant}`.trim();
   const confirmingDelete = !!showDeleteConfirmation;
+  const favoriteActive = cardType === 'user' && 'isFavorite' in seed ? seed.isFavorite : false;
 
   return (
     <Pressable
@@ -59,34 +51,40 @@ export default function SeedCard({
       ]}
       accessibilityRole="button"
       accessibilityLabel={`${seedLabel}, view details`}>
-      <View style={styles.row}>
-        <View style={styles.imageContainer}>
-          <SeedImage imageUri={seed.image} size="small" resizeMode="cover" />
-        </View>
+      {showDeleteConfirmation && <SeedCardDeleteOverlay seedName={seedLabel} onDelete={onDelete!} onCancel={onCancel!} />}
 
-        <View style={styles.mainColumn}>
-          <SeedCardInfo
-            variety={seed.variety}
-            plant={seed.plant}
-            beanType={seed.beanType}
-            category={seed.category}
-            cardType={cardType}
-            inUserCollection={inUserCollection}
-            onViewSeed={confirmingDelete ? () => {} : onViewSeed}
-            onAddToCollection={onAddFromBrowse ?? (() => {})}
-            onFavoriteSeed={() => {
-              console.log('onFavoriteSeed called');
-            }}
-            onCancel={onCancel}
-            onDelete={onDelete}
-            showDeleteConfirmation={showDeleteConfirmation}
-          />
+      {!showDeleteConfirmation && (
+        <View style={styles.row}>
+          <View style={styles.imageContainer}>
+            <SeedImage imageUri={seed.image} size="small" resizeMode="cover" />
+          </View>
+          <View style={styles.mainColumn}>
+            <SeedCardInfo
+              variety={seed.variety}
+              plant={seed.plant}
+              beanType={seed.beanType}
+              category={seed.category}
+              cardType={cardType}
+              inUserCollection={inUserCollection}
+              onViewSeed={confirmingDelete ? () => {} : onViewSeed}
+              onAddToCollection={onAddFromBrowse ?? (() => {})}
+              onFavoriteSeed={onFavoriteSeed ?? (() => {})}
+              isFavorite={favoriteActive}
+              showDeleteConfirmation={showDeleteConfirmation}
+            />
+          </View>
         </View>
-      </View>
+      )}
     </Pressable>
   );
 }
 
+// ---- CONSTANTS ----
+const CORNER_BTN = 28;
+const OWNED_OPACITY = 0.8;
+const ownedAccent = colors.dusk;
+
+// ---- STYLES ----
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
@@ -102,14 +100,10 @@ const styles = StyleSheet.create({
   },
   mainColumn: {
     flex: 1,
-    // marginLeft: 12,
     justifyContent: 'space-between',
     paddingLeft: 14,
     paddingRight: 14,
     paddingVertical: 10,
-
-    // borderWidth: 1,
-    borderColor: 'red',
   },
   browseActionRow: {
     alignItems: 'flex-end',
@@ -158,14 +152,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   cardConfirming: {
-    borderWidth: 1,
-    borderColor: colors.gray300,
     zIndex: 1,
     ...Platform.select({
       ios: {
         shadowColor: '#000',
         shadowOffset: { width: 2, height: 8 },
-        shadowOpacity: 0.45,
+        shadowOpacity: 0.3,
         shadowRadius: 8,
       },
       android: {

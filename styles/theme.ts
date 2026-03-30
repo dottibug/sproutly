@@ -7,36 +7,31 @@ export const fonts = {
 export const colors = {
   primary: '#2f2f2f',
   secondary: '#7d7d7d',
-
   white: '#FFF',
   black: '#000',
-
-  // Grays (light to dark, 100 to 700)
-  gray100: '#f2f2f2', // was screenColor
-  gray200: '#e6e8e7', // was alabaster
-  gray300: '#cccccc', // was grayLight or lightGray
+  gray100: '#f2f2f2',
+  gray200: '#e6e8e7',
+  gray300: '#cccccc',
   gray400: '#a5a5a5',
-  gray500: '#7d7d7d', // was grayMedium
+  gray500: '#7d7d7d',
   gray600: '#5b5b5b',
-  gray700: '#2f2f2f', // was graphite
+  gray700: '#2f2f2f',
 
-  // TODO: only keep the ones used in the app
-  blackSheer95: 'rgba(0, 0, 0, 0.95)', // was opaqueBlack95
-  blackSheer85: 'rgba(0, 0, 0, 0.85)', // was opaqueBlack85
-  blackSheer80: 'rgba(0, 0, 0, 0.80)', // was opaqueBlack80
-  blackSheer75: 'rgba(0, 0, 0, 0.75)', // was opaqueBlack75
-  blackSheer65: 'rgba(0, 0, 0, 0.65)', // was opaqueBlack65
-  blackSheer55: 'rgba(0, 0, 0, 0.55)', // was opaqueBlack
-  blackSheer45: 'rgba(0, 0, 0, 0.45)', // was opaqueBlack45
-  blackSheer35: 'rgba(0, 0, 0, 0.35)', // was opaqueBlack35
-  blackSheer25: 'rgba(0, 0, 0, 0.25)', // was opaqueBlack25
-  blackSheer15: 'rgba(0, 0, 0, 0.15)', // was opaqueBlack15
+  blackSheer95: 'rgba(0, 0, 0, 0.95)',
+  blackSheer85: 'rgba(0, 0, 0, 0.85)',
+  blackSheer80: 'rgba(0, 0, 0, 0.80)',
+  blackSheer75: 'rgba(0, 0, 0, 0.75)',
+  blackSheer65: 'rgba(0, 0, 0, 0.65)',
+  blackSheer55: 'rgba(0, 0, 0, 0.55)',
+  blackSheer45: 'rgba(0, 0, 0, 0.45)',
+  blackSheer35: 'rgba(0, 0, 0, 0.35)',
+  blackSheer25: 'rgba(0, 0, 0, 0.25)',
+  blackSheer15: 'rgba(0, 0, 0, 0.15)',
 
-  // TODO: only keep the ones used in the app
   greenLight: '#79988C', // #79988C
   greenMedium: '#40725E', // #40725E
-  greenDark: '#2B624D', // #2B624D // was hunterGreen and green
-  greenDark90: '#2B624D90', // #2B624D80 // was green90
+  greenDark: '#2B624D', // #2B624D
+  greenDark90: '#2B624D90', // #2B624D80
 
   chocolate: '#5F484F', // chocolate #5F484F (sow)
   teal: '#4B927A', // teal #4B927A (harvest)
@@ -107,9 +102,7 @@ export const inputStyles = StyleSheet.create({
     gap: 18,
     marginTop: 8,
   },
-  inputSection: {
-    // gap: 1,
-  },
+  inputSection: {},
 });
 
 export const shadowStyles = StyleSheet.create({
@@ -164,8 +157,6 @@ export const appStyles = StyleSheet.create({
     opacity: 0.94,
     transform: [{ scale: 0.99 }],
   },
-
-  ///// above fold are finished styles
   resultsList: {
     flex: 1,
     gap: 16,

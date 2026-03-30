@@ -25,21 +25,15 @@ export default function Account() {
         <View style={styles.logoContainer}>
           <Logo size="medium" showText={true} />
         </View>
-
         <View style={styles.menuContainer}>
-          {/* Profile */}
           <Pressable style={({ pressed }) => [styles.menuItem, pressed && appStyles.cardPressed]} onPress={handleProfile}>
             <MaterialIcons name="person" size={24} color="black" />
             <Text style={styles.menuItemText}>Profile</Text>
           </Pressable>
-
-          {/* Settings */}
           <Pressable style={({ pressed }) => [styles.menuItem, pressed && appStyles.cardPressed]} onPress={handleSettings}>
             <MaterialIcons name="settings" size={24} color={colors.primary} />
             <Text style={styles.menuItemText}>Settings</Text>
           </Pressable>
-
-          {/* Sign out button */}
           <Pressable style={({ pressed }) => [styles.menuItem, pressed && appStyles.cardPressed]} onPress={handleSignOut}>
             <MaterialIcons name="logout" size={24} color={colors.primary} />
             <Text style={styles.menuItemText}>Sign out</Text>
@@ -63,10 +57,10 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 80,
     paddingHorizontal: 16,
+    gap: 32,
   },
   logoContainer: {
     alignSelf: 'center',
-    marginBottom: 64,
   },
   menuContainer: {
     alignItems: 'flex-start',
@@ -80,9 +74,11 @@ const styles = StyleSheet.create({
     gap: 10,
     justifyContent: 'center',
     width: 180,
+    paddingVertical: 12,
   },
   menuItemText: {
     fontSize: 18,
     color: colors.primary,
+    marginRight: 4,
   },
 });

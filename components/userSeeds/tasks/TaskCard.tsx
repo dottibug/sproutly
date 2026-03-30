@@ -5,6 +5,8 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { colors } from '../../../styles/theme';
 
+// TaskCard.tsx: Renders a single task card.
+
 type TaskCardProps = {
   readonly task: UserSeedTask;
   readonly showToggle?: boolean;
@@ -14,12 +16,13 @@ type TaskCardProps = {
   readonly onDelete?: (task: UserSeedTask) => void;
 };
 
-// TaskCard.tsx: Renders a single task card.
 export default function TaskCard({ task, showToggle, showEdit, onEdit, onToggle, onDelete }: TaskCardProps) {
   const isCustom = isCustomTask(task);
   const taskType = task.customTaskType?.trim() || task.taskType;
   const taskLabelColor = isCustom ? TASK_TYPE_COLOR_MAP.custom : TASK_TYPE_COLOR_MAP[task.taskType];
+
   const taskStatusIcon = task.status === 'completed' ? 'checkbox-marked' : 'checkbox-blank-outline';
+
   const hasNotes = Boolean(task.notes?.trim());
 
   const dateText = task.status === 'pending' ? `Due ${formatISODate(task.date)}` : `Completed ${formatISODate(task.completedAt ?? '')}`;
@@ -37,17 +40,14 @@ export default function TaskCard({ task, showToggle, showEdit, onEdit, onToggle,
           </Pressable>
         )}
       </View>
-
       <View style={[styles.taskTypeChip, { backgroundColor: taskLabelColor }]}>
         <Text style={styles.taskTypeText}>{taskType}</Text>
       </View>
-
       <View style={styles.info}>
         <Text style={[styles.notes, { fontStyle: hasNotes ? 'normal' : 'italic', color: hasNotes ? colors.primary : colors.secondary }]}>
           {hasNotes ? task.notes?.trim() : 'No task notes'}
         </Text>
       </View>
-
       <View style={styles.cardBottomRow}>
         <View style={styles.actionButtons}>
           {showEdit && (

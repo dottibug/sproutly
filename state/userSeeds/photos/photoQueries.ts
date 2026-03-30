@@ -4,6 +4,8 @@ import { UserSeedPhoto } from './photoTypes';
 import { UserSeed } from '../seeds/seedTypes';
 import { buildUserSeedPhoto } from './photoUtils';
 
+// photoQueries.tsx: Contains database queries for photos
+
 // https://supabase.com/docs/reference/javascript/storage-from-upload
 // ** For React Native, upload files using ArrayBuffer from base64 file data, as specified in the Supabase docs
 

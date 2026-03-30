@@ -1,18 +1,11 @@
-import { View, StyleSheet, Text, Pressable, Button } from 'react-native';
+import { View, StyleSheet, Text, Pressable } from 'react-native';
 import { Category } from '../../../state/userSeeds/seeds/seedInfoTypes';
-import Heading from '../../ui/Heading';
-import Badge from '../../ui/Badge';
-import { colors } from '../../../styles/theme';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { IconButton } from '../../uiComponentBarrel';
+import Heading from '../../ui/Heading';
+import { colors } from '../../../styles/theme';
 
-const categoryColor = {
-  Vegetable: colors.teal,
-  Flower: colors.peach,
-  Fruit: colors.pink,
-  Herb: colors.lavender,
-};
-
-const ownedAccent = colors.dusk;
+// SeedCardInfo.tsx: Displays information about a seed on the SeedCard.tsx component
 
 type SeedCardInfoProps = {
   readonly variety: string;
@@ -24,12 +17,10 @@ type SeedCardInfoProps = {
   readonly onViewSeed: () => void;
   readonly onAddToCollection: () => void;
   readonly onFavoriteSeed: () => void;
-  readonly onCancel?: () => void;
-  readonly onDelete?: () => void;
+  readonly isFavorite?: boolean;
   readonly showDeleteConfirmation?: boolean;
 };
 
-// SeedCardInfo component displays the information of a single seed in the user's collection or the browse list
 export default function SeedCardInfo({
   variety,
   plant,
@@ -40,8 +31,7 @@ export default function SeedCardInfo({
   onViewSeed,
   onAddToCollection,
   onFavoriteSeed,
-  onCancel,
-  onDelete,
+  isFavorite = false,
   showDeleteConfirmation,
 }: SeedCardInfoProps) {
   const heading = `${variety} ${plant} ${beanType || ''}`;
@@ -49,35 +39,17 @@ export default function SeedCardInfo({
 
   return (
     <View style={styles.seedInfo}>
-      {showDeleteConfirmation && (
-        <View style={styles.deleteConfirmation}>
-          <View style={styles.deleteMsgContainer}>
-            <View style={styles.deleteMsgRow}>
-              <Text style={styles.deleteMsg}>{`Delete `}</Text>
-              <Text style={[styles.seedNameDelete, styles.deleteMsg]}>{`${heading.trim()}`}</Text>
-              <Text style={styles.deleteMsg}>{`?`}</Text>
-            </View>
-
-            <Text style={styles.warningMsg}>This cannot be undone.</Text>
-          </View>
-
-          <View style={styles.buttons}>
-            <Pressable onPress={onDelete} style={[styles.button, styles.deleteButton]}>
-              <Text style={styles.buttonText}>Delete</Text>
-            </Pressable>
-            <Pressable onPress={onCancel} style={[styles.button, styles.cancelButton]}>
-              <Text style={styles.buttonText}>Cancel</Text>
-            </Pressable>
-          </View>
-        </View>
-      )}
-
       {!showDeleteConfirmation && (
         <>
           <View style={styles.headingRow}>
             <View style={styles.chips}>
-              {cardType === 'browse' && inUserCollection && <Text style={styles.chipTextAlt}>{}</Text>}
-              <Text style={styles.chipTextAlt}>{category}</Text>
+              {cardType === 'browse' && inUserCollection && (
+                <>
+                  <Text style={[styles.chipText, { color: colors.dusk }]}>In My Seeds</Text>
+                  <MaterialCommunityIcons name="circle-medium" size={14} color={colors.gray300} />
+                </>
+              )}
+              <Text style={[styles.chipText, { color: backgroundColor }]}>{category}</Text>
             </View>
             <Heading size="xsmall">{heading}</Heading>
           </View>
@@ -85,13 +57,16 @@ export default function SeedCardInfo({
             <Pressable style={styles.actionButton} onPress={onViewSeed}>
               <Text style={styles.actionButtonText}>View Seed</Text>
             </Pressable>
-            <View style={styles.cornerButton}>
-              {cardType === 'browse' ? (
+            {cardType === 'browse' && (
+              <View style={[styles.cornerButton, { backgroundColor: colors.blackSheer55 }]}>
                 <IconButton icon="plus" size={18} color={colors.gray100} onPress={onAddToCollection} />
-              ) : (
-                <IconButton icon="heartOutline" size={18} color={colors.gray100} onPress={onFavoriteSeed} />
-              )}
-            </View>
+              </View>
+            )}
+            {cardType === 'user' && (
+              <View style={styles.cornerButton}>
+                <IconButton icon="heart" size={28} color={isFavorite ? colors.pink : colors.gray300} onPress={onFavoriteSeed} />
+              </View>
+            )}
           </View>
         </>
       )}
@@ -99,124 +74,64 @@ export default function SeedCardInfo({
   );
 }
 
+// ---- CONSTANTS ----
+const categoryColor = {
+  Vegetable: colors.teal,
+  Flower: colors.peach,
+  Fruit: colors.pink,
+  Herb: colors.lavender,
+};
+
+// ---- STYLES ----
 const styles = StyleSheet.create({
-  deleteConfirmation: {
-    justifyContent: 'space-between',
-    flex: 1,
-  },
-  deleteMsgContainer: {
-    gap: 10,
-  },
-  deleteMsg: {
-    fontSize: 16,
-  },
-  deleteMsgRow: {
-    flexDirection: 'row',
-  },
-  warningMsg: {
-    fontSize: 14,
-    // fontWeight: '600',
-    color: colors.primary,
-    fontStyle: 'italic',
-  },
-  seedNameDelete: {
-    fontWeight: '600',
-    color: colors.red,
-  },
-  buttons: {
-    flexDirection: 'row',
-    gap: 16,
-    // justifyContent: 'space-between',
-  },
-  button: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 100,
+  cornerButton: {
     alignItems: 'center',
+    borderRadius: 16,
+    height: 32,
     justifyContent: 'center',
-  },
-  deleteButton: {
-    backgroundColor: colors.red,
-    color: colors.white,
-  },
-  cancelButton: {
-    backgroundColor: colors.gray500,
-    color: colors.primary,
-  },
-  buttonText: {
-    color: colors.white,
-    fontSize: 14,
-    fontWeight: '600',
+    width: 32,
   },
   seedInfo: {
-    // gap: 10,
-    // gap: 8,
     justifyContent: 'space-between',
     flex: 1,
-
-    // borderWidth: 1,
-    borderColor: 'blue',
   },
   chips: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 4,
+    gap: 8,
   },
-  chip: {
-    // backgroundColor: colors.gray200,
-    alignSelf: 'flex-start',
-    // borderRadius: 100,
+  chipStyle: {
     opacity: 0.8,
-    // marginVertical: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    // borderWidth: 1,
-    // borderColor: 'rgba(0, 0, 0, 0.10)',
+    borderRadius: 1,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
   },
   chipText: {
     textAlign: 'center',
     color: colors.white,
     fontSize: 12,
-    fontWeight: '800',
+    fontWeight: '600',
     textTransform: 'uppercase',
   },
-  chipTextAlt: {},
-
   actionRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-
-    // borderWidth: 1,
-    borderColor: 'red',
   },
   actionButton: {
     backgroundColor: colors.greenDark90,
     paddingHorizontal: 12,
-    paddingVertical: 6,
+    height: 28,
     borderRadius: 100,
     alignItems: 'center',
     justifyContent: 'center',
   },
   actionButtonText: {
-    color: colors.gray100,
-    fontSize: 14,
+    color: colors.white,
+    fontSize: 13,
     fontWeight: '600',
+    textTransform: 'uppercase',
   },
-
   headingRow: {
     gap: 4,
-  },
-
-  cornerButton: {
-    // marginTop: 10,
-    backgroundColor: colors.blackSheer55,
-    // position: 'absolute',
-    // right: 12,
-    // bottom: 12,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });

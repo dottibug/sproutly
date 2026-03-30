@@ -3,6 +3,8 @@ import { useAuth } from '../auth/AuthContext';
 import { SearchFilter, OpenFilters, SelectedFilters, UserFilterPreferences, SEARCH_FILTER_NAMES, DEFAULT_OPEN } from './filterTypes';
 import { getOpenFilters, getUserFilterPreferences, updateUserFilterPreferences } from './filterUtils';
 
+// FiltersContext.tsx: Contains the context for filtering seeds
+
 // ---- TYPES ----
 export type FilterAction =
   | { type: 'SET_SELECTED'; payload: { filter: SearchFilter; value: string[] } }

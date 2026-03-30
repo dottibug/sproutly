@@ -4,9 +4,7 @@ import { FILTER_NAME_MAP, SEARCH_FILTERS } from '../../state/filters/filterTypes
 import FilterCategory from './FilterCategory';
 import SheetModal from '../ui/SheetModal';
 
-// TODO: Adjust the empty seed message. If user has no seeds in collection, can stay as is. If user has seeds but filters (or search) result in no matches, need a new message.
-
-const FILTERS_TITLE = 'Filter Seeds';
+// Filters.tsx: Renders the filters sheet modal on the 'My Seeds' or 'Browse' screens.
 
 type FiltersProps = {
   readonly open: boolean;
@@ -43,10 +41,13 @@ export default function Filters({ open, setOpen }: FiltersProps) {
   );
 }
 
+const FILTERS_TITLE = 'Filter Seeds';
+
 const styles = StyleSheet.create({
   filters: {
     flexDirection: 'column',
     gap: 6,
     marginBottom: 16,
+    marginTop: 8,
   },
 });

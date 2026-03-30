@@ -2,29 +2,24 @@ import { View, Text, Pressable, StyleSheet, Image, FlatList, Dimensions } from '
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useMemo, useState } from 'react';
 import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
-import { UserSeedTab } from '../../state/app/appTypes';
-import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
-import { GalleryCell } from '../../state/userSeeds/photos/photoTypes';
+import { UserSeedTab, UserSeed, GalleryCell } from '../../state/barrels/typesBarrel';
 import { flattenPhotos } from '../../state/userSeeds/photos/photoUtils';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import Loading from '../ui/Loading';
-import ScreenMessage from '../ui/ScreenMessage';
+import { Loading, ScreenMessage, FABButton, AlertDialog } from '../uiComponentBarrel';
 import GalleryModal from '../gallery/GalleryModal';
 import { colors } from '../../styles/theme';
-import FABButton from '../ui/buttons/FabButton';
-import AlertDialog from '../ui/AlertDialog';
+
+// UserSeedPhotos.tsx: Displays the photos of a single seed in the user's collection. Includes a FAB to add a new photo, delete buttons for each photo, and a modal to view an enlarged photo.
 
 type UserSeedPhotosProps = {
   readonly activeTab: UserSeedTab;
   readonly seed: UserSeed;
 };
 
-// UserSeedPhotos.tsx: Displays the photos of a single seed in the user's collection. Includes a FAB to add a new photo, delete buttons for each photo, and a modal to view an enlarged photo.
 export default function UserSeedPhotos({ seed, activeTab }: UserSeedPhotosProps) {
   const insets = useSafeAreaInsets();
   const { loading, error, addPhoto, deletePhoto } = useUserSeed();
   const [selected, setSelected] = useState<GalleryCell | null>(null);
-
   const cells = useMemo(() => flattenPhotos([seed] as UserSeed[]), [seed]);
   const hasPhotos = cells.length > 0;
 
@@ -57,30 +52,24 @@ export default function UserSeedPhotos({ seed, activeTab }: UserSeedPhotosProps)
 
   return (
     <View style={[styles.container, { display: activeTab === 'Photos' ? 'flex' : 'none' }]}>
-      <Text style={styles.subtitle}>Tap a photo for a larger view</Text>
       {!hasPhotos && <ScreenMessage message={NO_PHOTOS_MESSAGE} />}
-
       {hasPhotos && (
-        <FlatList
-          data={cells}
-          keyExtractor={(item) => item.key}
-          numColumns={2}
-          columnWrapperStyle={styles.row}
-          contentContainerStyle={styles.list}
-          renderItem={photoCell}
-        />
+        <>
+          <Text style={styles.subtitle}>Tap a photo for a larger view</Text>
+          <FlatList
+            data={cells}
+            keyExtractor={(item) => item.key}
+            numColumns={2}
+            columnWrapperStyle={styles.row}
+            contentContainerStyle={styles.list}
+            renderItem={photoCell}
+          />
+        </>
       )}
-
       <GalleryModal visible={selected !== null} onRequestClose={() => setSelected(null)} selected={selected} useViewButton={false} />
-
       <FABButton iconName="camera" iconSize={24} accessibilityLabel="Add photo" bottomInset={insets.bottom} onPress={handleAddPhoto} />
     </View>
   );
-}
-
-// ---- FAB ICON ----
-function photosFabIcon({ size, color }: { size: number; color: string }) {
-  return <FontAwesome5 name="camera" size={size} color={color} solid />;
 }
 
 // ---- CONSTANTS ----

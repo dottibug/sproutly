@@ -5,6 +5,7 @@ export type Profile = {
   createdAt: string | null;
 };
 
+// ---- TABS ----
 export type ListTab = 'My Seeds' | 'Browse';
 export type UserSeedTab = 'Seed' | 'Notes' | 'Photos' | 'Tasks';
 

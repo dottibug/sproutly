@@ -2,6 +2,8 @@ import { View, Image, StyleSheet } from 'react-native';
 import Logo from '../app/Logo';
 import { colors } from '../../styles/theme';
 
+// SeedImage.tsx: Displays the image of a seed on the 'Seed Details' screen, Gallery, and seed cards.
+
 type SeedImageProps = {
   readonly imageUri: string;
   readonly size: 'small' | 'medium' | 'large';
@@ -14,7 +16,6 @@ export default function SeedImage({ imageUri, size, resizeMode = 'cover' }: Seed
     size === 'medium' && styles.mediumImage,
     size === 'large' && styles.largeImage,
   ]);
-
   if (!imageUri?.trim()) {
     return (
       <View style={[frame, styles.photoFrame]}>
@@ -22,10 +23,10 @@ export default function SeedImage({ imageUri, size, resizeMode = 'cover' }: Seed
       </View>
     );
   }
-
   return <Image source={{ uri: imageUri }} resizeMode={resizeMode} style={frame} />;
 }
 
+// ---- STYLES ----
 const styles = StyleSheet.create({
   smallImage: {
     borderTopRightRadius: 0,

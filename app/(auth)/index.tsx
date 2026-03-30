@@ -1,11 +1,10 @@
 import { Alert, KeyboardAvoidingView, Text, Platform, StyleSheet, Pressable, View, useWindowDimensions } from 'react-native';
-import { useRouter } from 'expo-router';
 import { useState } from 'react';
+import { useRouter } from 'expo-router';
 import { useAuth } from '../../state/auth/AuthContext';
 import { validateSignIn } from '../../state/auth/authUtils';
+import { Input, AppButton } from '../../components/uiComponentBarrel';
 import Logo from '../../components/app/Logo';
-import Input from '../../components/ui/form/Input';
-import AppButton from '../../components/ui/buttons/AppButton';
 import { colors } from '../../styles/theme';
 
 // (auth)/index.tsx: Sign in page for the app
@@ -44,21 +43,14 @@ export default function SignIn() {
   return (
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <Logo size="medium" />
-
       <View style={styles.formContainer}>
         <Text style={styles.description}>{SUBTITLE}</Text>
-
         <View style={styles.inputContainer}>
-          {/* Username Input */}
           <Input label="Username" placeholder="Username" value={username} onChangeText={(text) => setUsername(text)} />
-          {/* PIN Input */}
           <Input label="PIN" placeholder="PIN" value={pin} onChangeText={(text) => setPin(text)} secureTextEntry={true} />
         </View>
-
         <View style={styles.buttonContainer}>
-          {/* Sign in button */}
           <AppButton text={submitting ? SIGNING_IN : SIGN_IN} onPress={handleSignIn} disabled={submitting} width={buttonWidth} />
-          {/* Sign up link */}
           <Pressable style={styles.signUpLink} onPress={handleSignUp}>
             <Text style={styles.signUpLinkText}>{CREATE_ACCOUNT}</Text>
           </Pressable>

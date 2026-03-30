@@ -9,12 +9,13 @@ import { Accordion, FABButton } from '../../../components/uiComponentBarrel';
 import TaskSection from './TaskSection';
 import TaskTimeline from './Timeline';
 
+// UserSeedTasks.tsx: Renders the tasks screen for a user seed. Shows tasks for today, upcoming, and timeline. Users can add, edit, and delete tasks.
+
 type UserSeedTasksProps = {
   readonly activeTab: UserSeedTab;
   readonly seed: UserSeed;
 };
 
-// UserSeedTasks.tsx: Renders the tasks screen for a user seed. Shows tasks for today, upcoming, and timeline. Users can add, edit, and delete tasks.
 export default function UserSeedTasks({ seed, activeTab }: UserSeedTasksProps) {
   const router = useRouter();
   const { toggleTaskStatus, deleteTask } = useUserSeed();
@@ -84,7 +85,6 @@ export default function UserSeedTasks({ seed, activeTab }: UserSeedTasksProps) {
               onEdit={handleEditTask}
               onDelete={showDeleteAlert}
             />
-
             <View style={styles.doneSection}>
               <TaskSection
                 tasks={completedToday}
@@ -97,7 +97,6 @@ export default function UserSeedTasks({ seed, activeTab }: UserSeedTasksProps) {
               />
             </View>
           </Accordion>
-
           <Accordion title={upcomingTitle}>
             <TaskSection
               tasks={upcoming}
@@ -108,13 +107,11 @@ export default function UserSeedTasks({ seed, activeTab }: UserSeedTasksProps) {
               onDelete={showDeleteAlert}
             />
           </Accordion>
-
           <Accordion title="Timeline">
             <TaskTimeline tasks={timeline} emptyMessage="No timeline yet." />
           </Accordion>
         </View>
       </ScrollView>
-
       <FABButton iconName="calendar-plus" iconSize={24} accessibilityLabel="Add task" bottomInset={insets.bottom} onPress={handleNewTask} />
     </View>
   );

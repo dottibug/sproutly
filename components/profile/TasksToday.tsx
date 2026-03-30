@@ -1,14 +1,13 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { colors, fonts } from '../../styles/theme';
 
+// TasksToday.tsx: Displays the number of tasks due today. Used in the Profile screen.
 type TasksTodayProps = {
   readonly tasksDueToday: number;
 };
 
-// TasksToday.tsx: Displays the number of tasks due today. Used in the Profile screen.
 export default function TasksToday({ tasksDueToday }: TasksTodayProps) {
   const taskWord = tasksDueToday === 1 ? 'task' : 'tasks';
-
   return (
     <View style={styles.container}>
       <Text style={styles.numTasks}>{tasksDueToday}</Text>

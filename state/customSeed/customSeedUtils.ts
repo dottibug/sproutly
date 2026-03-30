@@ -3,9 +3,10 @@ import { UserSeed } from '../userSeeds/seeds/seedTypes';
 import { ImagePreview } from '../userSeeds/photos/photoTypes';
 import { buildUserSeed } from '../userSeeds/seeds/seedUtils';
 
+// customSeedUtils.ts: Contains utility functions for custom seeds
+
 // Filter seeds by custom ID
 export function filterByCustomId(seeds: UserSeed[], customId: string) {
-  // Avoid state mutation
   const seedsCopy = [...seeds];
   return seedsCopy.filter((s) => s.customSeedId !== customId);
 }
@@ -79,6 +80,7 @@ export function createOptimisticCustomSeed(tempId: string, payload: CustomSeedPa
     companionPlanting: payload.companionPlanting,
     image: preview?.uri || (payload.image ?? '') || '',
     planting: [],
+    isFavorite: false,
     notes: [],
     photos: [],
     tasks: [],

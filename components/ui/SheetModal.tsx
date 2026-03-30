@@ -1,8 +1,13 @@
-import { Pressable, View, Text, StyleSheet, Modal, ScrollView, useWindowDimensions, KeyboardAvoidingView, Platform } from 'react-native';
+import { Pressable, View, Text, StyleSheet, Modal, ScrollView, useWindowDimensions, Platform } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { colors } from '../../styles/theme';
+import { useFilters } from '../../state/filters/FiltersContext';
+import { getNumberOfSelectedFilters } from '../../state/filters/filterUtils';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import IconButton from './buttons/IconButton';
 import Heading from './Heading';
+import { colors } from '../../styles/theme';
+
+// SheetModal.tsx: Displays a bottom sheet modal for the user to filter seeds.
 
 type SheetModalProps = {
   readonly accessibilityLabel: string;
@@ -13,9 +18,6 @@ type SheetModalProps = {
   readonly onPressTrigger: () => void;
   readonly onRequestClose: () => void;
 };
-
-const SHEET_MAX_RATIO = 0.88;
-const SHEET_HEADER_AREA = 56;
 
 export default function SheetModal({
   accessibilityLabel,
@@ -28,45 +30,50 @@ export default function SheetModal({
 }: SheetModalProps) {
   const insets = useSafeAreaInsets();
   const { height: windowHeight } = useWindowDimensions();
-
   const sheetMaxHeight = windowHeight * SHEET_MAX_RATIO;
   const scrollMaxHeight = Math.max(160, sheetMaxHeight - SHEET_HEADER_AREA - Math.max(16, insets.bottom));
-
   const showTriggerRow = showTrigger !== false;
+  const { selected, clearAllSelected } = useFilters();
+  const hasSelectedFilters = getNumberOfSelectedFilters(selected) > 0;
 
   return (
     <>
       {showTriggerRow && (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={accessibilityLabel}
-          accessibilityState={{ expanded: open }}
-          onPress={onPressTrigger}
-          style={({ pressed }) => [styles.trigger, pressed && styles.triggerPressed]}>
-          <Text style={styles.triggerTitle}>{title}</Text>
-        </Pressable>
+        <View style={styles.triggerRow}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={accessibilityLabel}
+            accessibilityState={{ expanded: open }}
+            onPress={onPressTrigger}
+            style={({ pressed }) => [styles.trigger, pressed && styles.triggerPressed]}>
+            <View style={styles.triggerHeader}>
+              <FontAwesome6 name="sliders" size={18} color={colors.primary} />
+              <Heading size="medium" customStyles={{ color: colors.primary }}>
+                {title}
+              </Heading>
+            </View>
+          </Pressable>
+          {hasSelectedFilters && (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Clear all filters"
+              onPress={clearAllSelected}
+              style={({ pressed }) => [styles.clearTrigger, pressed && styles.clearTriggerPressed]}>
+              <Text style={styles.clearTriggerText}>Clear Filters</Text>
+            </Pressable>
+          )}
+        </View>
       )}
-
-      {/* MODAL */}
       <Modal visible={open} transparent animationType="slide" presentationStyle="overFullScreen" onRequestClose={onRequestClose}>
         <View style={styles.modalRoot}>
           <Pressable style={StyleSheet.absoluteFill} onPress={onRequestClose} accessibilityLabel="Dismiss sheet" />
-
-          <SafeAreaView
-            style={[
-              styles.sheet,
-              {
-                maxHeight: sheetMaxHeight,
-              },
-            ]}
-            edges={['bottom']}>
+          <SafeAreaView style={[styles.sheet, { maxHeight: sheetMaxHeight }]} edges={['bottom']}>
             <View style={styles.sheetHeaderRow}>
-              <Heading size="small">{title}</Heading>
-              <Pressable onPress={onRequestClose} hitSlop={12} accessibilityRole="button" accessibilityLabel="Done">
-                <IconButton icon="close" size={24} onPress={onRequestClose} />
+              <Heading size="medium">{title}</Heading>
+              <Pressable onPress={onRequestClose} accessibilityRole="button" accessibilityLabel="Done" style={styles.closeButton}>
+                <IconButton icon="close" size={24} onPress={onRequestClose} color={colors.primary} />
               </Pressable>
             </View>
-
             <ScrollView
               style={[styles.sheetScroll, { maxHeight: scrollMaxHeight }]}
               contentContainerStyle={styles.sheetScrollContent}
@@ -84,25 +91,49 @@ export default function SheetModal({
   );
 }
 
+// ---- CONSTANTS ----
+const SHEET_MAX_RATIO = 0.88;
+const SHEET_HEADER_AREA = 56;
+
+// ---- STYLES ----
 const styles = StyleSheet.create({
+  triggerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginHorizontal: 16,
+    paddingVertical: 18,
+    gap: 12,
+  },
   trigger: {
-    backgroundColor: '#f5f5f5',
-    paddingBottom: 9,
-    paddingTop: 18,
-    paddingHorizontal: 16,
+    backgroundColor: colors.white,
+    flexShrink: 0,
   },
   triggerPressed: {
     opacity: 0.85,
   },
-  triggerTitle: {
-    color: colors.primary,
-    fontSize: 16,
+  clearTrigger: {
+    paddingVertical: 4,
+    paddingHorizontal: 4,
+  },
+  clearTriggerPressed: {
+    opacity: 0.6,
+  },
+  clearTriggerText: {
+    fontSize: 14,
     fontWeight: '600',
+    color: colors.dusk,
+    textTransform: 'uppercase',
+  },
+  triggerHeader: {
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'center',
   },
   modalRoot: {
     flex: 1,
     justifyContent: 'flex-end',
-    backgroundColor: colors.blackSheer55,
+    backgroundColor: colors.blackSheer75,
     position: 'relative',
   },
   kav: {
@@ -111,7 +142,7 @@ const styles = StyleSheet.create({
   },
   sheet: {
     width: '100%',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.white,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     borderColor: '#ccc',
@@ -127,14 +158,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    paddingHorizontal: 16,
   },
-  doneButton: {
-    color: colors.greenDark,
-    fontSize: 16,
-    fontWeight: '600',
+  closeButton: {
+    width: 48,
+    height: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   sheetScroll: {
-    // Intentionally not flex:1 to support variable-height sheets.
+    // Intentionally not flex:1 to allow for variable-height sheets.
   },
   sheetScrollContent: {
     paddingBottom: 8,

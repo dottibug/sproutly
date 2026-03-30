@@ -1,22 +1,22 @@
-import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useUserSeed } from '../../../state/userSeeds/UserSeedsContext';
 import { UserSeedTab, UserSeed, UserSeedNote } from '../../../state/barrels/typesBarrel';
+import { ScreenMessage, FABButton } from '../../uiComponentBarrel';
 import Note from './Note';
-import FABButton from '../../ui/buttons/FabButton';
 import { colors } from '../../../styles/theme';
+
+// UserSeedNotes.tsx: Renders the notes screen for a user seed. Shows notes for a seed. Users can add, edit, and delete notes.
 
 type UserSeedNotesProps = {
   readonly activeTab: UserSeedTab;
   readonly seed: UserSeed;
 };
 
-// UserSeedNotes.tsx: Renders the notes screen for a user seed. Shows notes for a seed. Users can add, edit, and delete notes.
 export default function UserSeedNotes({ seed, activeTab }: UserSeedNotesProps) {
   const router = useRouter();
   const { deleteNote } = useUserSeed();
-
   const notes = seed.notes ?? ([] as UserSeedNote[]);
   const hasNotes = notes.length > 0;
 
@@ -63,7 +63,7 @@ export default function UserSeedNotes({ seed, activeTab }: UserSeedNotesProps) {
     <View style={[styles.screen, { display: activeTab === 'Notes' ? 'flex' : 'none' }]}>
       <ScrollView style={styles.scroll} contentContainerStyle={{ paddingBottom: paddingBottom }} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
-          {!hasNotes && <Text style={styles.empty}>{NO_NOTES}</Text>}
+          {!hasNotes && <ScreenMessage message={NO_NOTES} />}
           {hasNotes && (
             <View style={styles.notes}>
               {notes.map((note) => (
@@ -73,16 +73,17 @@ export default function UserSeedNotes({ seed, activeTab }: UserSeedNotesProps) {
           )}
         </View>
       </ScrollView>
-
       <FABButton iconName="sticky-note" iconSize={24} accessibilityLabel="Add note" bottomInset={insets.bottom} onPress={handleNewNote} />
     </View>
   );
 }
 
+// ---- CONSTANTS ----
 const NO_NOTES = 'No notes found. Add a note to get started.';
 const FAB_MARGIN = 16;
 const FAB_HEIGHT = 56;
 
+// ---- STYLES ----
 const styles = StyleSheet.create({
   screen: {
     flex: 1,

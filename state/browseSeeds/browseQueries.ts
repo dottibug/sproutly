@@ -4,6 +4,8 @@ import { fetchPlantingActions } from '../userSeeds/seeds/seedQueries';
 import { attachPlantingToSeeds, mapCatalogRowToBrowseSeed } from './browseUtils';
 import { UserSeed } from '../userSeeds/seeds/seedTypes';
 
+// browseQueries.tsx: Contains database queries for browse seeds
+
 const CATALOG_SELECT = `
   id, variety, sku, category, bean_type, plant, latin, difficulty, exposure, matures_in_days, matures_under_days, description, timing, starting, growing, harvest, companion_planting, image
 `;
@@ -11,19 +13,15 @@ const CATALOG_SELECT = `
 // Fetch the seeds in the catalog
 async function fetchCatalogSeeds(): Promise<BrowseSeed[]> {
   const { data, error } = await supabase.from('seed_catalog').select(CATALOG_SELECT).order('variety', { ascending: true });
-
   if (error) throw error;
-
   return data?.map((row) => mapCatalogRowToBrowseSeed(row)) ?? ([] as BrowseSeed[]);
 }
 
 // Fetch the catalog from the database (alphabetical order by name)
 export async function fetchCatalog(): Promise<BrowseSeed[]> {
   let collection: BrowseSeed[] = [];
-
   // Fetch seeds in the catalog and planting actions
   const [seeds, plantingActions] = await Promise.all([fetchCatalogSeeds(), fetchPlantingActions()]);
-
   // Attach the planting actions to the seeds
   return attachPlantingToSeeds(seeds, plantingActions);
 }
@@ -45,6 +43,7 @@ export async function addBrowseSeedToCollection(userId: string, browseSeedId: st
     id: data.id,
     catalogSeedId: data.catalog_seed_id,
     customSeedId: null,
+    isFavorite: Boolean(data.is_favorite),
     variety: data.variety,
     sku: data.sku,
     category: data.category,

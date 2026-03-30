@@ -1,4 +1,4 @@
-// dateUtils.ts: Contains various date utility functions for the app
+// dateUtils.ts: Contains date utility functions
 
 // ---- DATE CREATION ----
 
@@ -78,7 +78,6 @@ export const formatDate = (date: Date): string => {
 };
 
 // ---- DATE SORTING ----
-
 // Sort two dates by their timestamp
 export function sortByDate(a: string, b: string): number {
   const aTime = new Date(a).getTime();

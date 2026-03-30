@@ -2,7 +2,8 @@ import { Pressable, Text, StyleSheet } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useFilters } from '../../state/filters/FiltersContext';
 import { SearchFilter } from '../../state/filters/filterTypes';
-import { colors } from '../../styles/theme';
+
+// FilterChip.tsx: Renders a single filter chip for a selected filter. Used on the 'My Seeds' and 'Browse' screens to show which filters are currently applied.
 
 type FilterChipProps = {
   readonly filter: SearchFilter;
@@ -26,18 +27,20 @@ export default function FilterChip({ filter, option }: FilterChipProps) {
   );
 }
 
+// ---- STYLES ----
 const styles = StyleSheet.create({
   chip: {
-    backgroundColor: colors.white,
-    borderColor: colors.gray500,
-    borderRadius: 24,
+    alignSelf: 'flex-start',
+    borderRadius: 100,
+    marginVertical: 1,
+    paddingVertical: 5,
     borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.10)',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
-    paddingLeft: 12,
-    paddingRight: 16,
-    paddingVertical: 6,
+    gap: 2,
+    paddingLeft: 8,
+    paddingRight: 12,
   },
 });

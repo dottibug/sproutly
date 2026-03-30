@@ -1,5 +1,7 @@
 import { UserSeed } from '../seeds/seedTypes';
 
+// photoTypes.ts: Contains types for photos
+
 // ---- ACTIONS ----
 export type PhotoAction =
   | { type: 'ADD_PHOTO'; payload: UserSeedPhoto & { tempId: string } }

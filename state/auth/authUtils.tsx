@@ -1,3 +1,5 @@
+// authUtils.tsx: Contains authentication utility functions
+
 // ---- AUTH TYPES & CONSTANTS ----
 export const AUTH_FAKE_EMAIL_DOMAIN = 'sproutly.com';
 export const UNIVERSAL_PIN = '123456';

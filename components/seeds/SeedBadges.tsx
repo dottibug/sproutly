@@ -1,7 +1,8 @@
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Pressable, Text } from 'react-native';
 import { Category, Exposure } from '../../state/userSeeds/seeds/seedInfoTypes';
-import Badge from '../ui/Badge';
 import { colors, seedTypeColorMap } from '../../styles/theme';
+
+// SeedBadges.tsx: Colored badges for seed type, exposure, and if a see is in the user's collection.
 
 type SeedBadgesProps = {
   readonly category: Category;
@@ -9,28 +10,44 @@ type SeedBadgesProps = {
   readonly inUserCollection: boolean;
 };
 
-// SeedBadges component displays the badges for a single seed in the user's collection or the browse list
 export default function SeedBadges({ category, exposure, inUserCollection }: SeedBadgesProps) {
   return (
-    <View style={styles.badges}>
-      {inUserCollection && <Badge type="detail" text="In My Seeds" color={colors.dusk} width={110} />}
-      <Badge type="detail" text={category} color={seedTypeColorMap[category]} width={96} />
-      <Badge type="detail" text={exposure} color={colors.yellow} width={exposure === 'Full sun to part shade' ? 180 : 100} />
+    <View style={styles.chips}>
+      {inUserCollection && (
+        <Pressable style={[styles.chipStyle, { backgroundColor: colors.dusk }]}>
+          <Text style={styles.chipText}>In My Seeds</Text>
+        </Pressable>
+      )}
+      <Pressable style={[styles.chipStyle, { backgroundColor: seedTypeColorMap[category] }]}>
+        <Text style={styles.chipText}>{category}</Text>
+      </Pressable>
+      <Pressable style={[styles.chipStyle, { backgroundColor: colors.chocolate }]}>
+        <Text style={styles.chipText}>{exposure}</Text>
+      </Pressable>
     </View>
   );
 }
 
+// ---- STYLES ----
 const styles = StyleSheet.create({
-  badges: {
+  chips: {
     alignItems: 'center',
     borderColor: '#ccc',
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 8,
   },
-  seedTypeAndExposure: {
-    alignItems: 'center',
-    borderColor: '#ccc',
-    borderTopWidth: 1,
-    flexDirection: 'row',
+  chipStyle: {
+    backgroundColor: colors.dusk,
+    opacity: 0.8,
+    borderRadius: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+  },
+  chipText: {
+    color: colors.white,
+    fontSize: 13,
+    fontWeight: 600,
+    textTransform: 'uppercase',
   },
 });

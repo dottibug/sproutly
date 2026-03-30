@@ -1,21 +1,15 @@
 import { Tabs } from 'expo-router';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { colors } from '../../styles/theme';
-
-// JS tabs: https://docs.expo.dev/router/advanced/tabs/
-// https://docs.expo.dev/router/advanced/tabs/#tab-bar-options
-
-// TODO: change tabBarActiveTintColor
 
 // (tabs)/_layout.tsx: Tabs layout for the app
 export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: 'purple',
-        tabBarInactiveTintColor: 'gray',
+        tabBarActiveTintColor: colors.greenMedium,
+        tabBarInactiveTintColor: colors.secondary,
         headerShown: false,
         tabBarItemStyle: {
           marginTop: 6,
@@ -28,7 +22,6 @@ export default function TabsLayout() {
           marginTop: 2,
         },
       }}>
-      {/* Home Tab */}
       <Tabs.Screen
         name="home"
         options={{
@@ -38,8 +31,6 @@ export default function TabsLayout() {
           tabBarIcon: ({ color }) => <FontAwesome6 name="seedling" size={24} color={color} />,
         }}
       />
-
-      {/* Gallery Tab */}
       <Tabs.Screen
         name="gallery"
         options={{
@@ -48,8 +39,6 @@ export default function TabsLayout() {
           tabBarIcon: ({ color }) => <FontAwesome6 name="images" size={26} color={color} />,
         }}
       />
-
-      {/* Account Tab */}
       <Tabs.Screen
         name="account"
         options={{
@@ -61,3 +50,7 @@ export default function TabsLayout() {
     </Tabs>
   );
 }
+
+// ---- REFERENCES ----
+// JS tabs: https://docs.expo.dev/router/advanced/tabs/
+// https://docs.expo.dev/router/advanced/tabs/#tab-bar-options

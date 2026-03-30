@@ -1,3 +1,5 @@
+// browseCache.tsx: Contains functions to get and set the cached browse seeds
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BrowseSeed } from './browseTypes';
 

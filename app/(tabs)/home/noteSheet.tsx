@@ -7,6 +7,8 @@ import { getNoteSheetTitle } from '../../../state/userSeeds/notes/noteUtils';
 import { validateNote } from '../../../components/userSeeds/notes/validateNotes';
 import { Heading, Input, AppButton, ScreenOptions } from '../../../components/uiComponentBarrel';
 
+// NoteSheet.tsx: Renders the note sheet for a user seed. Users can add a new note or edit an existing note. NoteContext.tsx manages the form state.
+
 type NoteSheetParams = {
   userSeedId: string;
   noteId?: string;
@@ -14,16 +16,12 @@ type NoteSheetParams = {
   plant: string;
 };
 
-// NoteSheet.tsx: Renders the note sheet for a user seed. Users can add a new note or edit an existing note. NoteContext.tsx manages the form state.
 export default function NoteSheet() {
   const router = useRouter();
-
   const params = useLocalSearchParams<NoteSheetParams>();
   const { userSeedId, noteId, variety, plant } = params;
-
   const { seeds, addNote, updateNote } = useUserSeed();
   const seed = seeds.find((s) => s.id === userSeedId);
-
   const isUpdate = noteId !== null && noteId !== undefined && noteId !== '';
 
   const noteToUpdate: UserSeedNote | undefined = isUpdate ? seed?.notes.find((n) => n.id === noteId) : undefined;
@@ -83,7 +81,6 @@ export default function NoteSheet() {
           ]),
         );
     }
-
     resetNote();
     router.back();
   };
@@ -95,7 +92,6 @@ export default function NoteSheet() {
         <Heading size="small" customStyles={styles.sheetTitle}>
           {sheetTitle}
         </Heading>
-
         <View style={styles.inputs}>
           <View style={styles.inputSection}>
             <Input
@@ -108,7 +104,6 @@ export default function NoteSheet() {
               errorMessage={errors?.title}
             />
           </View>
-
           <View style={styles.inputSection}>
             <Input
               label="Note"
@@ -122,7 +117,6 @@ export default function NoteSheet() {
             />
           </View>
         </View>
-
         <View style={styles.buttonContainer}>
           <AppButton text={isUpdate ? 'Save Changes' : 'Save Note'} size="small" rounded onPress={onSaveNote} />
         </View>

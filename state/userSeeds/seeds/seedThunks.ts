@@ -6,10 +6,12 @@ import { ImagePreview } from '../photos/photoTypes';
 import { isDuplicateSeed } from './seedUtils';
 import { createOptimisticCustomSeed } from '../../customSeed/customSeedUtils';
 import { uploadImage, getSignedImageUrl } from '../photos/photoQueries';
-import { fetchSeedCollection } from './seedQueries';
+import { fetchSeedCollection, updateCollectionFavorite } from './seedQueries';
 import { addBrowseSeedToCollection, deleteByCatalogId } from '../../browseSeeds/browseQueries';
 import { insertCustomSeed, deleteByCustomId } from '../../customSeed/customSeedQueries';
 import { createTempId } from '../../app/appUtils';
+
+// seedThunks.tsx: Contains thunks (functions that dispatch actions to the seed reducer and interact with the database)
 
 // Load user seed collection from the database
 export async function runLoadUserSeeds(dispatch: Dispatch<UserSeedAction>, userId: string) {
@@ -92,6 +94,20 @@ export async function runDeleteByCatalogId(dispatch: Dispatch<UserSeedAction>, u
     await deleteByCatalogId(userId, catalogSeedId);
   } catch (error) {
     console.error('Error deleting seed from collection: ', error);
+  }
+}
+
+export async function runSetSeedFavorite(dispatch: Dispatch<UserSeedAction>, seed: UserSeed, isFavorite: boolean) {
+  if (!seed.id || seed.id.startsWith('temp-')) return;
+
+  const previous = seed.isFavorite;
+  dispatch({ type: 'SET_SEED_FAVORITE', payload: { collectionId: seed.id, isFavorite } });
+
+  try {
+    await updateCollectionFavorite(seed.id, isFavorite);
+  } catch (error) {
+    dispatch({ type: 'SET_SEED_FAVORITE', payload: { collectionId: seed.id, isFavorite: previous } });
+    console.error('Error updating seed favorite:', error);
   }
 }
 

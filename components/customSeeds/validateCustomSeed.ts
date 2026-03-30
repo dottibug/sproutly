@@ -1,6 +1,7 @@
 import { BeanType, Category, Difficulty, Exposure } from '../../state/userSeeds/seeds/seedInfoTypes';
-
 import { CustomSeedErrors, CustomSeedDraft, CleanCustomSeed } from '../../state/customSeed/customSeedTypes';
+
+// validateCustomSeed.ts: Validates the custom seed form and returns any errors
 
 // Only fields that need validation. Note: category does not need validation, but is needed to validate beanType
 type CustomSeedInput = {

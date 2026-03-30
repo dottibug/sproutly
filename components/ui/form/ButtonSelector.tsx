@@ -59,6 +59,7 @@ export default function Selector({
   );
 }
 
+// ---- STYLES ----
 const styles = StyleSheet.create({
   selectorContainer: {
     gap: 8,

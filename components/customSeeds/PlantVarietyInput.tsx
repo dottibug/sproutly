@@ -1,16 +1,17 @@
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { Input } from '../uiComponentBarrel';
 import { appStyles, inputStyles } from '../../styles/theme';
 import { useCustomSeed } from '../../state/customSeed/CustomSeedContext';
 import { CustomSeedErrors } from '../../state/customSeed/customSeedTypes';
 import { isBeanCategoryAndPlant } from './validateCustomSeed';
 
+// PlantVarietyInput.tsx: Inputs for variety name and plant type. Used in CustomSeedSheet.tsx when creating a custom seed.
+
 type PlantVarietyInputProps = {
   readonly errors: CustomSeedErrors;
   readonly onDismissPlantError?: () => void;
 };
 
-// PlantVarietyInput.tsx: Inputs for variety name and plant type. Used in CustomSeedSheet.tsx when creating a custom seed.
 export default function PlantVarietyInput({ errors, onDismissPlantError }: PlantVarietyInputProps) {
   const customSeed = useCustomSeed();
 
@@ -36,7 +37,6 @@ export default function PlantVarietyInput({ errors, onDismissPlantError }: Plant
           errorMessage={errors?.variety}
         />
       </View>
-
       <View style={inputStyles.inputSection}>
         <Input
           required
@@ -51,5 +51,3 @@ export default function PlantVarietyInput({ errors, onDismissPlantError }: Plant
     </View>
   );
 }
-
-const styles = StyleSheet.create({});

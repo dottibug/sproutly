@@ -1,22 +1,17 @@
-import { View, Pressable, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useFilters } from '../../state/filters/FiltersContext';
 import { SEARCH_FILTER_NAMES } from '../../state/filters/filterTypes';
 import FilterChip from './FilterChip';
 import { colors } from '../../styles/theme';
 
-// TODO: Styling of chips and clear all filters button
+// FilterChips.tsx: Renders a list of filter chips for the selected filters. Used on the 'My Seeds' and 'Browse' screens to show which filters are currently applied.
+
 export default function FilterChips() {
-  const { selected, clearAllSelected } = useFilters();
-
+  const { selected } = useFilters();
   const chips = SEARCH_FILTER_NAMES.flatMap((filter) => selected[filter].map((option) => ({ filter, option })));
-
-  const handleClearAllFilters = () => clearAllSelected();
 
   return (
     <View style={styles.filterChipsContainer}>
-      <Pressable style={styles.clearAllFiltersButton} onPress={handleClearAllFilters}>
-        <Text style={styles.clearAllFiltersText}>Clear All Filters</Text>
-      </Pressable>
       <View style={styles.chipsContainer}>
         {chips.map((chip) => (
           <FilterChip key={chip.option} filter={chip.filter} option={chip.option} />
@@ -26,25 +21,16 @@ export default function FilterChips() {
   );
 }
 
+// ---- STYLES ----
 const styles = StyleSheet.create({
   filterChipsContainer: {
-    backgroundColor: '#f5f5f5',
-    gap: 8,
+    backgroundColor: colors.white,
     paddingHorizontal: 16,
-    paddingVertical: 8,
-  },
-  clearAllFiltersButton: {
-    // alignItems: 'center',
-    // justifyContent: 'center',
-  },
-  clearAllFiltersText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: 'blue',
+    marginBottom: 18,
   },
   chipsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: 4,
   },
 });

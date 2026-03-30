@@ -1,19 +1,16 @@
 import { useLocalSearchParams, Stack } from 'expo-router';
-import { useBrowseSeed } from '../../../state/browseSeeds/BrowseSeedContext';
-import { useUserSeed } from '../../../state/userSeeds/UserSeedsContext';
-import { BrowseSeed } from '../../../state/browseSeeds/browseTypes';
-import { UserSeed } from '../../../state/userSeeds/seeds/seedTypes';
-
+import { useBrowseSeed, useUserSeed } from '../../../state/barrels/contextBarrel';
+import { BrowseSeed, UserSeed } from '../../../state/barrels/typesBarrel';
 import UserSeedScreen from '../../../components/userSeeds/UserSeedScreen';
 import BrowseSeedDetails from '../../../components/browseSeeds/BrowseSeedDetails';
 import ScreenMessage from '../../../components/ui/ScreenMessage';
 import { colors } from '../../../styles/theme';
 
-// SeedDetailsScreen display the details of a single see – either one being browsed from the catalog or one in the user's own seed collection
+// (home)/[id].tsx: aka Seed Details Screen. Displays the details of a single seed – either one being browsed from the catalog or one in the user's own seed collection.
+
 export default function SeedDetailsScreen() {
   const { id, tab, source } = useLocalSearchParams();
   const isMySeedsTab = tab === 'My Seeds';
-
   let seed: UserSeed | BrowseSeed | undefined;
 
   if (isMySeedsTab) {
@@ -28,12 +25,10 @@ export default function SeedDetailsScreen() {
 
   if (!isMySeedsTab) {
     const { seeds: catalogSeeds } = useBrowseSeed();
-
     seed = catalogSeeds.find((seed) => seed.id === id) as BrowseSeed | undefined;
   }
 
   if (!seed) return <ScreenMessage message="Seed not found" />;
-
   const headerTitle = seed ? `${seed.variety} ${seed.plant}`.trim() : 'Seed Details';
 
   return (
@@ -45,7 +40,6 @@ export default function SeedDetailsScreen() {
           headerTintColor: colors.greenMedium,
         }}
       />
-
       {isMySeedsTab ? <UserSeedScreen seed={seed as UserSeed} /> : <BrowseSeedDetails seed={seed as BrowseSeed} />}
     </>
   );

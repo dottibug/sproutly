@@ -7,13 +7,18 @@ import { ImagePreview, AddPhotoDraft } from './photos/photoTypes';
 import { UserSeedNote, NoteDraft } from './notes/noteTypes';
 import { UserSeedTask, TaskStatus, TaskDraft } from './tasks/taskTypes';
 import { useAuth } from '../auth/AuthContext';
-import { runLoadUserSeeds, runAddSeedFromBrowse, runAddCustomSeed, runDeleteByCatalogId, runDeleteByCustomId } from './seeds/seedThunks';
+import {
+  runLoadUserSeeds,
+  runAddSeedFromBrowse,
+  runAddCustomSeed,
+  runDeleteByCatalogId,
+  runDeleteByCustomId,
+  runSetSeedFavorite,
+} from './seeds/seedThunks';
 import { runAddNote, runUpdateNote, runDeleteNote } from './notes/noteThunks';
 import { runAddPhoto, runDeletePhoto } from './photos/photoThunks';
 import { runAddTask, runUpdateTask, runDeleteTask, runToggleTaskStatus, scheduleDailyTaskNotification } from './tasks/taskThunks';
 import { countDailyPendingTasks } from './tasks/taskUtils';
-
-// TODO: Handle errors
 
 // UserSeedsContext.tsx follows the React context & reducer pattern to manage state for the user's seeds.
 // Prefer this pattern to avoid deep prop drilling in React components.
@@ -84,6 +89,13 @@ export function UserSeedProvider({ children }: UserSeedProviderProps) {
   );
 
   const deleteByCustomId = useCallback(async (seed: UserSeed) => await runDeleteByCustomId(dispatch, seed.customSeedId), [dispatch]);
+
+  const setSeedFavorite = useCallback(
+    async (seed: UserSeed, isFavorite: boolean) => {
+      await runSetSeedFavorite(dispatch, seed, isFavorite);
+    },
+    [dispatch],
+  );
 
   const addNote = useCallback(
     async (draft: NoteDraft) => {
@@ -166,6 +178,7 @@ export function UserSeedProvider({ children }: UserSeedProviderProps) {
       addCustomSeed,
       deleteByCatalogId,
       deleteByCustomId,
+      setSeedFavorite,
       addNote,
       updateNote,
       deleteNote,
@@ -184,6 +197,7 @@ export function UserSeedProvider({ children }: UserSeedProviderProps) {
       addCustomSeed,
       deleteByCatalogId,
       deleteByCustomId,
+      setSeedFavorite,
       addNote,
       updateNote,
       deleteNote,

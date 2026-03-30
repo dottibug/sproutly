@@ -6,6 +6,8 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Heading from './Heading';
 import { colors } from '../../styles/theme';
 
+// DatePickerSheet.tsx: Displays a bottom sheet with a date picker
+
 type DatePickerSheetProps = {
   readonly showDatePicker: boolean;
   readonly setShowDatePicker: (show: boolean) => void;
@@ -14,14 +16,12 @@ type DatePickerSheetProps = {
   readonly dateMinimum: Date | undefined;
 };
 
-// DatePickerSheet.tsx: Displays a bottom sheet with a date picker
 export default function DatePickerSheet({ showDatePicker, setShowDatePicker, taskDate, setTaskDate, dateMinimum }: DatePickerSheetProps) {
   const insets = useSafeAreaInsets();
 
   return (
     <View style={styles.inputSection}>
       <Heading size="xsmall">Date</Heading>
-
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="Choose task date"
@@ -30,7 +30,6 @@ export default function DatePickerSheet({ showDatePicker, setShowDatePicker, tas
         <Text style={styles.dateInputText}>{formatDate(taskDate)}</Text>
         <Ionicons name="calendar-outline" size={22} color={colors.gray500} />
       </Pressable>
-
       {Platform.OS === 'android' && showDatePicker && (
         <DateTimePicker
           value={taskDate}

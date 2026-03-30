@@ -5,8 +5,6 @@ import Heading from './Heading';
 
 // AppModal.tsx: A reusable modal component for the app. Title is optional, but the component must be controlled by the parent via visible and onRequestClose props.
 
-type titleSize = 'xsmall' | 'small' | 'medium' | 'large';
-
 type AppModalProps = {
   readonly visible: boolean;
   readonly onRequestClose: () => void;
@@ -38,6 +36,8 @@ export default function AppModal({ visible, onRequestClose, title, children, tit
     </Modal>
   );
 }
+
+type titleSize = 'xsmall' | 'small' | 'medium' | 'large';
 
 // ---- STYLES ----
 const styles = StyleSheet.create({

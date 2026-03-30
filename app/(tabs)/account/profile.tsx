@@ -1,21 +1,20 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { useAuth } from '../../../state/auth/AuthContext';
 import { useUserSeed } from '../../../state/userSeeds/UserSeedsContext';
-import { formatMemberSince } from '../../../state/app/dateUtils';
-import { countDailyPendingTasks } from '../../../state/userSeeds/tasks/taskUtils';
+import { formatMemberSince, countDailyPendingTasks } from '../../../state/barrels/utilsBarrel';
 import Logo from '../../../components/app/Logo';
 import SeedsCollected from '../../../components/profile/SeedsCollected';
 import NoSeedsCollected from '../../../components/profile/NoSeedsCollected';
 import TasksToday from '../../../components/profile/TasksToday';
+import ScreenOptions from '../../../components/ui/ScreenOptions';
 import NoTasksToday from '../../../components/profile/NoTasksToday';
 import { colors, fonts } from '../../../styles/theme';
-import ScreenOptions from '../../../components/ui/ScreenOptions';
 
 // Profile.tsx: Displays stats about the user's collection and tasks
+
 export default function Profile() {
   const { profile } = useAuth();
   const { seeds } = useUserSeed();
-
   const memberSince = formatMemberSince(profile?.createdAt ?? null);
   const seedCount = seeds.length;
   const tasksDueToday = countDailyPendingTasks(seeds);
@@ -43,6 +42,7 @@ export default function Profile() {
   );
 }
 
+// ---- STYLES ----
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -1,3 +1,5 @@
+// seedInfoTypes.ts: Contains types for seed information
+
 // ---- TYPES ----
 export type Category = 'Vegetable' | 'Flower' | 'Fruit' | 'Herb';
 export type BeanType = 'Broad' | 'Bush' | 'Pole' | null;

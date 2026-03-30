@@ -1,5 +1,7 @@
 import { BeanType, Difficulty, Exposure, Category } from '../userSeeds/seeds/seedInfoTypes';
 
+// customSeedTypes.ts: Contains types for custom seeds
+
 export type CustomSeed = {
   id: string;
   variety: string;
@@ -64,13 +66,7 @@ export type CleanCustomSeed = {
   image: string | null;
 };
 
-export const CUSTOM_SEED_FIELDS = [
-  'image',
-  'variety',
-  'plant',
-  'beanType',
-  'maturesInDays',
-] as const;
+export const CUSTOM_SEED_FIELDS = ['image', 'variety', 'plant', 'beanType', 'maturesInDays'] as const;
 
 export type CustomSeedFields = (typeof CUSTOM_SEED_FIELDS)[number];
 export type CustomSeedErrors = Partial<Record<CustomSeedFields, string>>;

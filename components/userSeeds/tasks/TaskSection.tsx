@@ -3,6 +3,8 @@ import { TaskSectionMode, UserSeedTask } from '../../../state/userSeeds/tasks/ta
 import TaskCard from './TaskCard';
 import { colors } from '../../../styles/theme';
 
+// TaskSection.tsx: Renders a list of tasks in a section.
+
 type TaskSectionProps = {
   readonly tasks: UserSeedTask[];
   readonly mode: TaskSectionMode;
@@ -14,7 +16,6 @@ type TaskSectionProps = {
   readonly onDelete?: (task: UserSeedTask) => void;
 };
 
-// TaskSection.tsx: Renders a list of tasks in a section.
 export default function TaskSection({
   tasks,
   mode,
@@ -34,7 +35,6 @@ export default function TaskSection({
     <View style={[styles.section, { paddingTop }]}>
       {hasTitle && <Text style={styles.sectionTitle}>{title}</Text>}
       {!hasTasks && <Text style={styles.emptyText}>{emptyMessage}</Text>}
-
       {hasTasks && (
         <View style={styles.tasks}>
           {tasks.map((task) => (

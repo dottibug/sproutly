@@ -1,19 +1,33 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ActivityIndicator, Text } from 'react-native';
+import { ActivityIndicator, Text, StyleSheet } from 'react-native';
 import { colors } from '../../styles/theme';
 
-// https://reactnative.dev/docs/activityindicator
+// Loading.tsx: A loading component with a message
 
 type LoadingProps = {
-  readonly message: string;
+  readonly message?: string;
 };
 
-// Loading component with a message
-export default function Loading({ message }: LoadingProps) {
+export default function Loading({ message = 'Seeds sprouting…' }: LoadingProps) {
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.container}>
       <ActivityIndicator size="large" color={colors.greenDark} />
-      <Text>{message}</Text>
+      <Text style={styles.message}>{message}</Text>
     </SafeAreaView>
   );
 }
+
+// ---- STYLES ----
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 24,
+    marginTop: 96,
+  },
+  message: {
+    color: colors.greenDark,
+    fontSize: 20,
+  },
+});

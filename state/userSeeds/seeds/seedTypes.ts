@@ -18,7 +18,8 @@ export type SeedAction =
   | { type: 'ADD_CUSTOM_SEED'; payload: UserSeed }
   | { type: 'SYNC_CUSTOM_SEED_WITH_DB'; payload: UserSeed & { tempId: string } }
   | { type: 'DELETE_BY_CATALOG_ID'; payload: UserSeed['catalogSeedId'] }
-  | { type: 'DELETE_BY_CUSTOM_ID'; payload: UserSeed['customSeedId'] };
+  | { type: 'DELETE_BY_CUSTOM_ID'; payload: UserSeed['customSeedId'] }
+  | { type: 'SET_SEED_FAVORITE'; payload: { collectionId: string; isFavorite: boolean } };
 
 // ---- STATE ----
 export type UserSeedState = {
@@ -36,6 +37,7 @@ export type UserSeedContextValue = {
   addCustomSeed: (preview: ImagePreview | null, payload: CustomSeedPayload) => Promise<void>;
   deleteByCatalogId: (seed: UserSeed) => Promise<void>;
   deleteByCustomId: (seed: UserSeed) => Promise<void>;
+  setSeedFavorite: (seed: UserSeed, isFavorite: boolean) => Promise<void>;
   addNote: (draft: NoteDraft) => Promise<void>;
   updateNote: (note: UserSeedNote, draft: NoteDraft) => Promise<void>;
   deleteNote: (note: UserSeedNote) => Promise<void>;
@@ -51,6 +53,7 @@ export type UserSeedContextValue = {
 export type UserSeed = BrowseSeed & {
   catalogSeedId: string | null;
   customSeedId: string | null;
+  isFavorite: boolean;
   notes: UserSeedNote[];
   photos: UserSeedPhoto[];
   tasks: UserSeedTask[];
@@ -79,6 +82,7 @@ export type BuildUserSeedInput = {
   companionPlanting: string | null;
   image: string;
   planting: Planting[];
+  isFavorite: boolean;
   notes: UserSeedNote[];
   photos: UserSeedPhoto[];
   tasks: UserSeedTask[];

@@ -2,7 +2,9 @@ import { StyleSheet } from 'react-native';
 import { FAB as PaperFAB, Portal } from 'react-native-paper';
 import { colors } from '../../../styles/theme';
 
-type FabActionsProps = {
+// FabActionButtons.tsx: Renders the FAB action buttons for the app. Used for the FAB menu in the app.
+
+type FabActionButtonsProps = {
   readonly open: boolean;
   readonly setFabOpen: (open: boolean) => void;
   readonly onAddCustomSeed: () => void;
@@ -11,8 +13,14 @@ type FabActionsProps = {
   readonly showFabActions: boolean;
 };
 
-// FabActionButtons.tsx: Renders the FAB action buttons for the app. Used for the FAB menu in the app.
-export default function FabActions({ open, setFabOpen, onAddCustomSeed, onBrowse, bottomInset, showFabActions }: FabActionsProps) {
+export default function FabActionButtons({
+  open,
+  setFabOpen,
+  onAddCustomSeed,
+  onBrowse,
+  bottomInset,
+  showFabActions,
+}: FabActionButtonsProps) {
   return (
     <Portal>
       <PaperFAB.Group
@@ -50,6 +58,7 @@ export default function FabActions({ open, setFabOpen, onAddCustomSeed, onBrowse
   );
 }
 
+// ---- STYLES ----
 const styles = StyleSheet.create({
   groupStyle: {},
   mainFab: {

@@ -7,14 +7,20 @@ import { groupNotesByUserSeedId } from '../notes/noteUtils';
 import { groupTasksByUserSeedId } from '../tasks/taskUtils';
 import { groupPhotosByUserSeedId } from '../photos/photoUtils';
 
+// seedUtils.ts: Contains utility functions for seeds
+
 // Check if a seed is already in the user's collection
 export function isDuplicateSeed(seeds: UserSeed[], browseSeedId: string): boolean {
   return seeds.some((s) => s.catalogSeedId === browseSeedId || s.customSeedId === browseSeedId);
 }
 
+// Apply a favorite status to a seed
+export function applySeedFavorite(seeds: UserSeed[], payload: { collectionId: string; isFavorite: boolean }): UserSeed[] {
+  return seeds.map((s) => (s.id === payload.collectionId ? { ...s, isFavorite: payload.isFavorite } : s));
+}
+
 // Filter seeds by catalog ID
 export function filterByCatalogId(seeds: UserSeed[], catalogId: string) {
-  // Avoid state mutation
   const seedsCopy = [...seeds];
   return seedsCopy.filter((s) => s.catalogSeedId !== catalogId);
 }
@@ -43,6 +49,7 @@ export function buildUserSeed(input: BuildUserSeedInput): UserSeed {
     companionPlanting: input.companionPlanting,
     image: input.image,
     planting: input.planting,
+    isFavorite: input.isFavorite,
     notes: input.notes,
     photos: input.photos,
     tasks: input.tasks,
@@ -52,7 +59,6 @@ export function buildUserSeed(input: BuildUserSeedInput): UserSeed {
 // Map a database row to a user seed object
 export function mapCollectionRowToUserSeed(row: any) {
   const seedSource = row.catalog_seed_id ? row.seed_catalog : row.custom_seeds;
-
   if (!seedSource) throw new Error(`User row ${row.id} has no seed data`);
 
   return buildUserSeed({
@@ -77,6 +83,7 @@ export function mapCollectionRowToUserSeed(row: any) {
     companionPlanting: seedSource.companion_planting,
     image: seedSource.image ?? '',
     planting: [],
+    isFavorite: Boolean(row.is_favorite),
     notes: [],
     photos: [],
     tasks: [],
@@ -92,7 +99,6 @@ export function attachAllToSeeds(
   photos: UserSeedPhoto[],
 ): UserSeed[] {
   const plantingActionsByPlant = groupPlantingActionsByPlant(plantingActions);
-
   const notesBySeedId = groupNotesByUserSeedId(notes);
   const tasksBySeedId = groupTasksByUserSeedId(tasks);
   const photosBySeedId = groupPhotosByUserSeedId(photos);
@@ -120,7 +126,6 @@ export function groupPlantingActionsByPlant(plantingActions: PlantingActionRow[]
     const plant = action.plant.toLowerCase();
     const variant = action.variant || 'null';
     const key = `${plant}-${variant}`;
-
     if (!map.has(key)) map.set(key, []);
     map.get(key)?.push({ action: action.action, seasons: action.seasons ?? [], months: action.months ?? [] });
   });
@@ -161,6 +166,7 @@ export function createUserSeedFromDatabase(row: any, planting: Planting[]): User
     companionPlanting: source.companion_planting,
     image: source.image ?? '',
     planting: planting,
+    isFavorite: Boolean(row.is_favorite),
     notes: [],
     photos: [],
     tasks: [],

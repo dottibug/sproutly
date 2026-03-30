@@ -8,11 +8,12 @@ import {
   NoteProvider,
 } from '../barrels/contextBarrel';
 
+// AppProviders.tsx: Single wrapper component for all providers the app needs to access shared state.
+
 type AppProvidersProps = {
   readonly children: React.ReactNode;
 };
 
-// Single wrapper component for all providers the app needs to access shared state.
 export function AppProviders({ children }: AppProvidersProps) {
   return (
     <PaperProvider>

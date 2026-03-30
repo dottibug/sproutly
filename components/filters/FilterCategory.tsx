@@ -5,13 +5,14 @@ import { type SearchFilter } from '../../state/filters/filterTypes';
 import FilterOption from './FilterOption';
 import { colors } from '../../styles/theme';
 
+// FilterCategory.tsx: Renders a filter category for the filters sheet modal
+
 type FilterCategoryProps = {
   readonly title: string;
   readonly options: string[];
   readonly filter: SearchFilter;
 };
 
-// FilterCategory.tsx: Renders a filter category for the filters sheet modal
 export default function FilterCategory({ title, options, filter }: FilterCategoryProps) {
   const { openFilters, setOpenFilters } = useFilters();
   const isOpen = openFilters[filter];
@@ -40,24 +41,28 @@ export default function FilterCategory({ title, options, filter }: FilterCategor
   );
 }
 
+// ---- STYLES ----
 const styles = StyleSheet.create({
   filterWrapper: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.white,
     paddingTop: 0,
     paddingBottom: 4,
   },
   filterContainer: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.white,
     marginVertical: 0,
   },
   filterTitle: {
-    color: colors.secondary,
+    color: colors.primary,
     fontSize: 14,
     fontWeight: '600',
+    textTransform: 'uppercase',
   },
-  filterContent: {},
+  filterContent: {
+    backgroundColor: colors.white,
+  },
   filterOptions: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.white,
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,

@@ -3,6 +3,8 @@ import { FAB as PaperFAB } from 'react-native-paper';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { colors } from '../../../styles/theme';
 
+// FABButton.tsx: Renders an absolutely positioned FAB button with an icon. Used for any FAB button in the app. Parent view must have position: relative.
+
 type FABButtonProps = {
   readonly iconName: 'calendar-plus' | 'sticky-note' | 'camera' | 'plus';
   readonly iconSize: number;
@@ -11,7 +13,6 @@ type FABButtonProps = {
   readonly onPress: () => void;
 };
 
-// FABButton.tsx: Renders an absolutely positioned FAB button with an icon. Used for any FAB button in the app. Parent view must have position: relative.
 export default function FABButton({ iconName, iconSize, accessibilityLabel, bottomInset, onPress }: FABButtonProps) {
   function fabIcon() {
     return <FontAwesome5 name={iconName} size={iconSize} color={colors.white} solid />;

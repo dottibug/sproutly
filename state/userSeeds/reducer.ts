@@ -1,10 +1,12 @@
 import { UserSeedState, UserSeedAction } from './seeds/seedTypes';
 import { createUserSeedFromBrowse } from '../browseSeeds/browseUtils';
-import { filterByCatalogId, replaceUISeed } from './seeds/seedUtils';
+import { filterByCatalogId, replaceUISeed, applySeedFavorite } from './seeds/seedUtils';
 import { filterByCustomId } from '../customSeed/customSeedUtils';
 import { createNote, editNote, replaceUINote, deleteByNoteId, restoreNote } from './notes/noteUtils';
 import { createPhoto, replaceUIPhoto, deleteByPhotoId, restorePhoto } from './photos/photoUtils';
 import { createTask, editTask, deleteByTaskId, replaceUITask, restoreTask, applyTaskStatus } from './tasks/taskUtils';
+
+// reducer.tsx: Contains the reducer for UserSeedsContext.tsx
 
 // ---- REDUCER ----
 export function userSeedReducer(state: UserSeedState, action: UserSeedAction): UserSeedState {
@@ -34,6 +36,9 @@ export function userSeedReducer(state: UserSeedState, action: UserSeedAction): U
 
     case 'DELETE_BY_CUSTOM_ID':
       return { ...state, seeds: filterByCustomId(state.seeds, payload ?? '') };
+
+    case 'SET_SEED_FAVORITE':
+      return { ...state, seeds: applySeedFavorite(state.seeds, payload) };
 
     case 'ADD_NOTE':
       return { ...state, seeds: createNote(state.seeds, payload) };

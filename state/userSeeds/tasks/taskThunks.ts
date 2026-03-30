@@ -13,7 +13,6 @@ import { requestReminderPermissions } from './taskUtils';
 // Creates a new task in the UI and database (optimistic update)
 export async function runAddTask(dispatch: Dispatch<UserSeedAction>, userId: string, draft: TaskDraft) {
   const { userSeedId, taskType, customTaskType, date, notes } = draft;
-
   const now = getTimestamp();
   const taskDate = new Date(date).toISOString();
   const tempId = createTempId();
@@ -77,10 +76,8 @@ export async function runUpdateTask(dispatch: Dispatch<UserSeedAction>, userId: 
   };
 
   dispatch({ type: 'UPDATE_TASK', payload: updatedTask });
-
   // Temp tasks don't exist in DB yet
   if (task.id.startsWith('temp-')) return;
-
   try {
     await updateTaskDetails(userId, updatedTask);
   } catch (error) {
@@ -92,9 +89,7 @@ export async function runUpdateTask(dispatch: Dispatch<UserSeedAction>, userId: 
 // Toggle the status of a task in the UI and database
 export async function runToggleTaskStatus(dispatch: Dispatch<UserSeedAction>, userId: string, task: UserSeedTask, newStatus: TaskStatus) {
   if (task.id.startsWith('temp-')) return;
-
   const prevStatus = task.status;
-
   const payload = {
     userSeedId: task.userSeedId,
     taskId: task.id,

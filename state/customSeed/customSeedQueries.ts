@@ -4,13 +4,12 @@ import { UserSeed } from '../userSeeds/seeds/seedTypes';
 import { buildUserSeed } from '../userSeeds/seeds/seedUtils';
 import { BeanType, Difficulty, Exposure } from '../userSeeds/seeds/seedInfoTypes';
 
+// customSeedQueries.tsx: Contains database queries for custom seeds
+
 // Insert a custom seed into the database
 export async function insertCustomSeed(userId: string, payload: CustomSeedPayload): Promise<UserSeed> {
-  console.log('insertCustomSeed called in customSeedQueries.ts');
   const customSeed = await insertToCustomSeedTable(userId, payload as CustomSeedPayload);
   const userSeedId = await insertCustomSeedToUserCollection(userId, customSeed.id);
-
-  console.log('building and inserting user seed in customSeedQueries.ts');
 
   return buildUserSeed({
     id: userSeedId,
@@ -34,6 +33,7 @@ export async function insertCustomSeed(userId: string, payload: CustomSeedPayloa
     companionPlanting: customSeed.companionPlanting,
     image: customSeed.image ?? '',
     planting: [],
+    isFavorite: false,
     notes: [],
     photos: [],
     tasks: [],
@@ -42,7 +42,6 @@ export async function insertCustomSeed(userId: string, payload: CustomSeedPayloa
 
 // Insert a custom seed into the custom_seeds table
 async function insertToCustomSeedTable(userId: string, payload: CustomSeedPayload): Promise<UserSeed> {
-  console.log('insertToCustomSeedTable called in customSeedQueries.ts');
   const { data, error } = await supabase
     .from('custom_seeds')
     .insert({
@@ -91,6 +90,7 @@ async function insertToCustomSeedTable(userId: string, payload: CustomSeedPayloa
     companionPlanting: data.companion_planting,
     image: data.image ?? '',
     planting: [],
+    isFavorite: false,
     notes: [],
     photos: [],
     tasks: [],
@@ -113,6 +113,7 @@ async function insertCustomSeedToUserCollection(userId: string, customSeedId: st
   return data.id as string;
 }
 
+// Delete a custom seed from the database
 export async function deleteByCustomId(customSeedId: string): Promise<void> {
   const { error } = await supabase.from('custom_seeds').delete().eq('id', customSeedId);
   if (error) throw error;

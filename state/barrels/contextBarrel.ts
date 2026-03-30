@@ -1,3 +1,5 @@
+// contextBarrel.ts: Contains barrel exports for all context providers
+
 export * from '../browseSeeds/BrowseSeedContext';
 export * from '../customSeed/CustomSeedContext';
 export * from '../filters/FiltersContext';

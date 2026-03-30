@@ -6,8 +6,6 @@ import { runLoadCatalog } from './browseThunks';
 // Prefer this pattern to avoid deep prop drilling in React components.
 // https://react.dev/learn/scaling-up-with-reducer-and-context
 
-// TODO: Handle errors
-
 // ---- INITIAL STATE SETUP ----
 type BrowseSeedState = {
   seeds: BrowseSeed[];

@@ -2,6 +2,8 @@ import { BrowseSeed, BuildBrowseSeedInput } from './browseTypes';
 import { buildUserSeed, groupPlantingActionsByPlant, matchBeanVariant } from '../userSeeds/seeds/seedUtils';
 import { PlantingActionRow } from '../userSeeds/seeds/seedInfoTypes';
 
+// browseUtils.ts: Contains utility functions for browse seeds
+
 // Build a browseSeed object
 export function buildBrowseSeed(input: BuildBrowseSeedInput): BrowseSeed {
   return {
@@ -51,6 +53,7 @@ export function createUserSeedFromBrowse(seed: BrowseSeed) {
     companionPlanting: seed.companionPlanting,
     image: seed.image,
     planting: seed.planting ?? [],
+    isFavorite: false,
     notes: [],
     photos: [],
     tasks: [],
@@ -85,12 +88,10 @@ export function mapCatalogRowToBrowseSeed(row: any): BrowseSeed {
 // Attach the planting actions to the seeds
 export function attachPlantingToSeeds(seeds: BrowseSeed[], plantingActions: PlantingActionRow[]): BrowseSeed[] {
   const plantingActionsByPlant = groupPlantingActionsByPlant(plantingActions);
-
   return seeds.map((seed) => {
     const plant = seed.plant.toLowerCase();
     const beanVariant = matchBeanVariant(seed.beanType);
     const plantingActionKey = `${plant}-${beanVariant}`;
-
     return {
       ...seed,
       planting: plantingActionsByPlant.get(plantingActionKey) ?? [],

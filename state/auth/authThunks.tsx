@@ -5,16 +5,16 @@ import { AuthAction } from './AuthContext';
 import { fetchProfile } from './authQueries';
 import { getAuthEmail, Profile, UNIVERSAL_PIN } from './authUtils';
 
+// authThunks.tsx: Contains authentication thunks (functions that dispatch actions to the auth reducer)
+
 // Load the session and profile when the component mounts
 export async function runLoadSessionAndProfile(dispatch: Dispatch<AuthAction>) {
   dispatch({ type: 'LOAD_START', payload: null });
-
   try {
     // Check for an existing session
     const {
       data: { session },
     } = await supabase.auth.getSession();
-
     // If no session, return early (user needs to sign in)
     if (!session?.user) {
       dispatch({
@@ -23,7 +23,6 @@ export async function runLoadSessionAndProfile(dispatch: Dispatch<AuthAction>) {
       });
       return;
     }
-
     const profile = await fetchProfile(session.user.id);
     dispatch({ type: 'LOAD_SUCCESS', payload: { session, user: session.user, profile } });
   } catch {
@@ -52,10 +51,8 @@ export function runSubscribeToAuthStateChanges(dispatch: Dispatch<AuthAction>) {
 // Sign in user
 export async function runSignIn(dispatch: Dispatch<AuthAction>, username: string) {
   dispatch({ type: 'SIGN_IN_START', payload: null });
-
   const usernameTrim = username.trim();
   const email = getAuthEmail(usernameTrim);
-
   try {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password: UNIVERSAL_PIN });
     if (error || !data.user) throw new Error('Sign in failed');
@@ -69,20 +66,16 @@ export async function runSignIn(dispatch: Dispatch<AuthAction>, username: string
 // Sign up user
 export async function runSignUp(dispatch: Dispatch<AuthAction>, username: string) {
   dispatch({ type: 'SIGN_UP_START', payload: null });
-
   const usernameTrim = username.trim();
   const email = getAuthEmail(usernameTrim);
-
   try {
     const { data, error } = await supabase.auth.signUp({ email, password: UNIVERSAL_PIN, options: { data: { username: usernameTrim } } });
     if (error || !data.user) throw new Error('Sign up failed');
-
     const { error: profileError } = await supabase.from('profiles').insert({
       id: data.user.id,
       username: usernameTrim,
     });
     if (profileError) throw profileError;
-
     const profile = await fetchProfile(data.user.id);
     dispatch({ type: 'SIGN_UP_SUCCESS', payload: { session: data.session, user: data.user, profile } });
   } catch (error) {

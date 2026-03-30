@@ -13,7 +13,6 @@ export function createTask(seeds: UserSeed[], payload: UserSeedTask & { tempId: 
 
   const updated = seedsCopy.map((s) => {
     if (s.id !== userSeedId) return s;
-
     const currentTasks = s.tasks ?? [];
     const now = getTimestamp();
 
@@ -30,7 +29,6 @@ export function createTask(seeds: UserSeed[], payload: UserSeedTask & { tempId: 
       updatedAt: now,
       completedAt: null,
     } as UserSeedTask;
-
     return { ...s, tasks: [...currentTasks, newTask] };
   });
 
@@ -98,7 +96,6 @@ export function applyTaskStatus(seeds: UserSeed[], payload: { userSeedId: string
   const { userSeedId, taskId, status } = payload;
   const now = new Date().toISOString();
   const completedAt = status === 'completed' ? now : null;
-
   return seeds.map((seed) => {
     if (seed.id !== userSeedId) return seed;
     const currentTasks = seed.tasks ?? [];
@@ -180,7 +177,6 @@ export function splitTasks(tasks: UserSeedTask[]) {
       else upcoming.push(task);
       return;
     }
-
     if (task.status === 'completed') {
       const markedDoneToday = Boolean(task.completedAt && isISOToday(task.completedAt));
       const dueToday = isDueDateToday(task.date, now);
@@ -191,7 +187,6 @@ export function splitTasks(tasks: UserSeedTask[]) {
 
   // Sort timeline by completedAt date (most recent first)
   const sortedTimeline = sortTimeline(timeline);
-
   return {
     pending,
     completedToday,

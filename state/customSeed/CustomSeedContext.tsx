@@ -2,8 +2,7 @@ import { createContext, useReducer, useCallback, useMemo, useContext } from 'rea
 import { Category, Difficulty, Exposure } from '../userSeeds/seeds/seedInfoTypes';
 import { CustomSeed } from './customSeedTypes';
 
-// Handles the form state for adding a custom seed
-// TODO: Structure similiar to user seed context
+// CustomSeedContext.tsx: Contains the context for the custom seed
 
 // ---- TYPES ----
 export type CustomSeedAction =
@@ -28,22 +27,6 @@ export type CustomSeedAction =
 // ---- INITIAL STATE SETUP ----
 type CustomSeedState = {
   seed: CustomSeed;
-  // variety: string;
-  // category: Category;
-  // plant: string;
-  // beanType: 'Broad' | 'Bush' | 'Pole' | null;
-  // latin: string | null;
-  // difficulty: Difficulty | null;
-  // exposure: Exposure | null;
-  // maturesInDays: number | null;
-  // maturesUnderDays: number | null;
-  // description: string | null;
-  // timing: string | null;
-  // starting: string | null;
-  // growing: string | null;
-  // harvest: string | null;
-  // companionPlanting: string | null;
-  // imagePath: string | null;
 };
 
 const initialState: CustomSeedState = {

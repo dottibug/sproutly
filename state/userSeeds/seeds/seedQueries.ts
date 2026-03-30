@@ -6,10 +6,13 @@ import { fetchNotesByUserSeedId } from '../notes/noteQueries';
 import { fetchTasksByUserSeedId } from '../tasks/taskQueries';
 import { fetchPhotosByUserSeedId, signPhotos } from '../photos/photoQueries';
 
+// seedQueries.tsx: Contains database queries for seeds
+
 const SEED_COLLECTION_SELECT = `
   id,
   catalog_seed_id,
   custom_seed_id,
+  is_favorite,
   seed_catalog (
     id, variety, sku, category, bean_type, plant, latin, difficulty, exposure,
     matures_in_days, matures_under_days, description, timing, starting,
@@ -62,4 +65,9 @@ export async function fetchSeedCollection(userId: string): Promise<UserSeed[]> {
 
   // Build and return the seed collection with signed URLs for any photos
   return Promise.all(collection.map((seed) => signPhotos(seed)));
+}
+
+export async function updateCollectionFavorite(collectionId: string, isFavorite: boolean): Promise<void> {
+  const { error } = await supabase.from('user_seed_collection').update({ is_favorite: isFavorite }).eq('id', collectionId);
+  if (error) throw error;
 }

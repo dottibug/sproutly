@@ -1,12 +1,9 @@
 import { Pressable, Text, StyleSheet } from 'react-native';
 import AppButtonIcon from './AppButtonIcon';
-import { colors } from '../../../styles/theme';
 import { BUTTON_COLOR_MAP } from './buttonConstants';
+import { colors } from '../../../styles/theme';
 
-type ButtonColor = 'primary' | 'secondary' | 'danger';
-type ButtonSize = 'xsmall' | 'small' | 'medium' | 'large';
-type ButtonVariant = 'solid' | 'outline';
-type ButtonIcon = 'add' | 'delete' | 'cancel';
+// AppButton.tsx: Button component to render any of the app button styles. Default is a solid green button that takes up the full width of the parent container.
 
 type AppButtonProps = {
   readonly text: string;
@@ -23,7 +20,6 @@ type AppButtonProps = {
   readonly transparent?: boolean;
 };
 
-// Button component to render any of the app button styles. Default is a solid hunter green button that takes up the full width of the parent container.
 export default function AppButton({
   text,
   onPress,
@@ -88,6 +84,9 @@ export default function AppButton({
   );
 }
 
+// ---- CONSTANTS ----
+export { BUTTON_COLOR_MAP } from './buttonConstants';
+
 const FONT_SIZE_MAP = {
   xsmall: 16,
   small: 18,
@@ -109,8 +108,13 @@ const PADDING_MAP = {
   large: 12,
 };
 
-export { BUTTON_COLOR_MAP } from './buttonConstants';
+// ---- TYPES ----
+type ButtonColor = 'primary' | 'secondary' | 'danger';
+type ButtonSize = 'xsmall' | 'small' | 'medium' | 'large';
+type ButtonVariant = 'solid' | 'outline';
+type ButtonIcon = 'add' | 'delete' | 'cancel';
 
+// ---- STYLES ----
 const styles = StyleSheet.create({
   button: {
     alignItems: 'center',

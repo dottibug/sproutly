@@ -5,18 +5,18 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Heading from '../../ui/Heading';
 import { colors } from '../../../styles/theme';
 
+// Note.tsx: Renders a single note card.
+
 type NoteProps = {
   readonly note: UserSeedNote;
   readonly onEdit?: (note: UserSeedNote) => void;
   readonly onDelete?: (note: UserSeedNote) => void;
 };
 
-// Note.tsx: Renders a single note card.
 export default function Note({ note, onEdit, onDelete }: NoteProps) {
   const hasNote = note.note !== null && note.note !== '';
   const dateText = `Added ${formatISODate(note.createdAt)}`;
   const noteText = hasNote ? note.note : 'This note has no content.';
-
   const handleEdit = () => onEdit?.(note);
   const handleDelete = () => onDelete?.(note);
 
@@ -41,6 +41,7 @@ export default function Note({ note, onEdit, onDelete }: NoteProps) {
   );
 }
 
+// ---- STYLES ----
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.white,

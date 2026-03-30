@@ -4,10 +4,9 @@ import { BrowseSeed } from '../browseSeeds/browseTypes';
 import { MONTH_MAP, PlantingAction } from '../userSeeds/seeds/seedInfoTypes';
 import { fetchUserFilterPrefs, updateUserFilterPrefs } from './filterQueries';
 
-/* Determine which filter sections are expanded when the 'Filters' accordion is opened
- - expand sections that have at least one filter selected
- - expand sections that are in FilterPreferences.expandedByDefault
- */
+// filterUtils.tsx: Contains utility functions for filters
+
+// Determine which filter sections are expanded when the 'Filters' accordion is opened. Expands sections that have at least one filter selected or are in FilterPreferences.expandedByDefault.
 export function getOpenFilters(selected: SelectedFilters, preferences: UserFilterPreferences): OpenFilters {
   const open: OpenFilters = {};
   for (const filter of SEARCH_FILTER_NAMES) {
@@ -23,6 +22,7 @@ export async function getUserFilterPreferences(profileId: string): Promise<UserF
   return userFilterPrefs;
 }
 
+// Update user filter preferences in the database
 export async function updateUserFilterPreferences(profileId: string, preferences: UserFilterPreferences): Promise<UserFilterPreferences> {
   if (!profileId) return { order: SEARCH_FILTER_NAMES, openByDefault: DEFAULT_OPEN } as UserFilterPreferences;
   const userFilterPrefs = await updateUserFilterPrefs(profileId, preferences);
@@ -61,6 +61,7 @@ export function applyFilters(seeds: UserSeed[] | BrowseSeed[], selectedFilters: 
   return list;
 }
 
+// Filter seeds by starting
 export function filterByStarting(seed: UserSeed | BrowseSeed, selected: string[]) {
   // Get the planting actions for the seed
   const seedActions = new Set(seed.planting.map((p) => p.action));
@@ -71,6 +72,7 @@ export function filterByStarting(seed: UserSeed | BrowseSeed, selected: string[]
   });
 }
 
+// Filter seeds by month
 export function filterByMonth(seed: UserSeed | BrowseSeed, selected: string[]) {
   // Get the planting months for the seed (as array of numbers)
   const seedMonths = seed.planting.map((p) => p.months);
@@ -81,6 +83,7 @@ export function filterByMonth(seed: UserSeed | BrowseSeed, selected: string[]) {
   });
 }
 
+// Filter seeds by ready to harvest
 export function filterByReadyToHarvest(seed: UserSeed | BrowseSeed, selected: string[]) {
   const days = seed.maturesUnderDays;
   if (days === null) return false;
@@ -95,6 +98,8 @@ export function filterByReadyToHarvest(seed: UserSeed | BrowseSeed, selected: st
   });
 }
 
+// TODO: I think this is unused and can be removed now
+// Filter browse seeds by category
 export function filterBrowseSeeds(seeds: BrowseSeed[], selectedFilters: Set<CategoryFilter>): BrowseSeed[] {
   if (selectedFilters.size > 0) {
     const filterArray = Array.from(selectedFilters);

@@ -1,37 +1,27 @@
-import { useState, Fragment, useCallback } from 'react';
-import { Text, StyleSheet } from 'react-native';
-import { useFocusEffect, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
 import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
 import SeedCard from '../seeds/seedCard/SeedCard';
 import SeedCardOverlay from '../seeds/seedCard/SeedCardOverlay';
-import { colors } from '../../styles/theme';
 
+// UserSeedCard.tsx: Renders a single seed in the user's collection on a card
 type UserSeedCardProps = {
   readonly seed: UserSeed;
   readonly showDeleteConfirmation: boolean;
   readonly onSetDeleteIsOpenForId: (id: string | null) => void;
 };
 
-// UserSeedCard component displays a single seed in the user's collection
 export default function UserSeedCard({ seed, showDeleteConfirmation, onSetDeleteIsOpenForId }: UserSeedCardProps) {
-  // State
-  // const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-
-  const { deleteByCatalogId, deleteByCustomId } = useUserSeed();
+  const { deleteByCatalogId, deleteByCustomId, setSeedFavorite } = useUserSeed();
   const router = useRouter();
 
   // Check if this seed is an optimistic update (has temp ID) and is being saved to the database
-
-  // TODO: COMMENT THIS BACK IN AFTER STYLING
-  // const isSaving = seed.id.startsWith('temp-') || (seed.customSeedId?.startsWith('temp-') ?? false);
-  const isSaving = false;
+  const isSaving = seed.id.startsWith('temp-') || (seed.customSeedId?.startsWith('temp-') ?? false);
 
   // Press handler to navigate to the seed details screen
   const handleViewSeed = () => {
     const seedId = seed.customSeedId ? seed.customSeedId : seed.catalogSeedId;
     const source = seed.customSeedId ? 'custom' : 'catalog';
-
     router.push({
       pathname: `/home/${seedId}`,
       params: {
@@ -61,6 +51,11 @@ export default function UserSeedCard({ seed, showDeleteConfirmation, onSetDelete
     onSetDeleteIsOpenForId(null);
   };
 
+  // Toggle the favorite status of the seed
+  const handleFavorite = () => {
+    void setSeedFavorite(seed, !seed.isFavorite);
+  };
+
   return (
     <>
       <SeedCard
@@ -72,20 +67,9 @@ export default function UserSeedCard({ seed, showDeleteConfirmation, onSetDelete
         onCancel={handleCancel}
         onDelete={handleDelete}
         showDeleteConfirmation={showDeleteConfirmation}
+        onFavoriteSeed={handleFavorite}
       />
-      {isSaving && (
-        <SeedCardOverlay>
-          <Text style={styles.savingText}>Saving...</Text>
-        </SeedCardOverlay>
-      )}
+      {isSaving && !showDeleteConfirmation && <SeedCardOverlay />}
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  savingText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: colors.primary,
-  },
-});

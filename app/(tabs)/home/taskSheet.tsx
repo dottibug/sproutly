@@ -8,6 +8,8 @@ import { AppButton, Input, DatePickerSheet, Heading, ScreenOptions } from '../..
 import TaskChips from '../../../components/userSeeds/tasks/TaskChips';
 import { validateTask } from '../../../components/userSeeds/tasks/validateTask';
 
+// TaskSheet.tsx: Renders the task sheet for a user seed. Users can add a new task or edit an existing task. TaskContext.tsx manages the form state.
+
 type TaskSheetParams = {
   userSeedId: string;
   taskId?: string;
@@ -15,16 +17,12 @@ type TaskSheetParams = {
   plant: string;
 };
 
-// TaskSheet.tsx: Renders the task sheet for a user seed. Users can add a new task or edit an existing task. TaskContext.tsx manages the form state.
 export default function TaskSheet() {
   const router = useRouter();
-
   const params = useLocalSearchParams<TaskSheetParams>();
   const { userSeedId, taskId, variety, plant } = params;
-
   const { seeds, addTask, updateTask } = useUserSeed();
   const seed = seeds.find((s) => s.id === userSeedId);
-
   const isUpdate = taskId !== null && taskId !== undefined && taskId !== '';
 
   const taskToUpdate: UserSeedTask | undefined = isUpdate ? seed?.tasks.find((t) => t.id === taskId) : undefined;
@@ -66,7 +64,6 @@ export default function TaskSheet() {
   const onSelectTaskType = (type: TaskType) => {
     if (type === 'custom') setCustomTaskEnabled(true);
     setTaskType(type);
-
     if (type !== 'custom') {
       setCustomTaskType(null);
       setCustomTaskEnabled(false);
@@ -112,7 +109,6 @@ export default function TaskSheet() {
           ]),
         );
     }
-
     resetTask();
     router.back();
   };
@@ -124,13 +120,11 @@ export default function TaskSheet() {
         <Heading size="small" customStyles={styles.sheetTitle}>
           {sheetTitle}
         </Heading>
-
         <View style={styles.inputs}>
           <View style={styles.inputSection}>
             <Heading size="xsmall">Select Garden Task Type</Heading>
             <TaskChips thisTaskType={task.taskType} onSelectTaskType={onSelectTaskType} />
           </View>
-
           <View style={styles.inputSection}>
             <Input
               label="Custom Garden Task"
@@ -145,7 +139,6 @@ export default function TaskSheet() {
               required={customTaskEnabled}
             />
           </View>
-
           <DatePickerSheet
             showDatePicker={showDatePicker}
             setShowDatePicker={setShowDatePicker}
@@ -153,7 +146,6 @@ export default function TaskSheet() {
             setTaskDate={setDate}
             dateMinimum={dateMinimum}
           />
-
           <View style={styles.inputSection}>
             <Input
               label="Notes"
@@ -164,7 +156,6 @@ export default function TaskSheet() {
               multiline
             />
           </View>
-
           <View style={styles.buttonContainer}>
             <AppButton text={isUpdate ? 'Save Changes' : 'Save Task'} size="small" rounded onPress={onSaveTask} />
           </View>

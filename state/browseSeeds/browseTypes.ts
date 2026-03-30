@@ -1,5 +1,7 @@
 import { Category, Planting } from '../userSeeds/seeds/seedInfoTypes';
 
+// browseTypes.ts: Contains types for browse seeds
+
 export type BrowseSeedAction =
   | { type: 'LOAD_START'; payload: null }
   | { type: 'LOAD_SUCCESS'; payload: BrowseSeed[] }

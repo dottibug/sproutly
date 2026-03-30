@@ -2,18 +2,18 @@ import { View, Text, StyleSheet } from 'react-native';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { colors } from '../../styles/theme';
 
+// Logo.tsx: Logo component for the app
+
 type LogoProps = {
   readonly size: 'small' | 'medium' | 'large';
   readonly showText?: boolean;
 };
 
-// Logo.tsx: Logo component for the app
 export default function Logo({ size = 'medium', showText = true }: LogoProps) {
   const logoIconContainerSize = {
     height: LOGO_CONTAINER_SIZE_MAP[size],
     width: LOGO_CONTAINER_SIZE_MAP[size],
   };
-
   const logoIconSize = LOGO_ICON_SIZE_MAP[size];
   const logoTextSize = LOGO_TEXT_SIZE_MAP[size];
   const logoTextMarginTop = LOGO_TEXT_MARGIN_TOP_MAP[size];
@@ -23,12 +23,12 @@ export default function Logo({ size = 'medium', showText = true }: LogoProps) {
       <View style={[styles.logoIconContainer, logoIconContainerSize]}>
         <FontAwesome6 name="seedling" size={logoIconSize} color={colors.white} />
       </View>
-
       {showText && <Text style={[styles.logoText, { fontSize: logoTextSize, marginTop: logoTextMarginTop }]}>Sproutly</Text>}
     </View>
   );
 }
 
+// ---- CONSTANTS ----
 const LOGO_CONTAINER_SIZE_MAP = {
   small: 44,
   medium: 96,
@@ -53,6 +53,7 @@ const LOGO_TEXT_MARGIN_TOP_MAP = {
   large: 16,
 };
 
+// ---- STYLES ----
 const styles = StyleSheet.create({
   logoContainer: {
     alignItems: 'center',
