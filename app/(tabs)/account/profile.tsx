@@ -18,26 +18,26 @@ export default function Profile() {
   const memberSince = formatMemberSince(profile?.createdAt ?? null);
   const seedCount = seeds.length;
   const tasksDueToday = countDailyPendingTasks(seeds);
+  const hasSeeds = seedCount > 0;
+  const hasTasksDueToday = tasksDueToday > 0;
 
   return (
     <View style={styles.container}>
-      <ScreenOptions backButtonMode="generic" />
-      {/* Member Since */}
-      <View style={styles.memberSinceContainer}>
-        <Logo size="medium" showText={false} />
-        <View style={styles.memberSinceTextContainer}>
-          <Text style={styles.memberSinceText}>Joined Sproutly</Text>
-          <Text style={styles.memberSinceDate}>{memberSince}</Text>
+      <ScreenOptions backButtonMode="generic" title="Profile" backTitle="Back" />
+      <View style={styles.stats}>
+        {/* Member Since — profile.createdAt from Supabase */}
+        <View style={styles.memberSinceContainer}>
+          <Logo size="medium" showText={false} />
+          <View style={styles.memberSinceTextContainer}>
+            <Text style={styles.memberSinceText}>Joined Sproutly</Text>
+            <Text style={styles.memberSinceDate}>{memberSince ?? '—'}</Text>
+          </View>
         </View>
+
+        <View style={styles.seedsContainer}>{hasSeeds ? <SeedsCollected seedCount={seedCount} /> : <NoSeedsCollected />}</View>
+
+        <View style={styles.tasksContainer}>{hasTasksDueToday ? <TasksToday tasksDueToday={tasksDueToday} /> : <NoTasksToday />}</View>
       </View>
-
-      {/* Seeds Collected */}
-      <SeedsCollected seedCount={seedCount} />
-      <NoSeedsCollected />
-
-      {/* Tasks Due Today */}
-      <NoTasksToday />
-      <TasksToday tasksDueToday={tasksDueToday} />
     </View>
   );
 }
@@ -46,29 +46,39 @@ export default function Profile() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    gap: 12,
-    marginTop: 24,
     paddingHorizontal: 16,
-    paddingTop: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: -32,
+  },
+  stats: {
+    alignItems: 'center',
+    gap: 14,
   },
   memberSinceContainer: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
     flexDirection: 'row',
-    gap: 18,
+    gap: 14,
   },
   memberSinceTextContainer: {
     flexDirection: 'column',
-    gap: 4,
+    gap: 0,
   },
   memberSinceText: {
     color: colors.greenLight,
     fontSize: 26,
     fontWeight: 600,
-    marginBottom: 4,
   },
   memberSinceDate: {
     color: colors.secondary,
     fontFamily: fonts.aladin.fontFamily,
     fontSize: 36,
+  },
+  seedsContainer: {
+    alignItems: 'flex-start',
+    marginTop: 18,
+  },
+  tasksContainer: {
+    alignItems: 'flex-start',
   },
 });

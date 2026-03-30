@@ -64,11 +64,13 @@ export function sortByDate(a: string, b: string): number {
   return bTime - aTime;
 }
 
-// Format the member since date for display (ex. Mar 23, 2026)
+// Format the member since date for display (ex. Jan 1, 2026)
 export function formatMemberSince(iso: string | null): string | null {
   if (!iso) return null;
   try {
-    return new Date(iso).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' });
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return null;
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   } catch {
     return null;
   }

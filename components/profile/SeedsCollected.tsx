@@ -10,7 +10,7 @@ export default function SeedsCollected({ seedCount }: SeedsCollectedProps) {
   const seedWord = seedCount === 1 ? 'seed' : 'seeds';
   return (
     <View style={styles.container}>
-      <Text style={styles.numSeeds}>{23}</Text>
+      <Text style={styles.numSeeds}>{seedCount}</Text>
       <View style={styles.textContainer}>
         <Text style={styles.text}>{seedWord}</Text>
         <Text style={[styles.text, styles.bottomTextLine]}>collected</Text>
@@ -27,8 +27,6 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   numSeeds: {
-    alignItems: 'center',
-    borderColor: 'red',
     color: colors.greenMedium,
     fontFamily: fonts.aladin.fontFamily,
     fontSize: 96,

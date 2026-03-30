@@ -31,13 +31,13 @@ export default function Logo({ size = 'medium', showText = true }: LogoProps) {
 // ---- CONSTANTS ----
 const LOGO_CONTAINER_SIZE_MAP = {
   small: 44,
-  medium: 96,
+  medium: 76,
   large: 132,
 };
 
 const LOGO_ICON_SIZE_MAP = {
   small: 22,
-  medium: 58,
+  medium: 44,
   large: 76,
 };
 
@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.greenDark,
     borderRadius: 100,
     justifyContent: 'center',
+    paddingTop: 4,
   },
   logoText: {
     color: colors.greenDark,

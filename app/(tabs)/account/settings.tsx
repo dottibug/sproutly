@@ -48,7 +48,7 @@ export default function Settings() {
       scrollEnabled={!filterDragActive}
       keyboardShouldPersistTaps="handled"
       contentContainerStyle={{ paddingBottom: 32 }}>
-      <ScreenOptions backButtonMode="generic" />
+      <ScreenOptions backButtonMode="generic" title="Settings" backTitle="Back" />
       <View style={styles.settingsSection}>
         <View style={styles.settingsSectionHeader}>
           <Heading size="small">{SEED_FILTERS_TITLE}</Heading>
