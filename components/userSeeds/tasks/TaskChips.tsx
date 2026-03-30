@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   taskChipSelected: {
     backgroundColor: colors.greenDark90,
     borderWidth: 1,
-    borderColor: colors.greenDark90,
+    borderColor: 'transparent',
   },
   taskChipText: {
     color: colors.blackSheer55,

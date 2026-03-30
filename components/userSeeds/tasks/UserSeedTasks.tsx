@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router';
 import { useUserSeed } from '../../../state/userSeeds/UserSeedsContext';
 import { UserSeedTab, UserSeed, UserSeedTask } from '../../../state/barrels/typesBarrel';
 import { splitTasks } from '../../../state/userSeeds/tasks/taskUtils';
-import { Accordion, FABButton } from '../../../components/uiComponentBarrel';
+import { Accordion, FabButton } from '../../../components/uiComponentBarrel';
 import TaskSection from './TaskSection';
 import TaskTimeline from './Timeline';
 
@@ -112,7 +112,7 @@ export default function UserSeedTasks({ seed, activeTab }: UserSeedTasksProps) {
           </Accordion>
         </View>
       </ScrollView>
-      <FABButton iconName="calendar-plus" iconSize={24} accessibilityLabel="Add task" bottomInset={insets.bottom} onPress={handleNewTask} />
+      <FabButton iconName="calendar-plus" iconSize={24} accessibilityLabel="Add task" bottomInset={insets.bottom} onPress={handleNewTask} />
     </View>
   );
 }

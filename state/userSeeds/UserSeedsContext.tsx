@@ -59,7 +59,7 @@ export function UserSeedProvider({ children }: UserSeedProviderProps) {
     if (!userId) return;
     const pendingTodayCount = countDailyPendingTasks(state.seeds);
     scheduleDailyTaskNotification(pendingTodayCount).catch((err) => {
-      console.error('Failed to schedule daily task summary:', err);
+      throw new Error(`Failed to schedule daily task summary: ${err}`);
     });
   }, [userId, state.seeds]);
 
@@ -74,7 +74,6 @@ export function UserSeedProvider({ children }: UserSeedProviderProps) {
   const addCustomSeed = useCallback(
     async (preview: ImagePreview | null, payload: CustomSeedPayload) => {
       if (!userId) return;
-      console.log('addCustomSeed called in UserSeedsContext.tsx');
       await runAddCustomSeed(dispatch, userId, payload, preview);
     },
     [dispatch, userId],

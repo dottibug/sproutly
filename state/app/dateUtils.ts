@@ -1,21 +1,5 @@
 // dateUtils.ts: Contains date utility functions
 
-// ---- DATE CREATION ----
-
-// Convert an ISO string to a Date object
-export function isoToDate(iso: string): Date {
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) throw new TypeError(`Invalid ISO string: ${iso}`);
-  return date;
-}
-
-// Create a default date at noon
-export function createNoonDate(): Date {
-  const date = new Date();
-  date.setHours(12, 0, 0, 0);
-  return date;
-}
-
 // ---- DATE TIMESTAMPS ----
 // Get the current timestamp
 export function getTimestamp(): string {
@@ -36,18 +20,13 @@ export function startOfDay(date: Date): number {
 
 // ---- DATE COMPARISONS ----
 // Check if the given date is the same day as the due date
-export function isDueToday(date: Date, dueDate: Date): boolean {
+function isDueToday(date: Date, dueDate: Date): boolean {
   return date.getFullYear() === dueDate.getFullYear() && date.getMonth() === dueDate.getMonth() && date.getDate() === dueDate.getDate();
 }
 
 // Check if the given ISO string is today
 export function isISOToday(iso: string): boolean {
   return isDueToday(new Date(iso), new Date());
-}
-
-// Check if the due date is the same day as today
-export function isSameDay(dueDate: Date): boolean {
-  return isDueToday(dueDate, startOfToday());
 }
 
 // ---- DATE FORMATTING ----

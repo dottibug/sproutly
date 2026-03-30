@@ -20,8 +20,7 @@ export async function runLoadUserSeeds(dispatch: Dispatch<UserSeedAction>, userI
     const collection = await fetchSeedCollection(userId);
     dispatch({ type: 'LOAD_SUCCESS', payload: collection ?? [] });
   } catch (error) {
-    console.error('Error loading user seed collection: ', error);
-    console.log('LOAD THE ERROR');
+    throw new Error(`Error loading user seed collection: ${error}`);
   }
 }
 
@@ -44,8 +43,7 @@ export async function runAddSeedFromBrowse(
     return 'added';
   } catch (error) {
     dispatch({ type: 'DELETE_BY_CATALOG_ID', payload: id });
-    console.error('Error adding seed from browse:', error);
-    return 'failed';
+    throw new Error(`Error adding seed from browse: ${error}`);
   }
 }
 
@@ -79,7 +77,7 @@ export async function runAddCustomSeed(
   } catch (error) {
     // Rollback optimistic state update
     dispatch({ type: 'DELETE_BY_CUSTOM_ID', payload: tempId });
-    console.error('Error adding custom seed:', error);
+    throw new Error(`Error adding custom seed: ${error}`);
   }
 }
 
@@ -93,7 +91,7 @@ export async function runDeleteByCatalogId(dispatch: Dispatch<UserSeedAction>, u
     // Database delete
     await deleteByCatalogId(userId, catalogSeedId);
   } catch (error) {
-    console.error('Error deleting seed from collection: ', error);
+    throw new Error(`Error deleting seed from collection: ${error}`);
   }
 }
 
@@ -107,7 +105,7 @@ export async function runSetSeedFavorite(dispatch: Dispatch<UserSeedAction>, see
     await updateCollectionFavorite(seed.id, isFavorite);
   } catch (error) {
     dispatch({ type: 'SET_SEED_FAVORITE', payload: { collectionId: seed.id, isFavorite: previous } });
-    console.error('Error updating seed favorite:', error);
+    throw new Error(`Error updating seed favorite: ${error}`);
   }
 }
 
@@ -121,6 +119,6 @@ export async function runDeleteByCustomId(dispatch: Dispatch<UserSeedAction>, cu
     // Database delete
     await deleteByCustomId(customSeedId);
   } catch (error) {
-    console.error('Error deleting seed from collection: ', error);
+    throw new Error(`Error deleting seed from collection: ${error}`);
   }
 }

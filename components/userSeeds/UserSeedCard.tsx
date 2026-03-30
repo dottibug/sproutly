@@ -32,29 +32,20 @@ export default function UserSeedCard({ seed, showDeleteConfirmation, onSetDelete
   };
 
   // Show the delete confirmation
-  const handleLongPress = () => {
-    console.log('handleLongPress called');
-    onSetDeleteIsOpenForId(seed.id);
-  };
+  const handleLongPress = () => onSetDeleteIsOpenForId(seed.id);
 
   // Hide the delete confirmation
-  const handleCancel = () => {
-    console.log('handleCancel called');
-    onSetDeleteIsOpenForId(null);
-  };
+  const handleCancel = () => onSetDeleteIsOpenForId(null);
 
   // Delete the seed from the database
   const handleDelete = () => {
-    console.log('handleDelete called');
     if (seed.catalogSeedId) deleteByCatalogId(seed);
     else deleteByCustomId(seed);
     onSetDeleteIsOpenForId(null);
   };
 
   // Toggle the favorite status of the seed
-  const handleFavorite = () => {
-    void setSeedFavorite(seed, !seed.isFavorite);
-  };
+  const handleFavorite = () => void setSeedFavorite(seed, !seed.isFavorite);
 
   return (
     <>

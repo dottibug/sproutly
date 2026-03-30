@@ -6,16 +6,6 @@ import { buildUserSeedPhoto } from './photoUtils';
 
 // photoQueries.tsx: Contains database queries for photos
 
-// https://supabase.com/docs/reference/javascript/storage-from-upload
-// ** For React Native, upload files using ArrayBuffer from base64 file data, as specified in the Supabase docs
-
-// https://docs.expo.dev/tutorial/image-picker/
-// https://docs.expo.dev/versions/v54.0.0/sdk/imagepicker/#imagepickeroptions
-// •• ImagePicker options includes a boolean flag for base64 encoding
-
-// https://supabase.com/docs/reference/javascript/storage-from-createsignedurl
-// ** Signed URLs are used to access private storage buckets; tokens expire after 1 hour
-
 const USER_BUCKET = 'user_seed_images';
 
 // Upload an image to supabase storage bucket. Returns the path of the uploaded image (or null if error)
@@ -32,10 +22,7 @@ export async function uploadImage(userId: string, mimeType: string | undefined, 
     upsert: false,
   });
 
-  if (error) {
-    console.error('Error uploading image to Supabase storage:', error);
-    return null;
-  }
+  if (error) return null;
   return path;
 }
 
@@ -43,18 +30,9 @@ export async function uploadImage(userId: string, mimeType: string | undefined, 
 export async function getSignedImageUrl(path: string): Promise<string> {
   if (!path) return '';
   if (path.startsWith('http')) return path;
-
   const { data, error } = await supabase.storage.from(USER_BUCKET).createSignedUrl(path, 60 * 60);
-
-  if (error) {
-    console.log('createSignedUrl error', { path, error });
-    return '';
-  }
-
-  if (!data?.signedUrl) {
-    console.log('createSignedUrl missing signedUrl', { path, data });
-    return 'null';
-  }
+  if (error) return '';
+  if (!data?.signedUrl) return 'null';
   return data.signedUrl;
 }
 
@@ -126,3 +104,15 @@ export async function signPhotos(seed: UserSeed): Promise<UserSeed> {
     photos,
   };
 }
+
+// ---- REFERENCE LINKS ----
+
+// https://supabase.com/docs/reference/javascript/storage-from-upload
+// ** For React Native, upload files using ArrayBuffer from base64 file data, as specified in the Supabase docs
+
+// https://docs.expo.dev/tutorial/image-picker/
+// https://docs.expo.dev/versions/v54.0.0/sdk/imagepicker/#imagepickeroptions
+// •• ImagePicker options includes a boolean flag for base64 encoding
+
+// https://supabase.com/docs/reference/javascript/storage-from-createsignedurl
+// ** Signed URLs are used to access private storage buckets; tokens expire after 1 hour

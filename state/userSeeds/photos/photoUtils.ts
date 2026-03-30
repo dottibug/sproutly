@@ -94,12 +94,8 @@ export async function selectImage(): Promise<ImagePreview | null> {
   });
 
   if (result.canceled) return null;
-
   const asset = result.assets[0];
-  if (!asset?.base64) {
-    console.log('Picked image missing base64 data');
-    return null;
-  }
+  if (!asset?.base64) return null;
 
   return {
     uri: asset.uri,

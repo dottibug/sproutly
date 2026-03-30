@@ -5,7 +5,7 @@ import { colors } from '../../../styles/theme';
 
 // FABButton.tsx: Renders an absolutely positioned FAB button with an icon. Used for any FAB button in the app. Parent view must have position: relative.
 
-type FABButtonProps = {
+type FabButtonProps = {
   readonly iconName: 'calendar-plus' | 'sticky-note' | 'camera' | 'plus';
   readonly iconSize: number;
   readonly accessibilityLabel: string;
@@ -13,7 +13,7 @@ type FABButtonProps = {
   readonly onPress: () => void;
 };
 
-export default function FABButton({ iconName, iconSize, accessibilityLabel, bottomInset, onPress }: FABButtonProps) {
+export default function FabButton({ iconName, iconSize, accessibilityLabel, bottomInset, onPress }: FabButtonProps) {
   function fabIcon() {
     return <FontAwesome5 name={iconName} size={iconSize} color={colors.white} solid />;
   }

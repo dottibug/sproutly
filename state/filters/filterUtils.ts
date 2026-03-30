@@ -98,22 +98,6 @@ export function filterByReadyToHarvest(seed: UserSeed | BrowseSeed, selected: st
   });
 }
 
-// TODO: I think this is unused and can be removed now
-// Filter browse seeds by category
-export function filterBrowseSeeds(seeds: BrowseSeed[], selectedFilters: Set<CategoryFilter>): BrowseSeed[] {
-  if (selectedFilters.size > 0) {
-    const filterArray = Array.from(selectedFilters);
-
-    const filters = filterArray.map((plantType) => {
-      if (plantType === 'Veggie') return 'Vegetable';
-      return plantType;
-    });
-
-    return seeds.filter((seed) => new Set(filters).has(seed.category));
-  }
-  return seeds; // No filters applied (return all seeds)
-}
-
 export function getNumberOfSelectedFilters(selectedFilters: SelectedFilters): number {
   return Object.values(selectedFilters).reduce((acc, curr) => acc + curr.length, 0);
 }

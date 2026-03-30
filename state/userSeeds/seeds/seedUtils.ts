@@ -139,40 +139,6 @@ export function matchBeanVariant(beanType: string | null): BeanVariantForPlantin
   else return 'bush_pole';
 }
 
-// Helper function to create a user seed object from a database row
-export function createUserSeedFromDatabase(row: any, planting: Planting[]): UserSeed {
-  const source = row.seed_catalog ?? row.custom_seeds;
-  if (!source) throw new Error(`User row ${row.id} has no seed data`);
-
-  return buildUserSeed({
-    id: row.id,
-    catalogSeedId: row.catalog_seed_id,
-    customSeedId: row.custom_seed_id,
-    variety: source.variety,
-    sku: source.sku,
-    category: source.category,
-    beanType: source.bean_type,
-    plant: source.plant,
-    latin: source.latin,
-    difficulty: source.difficulty,
-    exposure: source.exposure,
-    maturesInDays: source.matures_in_days,
-    maturesUnderDays: source.matures_under_days,
-    description: source.description,
-    timing: source.timing,
-    starting: source.starting,
-    growing: source.growing,
-    harvest: source.harvest,
-    companionPlanting: source.companion_planting,
-    image: source.image ?? '',
-    planting: planting,
-    isFavorite: Boolean(row.is_favorite),
-    notes: [],
-    photos: [],
-    tasks: [],
-  });
-}
-
 // Replace the optimistic custom seed in state with the successful DB insert (ensures the custom seed id is updated in state)
 export function replaceUISeed(seeds: UserSeed[], payload: UserSeed & { tempId: string }) {
   const seedsCopy = [...seeds];

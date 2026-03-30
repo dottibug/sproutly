@@ -5,7 +5,7 @@ import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
 import { UserSeedTab, UserSeed, GalleryCell } from '../../state/barrels/typesBarrel';
 import { flattenPhotos } from '../../state/userSeeds/photos/photoUtils';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import { Loading, ScreenMessage, FABButton, AlertDialog } from '../uiComponentBarrel';
+import { Loading, ScreenMessage, FabButton, AlertDialog } from '../uiComponentBarrel';
 import GalleryModal from '../gallery/GalleryModal';
 import { colors } from '../../styles/theme';
 
@@ -67,7 +67,7 @@ export default function UserSeedPhotos({ seed, activeTab }: UserSeedPhotosProps)
         </>
       )}
       <GalleryModal visible={selected !== null} onRequestClose={() => setSelected(null)} selected={selected} useViewButton={false} />
-      <FABButton iconName="camera" iconSize={24} accessibilityLabel="Add photo" bottomInset={insets.bottom} onPress={handleAddPhoto} />
+      <FabButton iconName="camera" iconSize={24} accessibilityLabel="Add photo" bottomInset={insets.bottom} onPress={handleAddPhoto} />
     </View>
   );
 }

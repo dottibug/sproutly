@@ -3,7 +3,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useUserSeed } from '../../../state/userSeeds/UserSeedsContext';
 import { UserSeedTab, UserSeed, UserSeedNote } from '../../../state/barrels/typesBarrel';
-import { ScreenMessage, FABButton } from '../../uiComponentBarrel';
+import { ScreenMessage, FabButton } from '../../uiComponentBarrel';
 import Note from './Note';
 import { colors } from '../../../styles/theme';
 
@@ -73,7 +73,7 @@ export default function UserSeedNotes({ seed, activeTab }: UserSeedNotesProps) {
           )}
         </View>
       </ScrollView>
-      <FABButton iconName="sticky-note" iconSize={24} accessibilityLabel="Add note" bottomInset={insets.bottom} onPress={handleNewNote} />
+      <FabButton iconName="sticky-note" iconSize={24} accessibilityLabel="Add note" bottomInset={insets.bottom} onPress={handleNewNote} />
     </View>
   );
 }

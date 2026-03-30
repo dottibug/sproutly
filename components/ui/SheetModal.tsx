@@ -136,10 +136,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.blackSheer75,
     position: 'relative',
   },
-  kav: {
-    width: '100%',
-    justifyContent: 'flex-end',
-  },
   sheet: {
     width: '100%',
     backgroundColor: colors.white,

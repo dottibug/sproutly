@@ -8,7 +8,6 @@ export const colors = {
   primary: '#2f2f2f',
   secondary: '#7d7d7d',
   white: '#FFF',
-  black: '#000',
   gray100: '#f2f2f2',
   gray200: '#e6e8e7',
   gray300: '#cccccc',
@@ -16,37 +15,27 @@ export const colors = {
   gray500: '#7d7d7d',
   gray600: '#5b5b5b',
   gray700: '#2f2f2f',
-
-  blackSheer95: 'rgba(0, 0, 0, 0.95)',
-  blackSheer85: 'rgba(0, 0, 0, 0.85)',
   blackSheer80: 'rgba(0, 0, 0, 0.80)',
   blackSheer75: 'rgba(0, 0, 0, 0.75)',
   blackSheer65: 'rgba(0, 0, 0, 0.65)',
   blackSheer55: 'rgba(0, 0, 0, 0.55)',
   blackSheer45: 'rgba(0, 0, 0, 0.45)',
-  blackSheer35: 'rgba(0, 0, 0, 0.35)',
-  blackSheer25: 'rgba(0, 0, 0, 0.25)',
   blackSheer15: 'rgba(0, 0, 0, 0.15)',
-
-  greenLight: '#79988C', // #79988C
-  greenMedium: '#40725E', // #40725E
-  greenDark: '#2B624D', // #2B624D
-  greenDark90: '#2B624D90', // #2B624D80
-
-  chocolate: '#5F484F', // chocolate #5F484F (sow)
-  teal: '#4B927A', // teal #4B927A (harvest)
-  blue: '#669BBC', // blue #669BBC (custom)
-  amethyst: '#AD6FB3', // amethyst #AD6FB3 (prune)
-  tangerine: '#FAA26B', // tangerine #FAA26B (transplant)
-  coral: '#D57373', // coral #D57373 (fertilize)
-  dusk: '#445A9C', // dusk #445A9C
-  pink: '#F4608C', // pink #F4608C
-  peach: '#f79d65', // peach #f79d65
-  red: '#D65564', // red #D65564
-  lavender: '#6D5379', // lavender #6D5379
-  grapefruit: '#FB7A78', // grapefruit #FB7A78
-  grape: '#584778', // grape #584778
-  yellow: '#F3C51F', // yellow2 #fcdc5d
+  greenLight: '#79988C',
+  greenMedium: '#40725E',
+  greenDark: '#2B624D',
+  greenDark90: '#2B624D90',
+  chocolate: '#5F484F',
+  teal: '#4B927A',
+  blue: '#669BBC',
+  amethyst: '#AD6FB3',
+  tangerine: '#FAA26B',
+  coral: '#D57373',
+  dusk: '#445A9C',
+  pink: '#F4608C',
+  peach: '#f79d65',
+  red: '#D65564',
+  lavender: '#6D5379',
 };
 
 export const seedTypeColorMap = {
@@ -88,13 +77,9 @@ export const headingSizeMap = {
 
 export const text = StyleSheet.create({
   uppercase: { textTransform: 'uppercase' } satisfies TextStyle,
-  italic: { fontStyle: 'italic' } satisfies TextStyle,
-  mediumBold: { fontWeight: '500' } satisfies TextStyle,
   semibold: { fontWeight: '600' } satisfies TextStyle,
   bold: { fontWeight: '700' } satisfies TextStyle,
-  small: { fontSize: 14 } satisfies TextStyle,
   medium: { fontSize: 16 } satisfies TextStyle,
-  large: { fontSize: 20 } satisfies TextStyle,
 });
 
 export const inputStyles = StyleSheet.create({
@@ -160,27 +145,5 @@ export const appStyles = StyleSheet.create({
   resultsList: {
     flex: 1,
     gap: 16,
-  },
-  modalContainer: {
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    flex: 1,
-    justifyContent: 'center',
-  },
-  modalContent: {
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderRadius: 20,
-    elevation: 5,
-    gap: 12,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    width: '80%',
   },
 });
