@@ -57,7 +57,7 @@ export default function SeedCardInfo({
             <Pressable style={styles.actionButton} onPress={onViewSeed}>
               <Text style={styles.actionButtonText}>View Seed</Text>
             </Pressable>
-            {cardType === 'browse' && (
+            {cardType === 'browse' && !inUserCollection && (
               <View style={[styles.cornerButton, { backgroundColor: colors.blackSheer55 }]}>
                 <IconButton icon="plus" size={18} color={colors.gray100} onPress={onAddToCollection} />
               </View>
