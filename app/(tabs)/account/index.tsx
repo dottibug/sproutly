@@ -1,6 +1,6 @@
 import { Text, View, StyleSheet, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { useAuth } from '../../../state/auth/AuthContext';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Logo from '../../../components/app/Logo';
@@ -21,6 +21,14 @@ export default function Account() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
+      <Stack.Screen
+        options={{
+          title: 'Account',
+          headerBackButtonDisplayMode: 'minimal',
+          headerTintColor: colors.greenMedium,
+          headerTitleAlign: 'center',
+        }}
+      />
       <View style={styles.contentContainer}>
         <View style={styles.logoContainer}>
           <Logo size="medium" showText={true} />

@@ -85,7 +85,7 @@ const CELL_SIZE = (SCREEN_WIDTH - PADDING * 2 - GAP) / COLS;
 // ---- STYLES ----
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.gray200,
+    // backgroundColor: colors.gray200,
     flex: 1,
     paddingTop: PADDING,
     position: 'relative',

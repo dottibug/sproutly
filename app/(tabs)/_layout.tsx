@@ -2,9 +2,11 @@ import { Tabs } from 'expo-router';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { colors } from '../../styles/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // (tabs)/_layout.tsx: Tabs layout for the app
 export default function TabsLayout() {
+  const insets = useSafeAreaInsets();
   return (
     <Tabs
       screenOptions={{
@@ -16,6 +18,8 @@ export default function TabsLayout() {
         },
         tabBarStyle: {
           paddingHorizontal: 12,
+          paddingBottom: insets.bottom,
+          backgroundColor: colors.white,
         },
         tabBarLabelStyle: {
           fontSize: 11,

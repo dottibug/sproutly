@@ -21,9 +21,9 @@ export default function BrowseSeedCard({ seed }: BrowseSeedCardProps) {
     void (async () => {
       const result = await addSeedFromBrowse(seed);
       if (result === 'added') {
-        Alert.alert('Added to collection', `${seedLabel} is now in My Seeds.`);
+        Alert.alert('Seed successfully added', `${seedLabel} is now in your seed collection.`);
       } else if (result === 'duplicate') {
-        Alert.alert('Already in collection', 'This seed is already in My Seeds.');
+        Alert.alert('Already in collection', 'This seed is already in your collection.');
       } else if (result === 'failed') {
         Alert.alert('Could not add seed', 'Something went wrong. Please try again.');
       } else if (result === 'no_user') {

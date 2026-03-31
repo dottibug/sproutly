@@ -1,6 +1,7 @@
 import { StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEffect, useState } from 'react';
+import { Stack } from 'expo-router';
 import { useBrowseSeed } from '../../../state/browseSeeds/BrowseSeedContext';
 import { useFilters } from '../../../state/filters/FiltersContext';
 import UserSeeds from '../../../components/userSeeds/UserSeeds';

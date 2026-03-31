@@ -21,19 +21,21 @@ export default function AppLoadingScreen() {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
+    justifyContent: 'center',
     flex: 1,
     gap: 32,
-    marginTop: 96,
+    marginTop: -64,
   },
   loadingMessageContainer: {
     alignItems: 'center',
     flexDirection: 'row',
     gap: 12,
     justifyContent: 'center',
-    marginTop: 64,
+    marginTop: 48,
   },
   message: {
     color: colors.greenDark,
     fontSize: 20,
+    marginRight: 10,
   },
 });

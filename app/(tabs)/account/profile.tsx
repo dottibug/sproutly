@@ -9,6 +9,7 @@ import TasksToday from '../../../components/profile/TasksToday';
 import ScreenOptions from '../../../components/ui/ScreenOptions';
 import NoTasksToday from '../../../components/profile/NoTasksToday';
 import { colors, fonts } from '../../../styles/theme';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Profile.tsx: Displays stats about the user's collection and tasks
 
@@ -22,23 +23,26 @@ export default function Profile() {
   const hasTasksDueToday = tasksDueToday > 0;
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <ScreenOptions backButtonMode="generic" title="Profile" backTitle="Back" />
-      <View style={styles.stats}>
-        {/* Member Since — profile.createdAt from Supabase */}
-        <View style={styles.memberSinceContainer}>
-          <Logo size="medium" showText={false} />
-          <View style={styles.memberSinceTextContainer}>
-            <Text style={styles.memberSinceText}>Joined Sproutly</Text>
-            <Text style={styles.memberSinceDate}>{memberSince ?? '—'}</Text>
+      <View style={styles.contentContainer}>
+        <Text style={styles.title}>Your Sproutly Stats</Text>
+        <View style={styles.stats}>
+          {/* Member Since — profile.createdAt from Supabase */}
+          <View style={styles.memberSinceContainer}>
+            <Logo size="medium" showText={false} />
+            <View style={styles.memberSinceTextContainer}>
+              <Text style={styles.memberSinceText}>Joined Sproutly</Text>
+              <Text style={styles.memberSinceDate}>{memberSince ?? '—'}</Text>
+            </View>
           </View>
+
+          <View style={styles.seedsContainer}>{hasSeeds ? <SeedsCollected seedCount={seedCount} /> : <NoSeedsCollected />}</View>
+
+          <View style={styles.tasksContainer}>{hasTasksDueToday ? <TasksToday tasksDueToday={tasksDueToday} /> : <NoTasksToday />}</View>
         </View>
-
-        <View style={styles.seedsContainer}>{hasSeeds ? <SeedsCollected seedCount={seedCount} /> : <NoSeedsCollected />}</View>
-
-        <View style={styles.tasksContainer}>{hasTasksDueToday ? <TasksToday tasksDueToday={tasksDueToday} /> : <NoTasksToday />}</View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -49,7 +53,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: -32,
+    marginTop: 12,
+  },
+  contentContainer: {
+    alignItems: 'center',
+    flex: 1,
+    gap: 64,
+    paddingHorizontal: 16,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: colors.secondary,
+    paddingBottom: 2,
+    borderBottomWidth: 2,
+    borderColor: colors.greenLight,
   },
   stats: {
     alignItems: 'center',

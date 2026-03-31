@@ -104,6 +104,7 @@ const styles = StyleSheet.create({
   userSeedsContainer: {
     flex: 1,
     position: 'relative',
+    paddingBottom: 24,
   },
   userSeedsContent: {
     flex: 1,

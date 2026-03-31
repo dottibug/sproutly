@@ -38,6 +38,7 @@ export default function SeedDetailsScreen() {
           title: headerTitle,
           headerBackButtonDisplayMode: 'minimal',
           headerTintColor: colors.greenMedium,
+          headerTitleAlign: 'center',
         }}
       />
       {isMySeedsTab ? <UserSeedScreen seed={seed as UserSeed} /> : <BrowseSeedDetails seed={seed as BrowseSeed} />}

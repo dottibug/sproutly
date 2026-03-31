@@ -5,6 +5,7 @@ import { AppProviders } from '../state/app/AppProviders';
 import { useFonts } from '@expo-google-fonts/aladin/useFonts';
 import { Aladin_400Regular } from '@expo-google-fonts/aladin/400Regular';
 import AppLoadingScreen from '../components/ui/AppLoadingScreen';
+import { StatusBar } from 'expo-status-bar';
 
 // app/_layout.tsx: Root layout that wraps the whole app
 export default function RootLayout() {
@@ -15,15 +16,18 @@ export default function RootLayout() {
     return <AppLoadingScreen />;
   }
   return (
-    <SafeAreaProvider>
-      <AuthProvider>
-        <AppProviders>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="(auth)" />
-            <Stack.Screen name="(tabs)" />
-          </Stack>
-        </AppProviders>
-      </AuthProvider>
-    </SafeAreaProvider>
+    <>
+      <StatusBar style="dark" />
+      <SafeAreaProvider>
+        <AuthProvider>
+          <AppProviders>
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="(auth)" />
+              <Stack.Screen name="(tabs)" />
+            </Stack>
+          </AppProviders>
+        </AuthProvider>
+      </SafeAreaProvider>
+    </>
   );
 }

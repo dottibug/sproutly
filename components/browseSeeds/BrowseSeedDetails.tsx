@@ -40,7 +40,7 @@ export default function BrowseSeedDetails({ seed }: BrowseSeedDetailsProps) {
   };
 
   return (
-    <ScrollView style={styles.scrollStyle} contentContainerStyle={styles.scrollContent}>
+    <ScrollView style={styles.scrollStyle} contentContainerStyle={[styles.scrollContent, { paddingBottom: inUserCollection ? 0 : 24 }]}>
       <View style={styles.heroWrap}>
         <SeedImage imageUri={seed.image} size="large" />
         {!inUserCollection && (

@@ -41,7 +41,7 @@ export default function SignIn() {
   const handleSignUp = () => router.push('/(auth)/signUp');
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <Logo size="medium" />
       <View style={styles.formContainer}>
         <Text style={styles.description}>{SUBTITLE}</Text>
@@ -83,6 +83,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 48,
     paddingHorizontal: 48,
+    width: '100%',
   },
   description: {
     fontSize: 18,
@@ -92,6 +93,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     gap: 24,
+    width: '100%',
   },
   buttonContainer: {
     gap: 16,

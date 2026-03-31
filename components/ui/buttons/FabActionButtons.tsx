@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { FAB as PaperFAB, Portal } from 'react-native-paper';
 import { colors } from '../../../styles/theme';
 
@@ -49,9 +49,9 @@ export default function FabActionButtons({
         icon={open ? 'close' : 'plus'}
         open={open}
         onStateChange={({ open }) => setFabOpen(open)}
-        fabStyle={[styles.mainFab, { bottom: bottomInset }]}
+        fabStyle={[styles.mainFab, { bottom: bottomInset, marginTop: Platform.OS === 'ios' ? 24 : 42 }]}
         color={colors.gray200}
-        style={[styles.groupStyle, { bottom: bottomInset }]}
+        style={[styles.groupStyle, { bottom: Platform.OS === 'ios' ? 18 : 0 }]}
         visible={showFabActions}
       />
     </Portal>
@@ -62,19 +62,18 @@ export default function FabActionButtons({
 const styles = StyleSheet.create({
   groupStyle: {},
   mainFab: {
-    backgroundColor: colors.blackSheer45,
+    backgroundColor: colors.gray600,
     borderRadius: 100,
     color: colors.gray200,
     marginTop: 28,
     padding: 4,
   },
   fab: {
-    backgroundColor: colors.blackSheer45,
+    backgroundColor: colors.gray600,
     borderRadius: 100,
     padding: 4,
   },
   wrapperStyle: {},
-
   containerStyle: {
     marginRight: 8,
   },

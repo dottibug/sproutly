@@ -146,8 +146,10 @@ const styles = StyleSheet.create({
   },
   inputMultiline: {
     height: 120,
-    maxHeight: 120,
+    minHeight: 120,
+    maxHeight: 240,
     paddingTop: 12,
+    textAlignVertical: 'top',
   },
   inputError: {
     borderColor: colors.red,

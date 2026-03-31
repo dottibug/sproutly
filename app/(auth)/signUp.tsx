@@ -82,6 +82,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 48,
     paddingHorizontal: 48,
+    width: '100%',
   },
   description: {
     fontSize: 18,
@@ -91,6 +92,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     gap: 24,
+    width: '100%',
   },
   buttonContainer: {
     gap: 16,

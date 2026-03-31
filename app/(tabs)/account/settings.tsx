@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
 import { useState, useCallback, useEffect } from 'react';
 import { useFilters } from '../../../state/filters/FiltersContext';
 import { SearchFilter, SEARCH_FILTER_NAMES, FILTER_NAME_MAP } from '../../../state/filters/filterTypes';
@@ -24,6 +24,7 @@ export default function Settings() {
     const newPrefs = { ...preferences, order: editingFilterOrder };
     setFilterPreferences(newPrefs);
     await saveFilterPreferences(newPrefs);
+    Alert.alert('Settings saved', 'Your filter preferences were updated successfully.');
   }, [saveFilterPreferences, preferences, editingFilterOrder, setFilterPreferences]);
 
   // Save new open filter preferences to the database
@@ -31,6 +32,7 @@ export default function Settings() {
     const newPrefs = { ...preferences, openByDefault: openByDefault };
     setFilterPreferences(newPrefs);
     await saveFilterPreferences(newPrefs);
+    Alert.alert('Settings saved', 'Your filter preferences were updated successfully.');
   }, [saveFilterPreferences, preferences, setFilterPreferences, openByDefault]);
 
   // Toggles the "default open" filter settings (in the UI)
@@ -77,7 +79,7 @@ export default function Settings() {
                 <Switch
                   value={openByDefault.includes(filter)}
                   onValueChange={() => toggleOpenByDefault(filter)}
-                  color={colors.greenDark90}
+                  color={colors.greenLight}
                 />
               </View>
               <Text style={styles.switchLabel}>{FILTER_NAME_MAP[filter]}</Text>

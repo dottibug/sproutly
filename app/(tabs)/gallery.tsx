@@ -7,6 +7,7 @@ import { flattenPhotos } from '../../state/userSeeds/photos/photoUtils';
 import { Loading, ScreenMessage } from '../../components/uiComponentBarrel';
 import GalleryModal from '../../components/gallery/GalleryModal';
 import { colors } from '../../styles/theme';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // GalleryScreen.tsx: Displays all the user's photos in a 2x2 grid
 
@@ -32,27 +33,36 @@ export default function GalleryScreen() {
   );
 
   return (
-    <View style={styles.container}>
-      <Stack.Screen options={{ title: 'Photo Gallery', headerShown: true }} />
-      <Text style={styles.subtitle}>Tap a photo for a larger view</Text>
-      {!hasPhotos && <ScreenMessage message={NO_PHOTOS_MESSAGE} />}
-      {hasPhotos && (
-        <FlatList
-          data={cells}
-          keyExtractor={(item) => item.key}
-          numColumns={2}
-          columnWrapperStyle={styles.row}
-          contentContainerStyle={styles.list}
-          renderItem={photoCell}
-        />
-      )}
-      <GalleryModal
-        visible={selected !== null}
-        onRequestClose={() => setSelected(null)}
-        selected={selected}
-        isSeedInCollection={isSeedInCollection(selected?.seed?.id ?? '')}
+    <>
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          title: 'Photo Gallery',
+          headerTintColor: colors.greenMedium,
+          headerTitleAlign: 'center',
+        }}
       />
-    </View>
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <Text style={styles.subtitle}>Tap a photo for a larger view</Text>
+        {!hasPhotos && <ScreenMessage message={NO_PHOTOS_MESSAGE} />}
+        {hasPhotos && (
+          <FlatList
+            data={cells}
+            keyExtractor={(item) => item.key}
+            numColumns={2}
+            columnWrapperStyle={styles.row}
+            contentContainerStyle={styles.list}
+            renderItem={photoCell}
+          />
+        )}
+        <GalleryModal
+          visible={selected !== null}
+          onRequestClose={() => setSelected(null)}
+          selected={selected}
+          isSeedInCollection={isSeedInCollection(selected?.seed?.id ?? '')}
+        />
+      </SafeAreaView>
+    </>
   );
 }
 
@@ -69,7 +79,6 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.gray200,
     flex: 1,
-    paddingTop: PADDING,
   },
   subtitle: {
     color: colors.secondary,

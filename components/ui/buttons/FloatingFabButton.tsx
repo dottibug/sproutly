@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { FAB as PaperFAB } from 'react-native-paper';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { colors } from '../../../styles/theme';
@@ -17,6 +17,7 @@ export default function FabButton({ iconName, iconSize, accessibilityLabel, bott
   function fabIcon() {
     return <FontAwesome5 name={iconName} size={iconSize} color={colors.white} solid />;
   }
+  console.log('bottomInset', bottomInset);
   return (
     <PaperFAB
       accessibilityLabel={accessibilityLabel}
@@ -24,8 +25,8 @@ export default function FabButton({ iconName, iconSize, accessibilityLabel, bott
       style={[
         styles.fab,
         {
-          backgroundColor: colors.blackSheer45,
-          bottom: bottomInset,
+          backgroundColor: colors.gray600,
+          bottom: 18,
           right: 16,
         },
       ]}

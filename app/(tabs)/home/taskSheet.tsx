@@ -115,7 +115,7 @@ export default function TaskSheet() {
 
   return (
     <ScrollView style={styles.screen} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
-      <ScreenOptions backButtonMode="generic" />
+      <ScreenOptions backButtonMode="generic" title="Tasks" />
       <View style={styles.contentContainer}>
         <Heading size="small" customStyles={styles.sheetTitle}>
           {sheetTitle}
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   },
   sheetTitle: {
     fontSize: 17,
-    textAlign: 'center',
+    textAlign: 'left',
   },
   contentContainer: {
     gap: 18,

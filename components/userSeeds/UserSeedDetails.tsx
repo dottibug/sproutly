@@ -2,7 +2,7 @@ import { ScrollView, View, Text, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
 import { UserSeed, UserSeedTab, Exposure } from '../../state/barrels/typesBarrel';
-import { AppButton, Accordion, Heading } from '../uiComponentBarrel';
+import { AppButton, Accordion, Heading, ScreenOptions } from '../uiComponentBarrel';
 import SeedImage from '../seeds/SeedImage';
 import SeedHeader from '../seeds/SeedHeader';
 import SeedQuickFacts from '../seeds/SeedQuickFacts';
