@@ -24,7 +24,7 @@ export default function UserSeedList({ seeds, deleteIsOpenForId, setDeleteIsOpen
         />
       )}
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 2, paddingBottom: 24 }}
+      contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 2, paddingBottom: 76 }}
       ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
     />
   );

@@ -19,6 +19,7 @@ export default function ScreenOptions({ backButtonMode = 'minimal', title = '', 
         title: title || '',
         headerBackTitle: backTitle || '',
         headerTitleAlign: 'center',
+        headerTitleStyle: { fontSize: 16 },
       }}
     />
   );

@@ -40,6 +40,7 @@ export default function GalleryScreen() {
           title: 'Photo Gallery',
           headerTintColor: colors.greenMedium,
           headerTitleAlign: 'center',
+          headerTitleStyle: { fontSize: 16 },
         }}
       />
       <SafeAreaView style={styles.container} edges={['top']}>
