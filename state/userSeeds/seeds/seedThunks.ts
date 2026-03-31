@@ -43,7 +43,7 @@ export async function runAddSeedFromBrowse(
     return 'added';
   } catch (error) {
     dispatch({ type: 'DELETE_BY_CATALOG_ID', payload: id });
-    throw new Error(`Error adding seed from browse: ${error}`);
+    return 'failed';
   }
 }
 
