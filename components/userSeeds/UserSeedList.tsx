@@ -1,6 +1,6 @@
-import { Fragment } from 'react';
 import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
 import UserSeedCard from './UserSeedCard';
+import { FlatList, View } from 'react-native';
 
 // UserSeedList.tsx: Renders a list of seeds in the user's collection.
 
@@ -12,15 +12,20 @@ type UserSeedListProps = {
 
 export default function UserSeedList({ seeds, deleteIsOpenForId, setDeleteIsOpenForId }: UserSeedListProps) {
   return (
-    <Fragment>
-      {seeds.map((seed: UserSeed) => (
+    <FlatList
+      data={seeds}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item }) => (
         <UserSeedCard
-          key={seed.id}
-          seed={seed}
-          showDeleteConfirmation={deleteIsOpenForId === seed.id}
+          key={item.id}
+          seed={item}
+          showDeleteConfirmation={deleteIsOpenForId === item.id}
           onSetDeleteIsOpenForId={setDeleteIsOpenForId}
         />
-      ))}
-    </Fragment>
+      )}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 2, paddingBottom: 24 }}
+      ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+    />
   );
 }

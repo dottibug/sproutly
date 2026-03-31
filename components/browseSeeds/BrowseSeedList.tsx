@@ -1,6 +1,6 @@
-import { Fragment } from 'react';
 import { BrowseSeed } from '../../state/browseSeeds/browseTypes';
 import BrowseSeedCard from './BrowseSeedCard';
+import { FlatList, View } from 'react-native';
 
 // BrowseSeedList.tsx: Maps the seeds from the database catalog to BrowseSeedCard components.
 
@@ -10,10 +10,13 @@ type BrowseSeedListProps = {
 
 export default function BrowseSeedList({ seeds }: BrowseSeedListProps) {
   return (
-    <Fragment>
-      {seeds.map((seed: BrowseSeed) => (
-        <BrowseSeedCard key={seed.id} seed={seed} />
-      ))}
-    </Fragment>
+    <FlatList
+      data={seeds}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item }) => <BrowseSeedCard key={item.id} seed={item} />}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 2, paddingBottom: 24 }}
+      ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+    />
   );
 }

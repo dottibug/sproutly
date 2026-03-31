@@ -29,10 +29,8 @@ export default function HomeScreen() {
   return (
     <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: colors.white }}>
       <Tabs tabs={LIST_TABS} activeTab={activeTab} onTabPress={(tab: string) => handleTabPress(tab as ListTab)} />
-      <ScrollView style={styles.seedsContainer}>
-        <UserSeeds activeTab={activeTab} onGoToBrowse={() => handleTabPress('Browse')} />
-        <BrowseSeeds activeTab={activeTab} />
-      </ScrollView>
+      <UserSeeds activeTab={activeTab} onGoToBrowse={() => handleTabPress('Browse')} />
+      <BrowseSeeds activeTab={activeTab} />
     </SafeAreaView>
   );
 }

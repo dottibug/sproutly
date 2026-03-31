@@ -58,6 +58,5 @@ const styles = StyleSheet.create({
   },
   seedListContainer: {
     flex: 1,
-    paddingHorizontal: 16,
   },
 });
