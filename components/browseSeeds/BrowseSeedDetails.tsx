@@ -16,12 +16,13 @@ type BrowseSeedDetailsProps = {
 
 export default function BrowseSeedDetails({ seed }: BrowseSeedDetailsProps) {
   const { addSeedFromBrowse, seeds: userSeeds } = useUserSeed();
+
   const inUserCollection = userSeeds.some((s: UserSeed) => s.catalogSeedId === seed.id);
-  const showTiming = seed.timing !== null;
-  const showStarting = seed.starting !== null;
-  const showGrowing = seed.growing !== null;
-  const showHarvest = seed.harvest !== null;
-  const showCompanionPlanting = seed.companionPlanting !== null;
+  const showTiming = seed.timing !== null && seed.timing !== '';
+  const showStarting = seed.starting !== null && seed.starting !== '';
+  const showGrowing = seed.growing !== null && seed.growing !== '';
+  const showHarvest = seed.harvest !== null && seed.harvest !== '';
+  const showCompanionPlanting = seed.companionPlanting !== null && seed.companionPlanting !== '';
 
   const handleAddToCollection = () => {
     const seedLabel = `${seed.variety} ${seed.plant}`.trim();
