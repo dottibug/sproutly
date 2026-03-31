@@ -17,7 +17,6 @@ export default function FabButton({ iconName, iconSize, accessibilityLabel, bott
   function fabIcon() {
     return <FontAwesome5 name={iconName} size={iconSize} color={colors.white} solid />;
   }
-  console.log('bottomInset', bottomInset);
   return (
     <PaperFAB
       accessibilityLabel={accessibilityLabel}
