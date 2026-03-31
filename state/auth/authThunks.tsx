@@ -40,11 +40,31 @@ export function runSubscribeToAuthStateChanges(dispatch: Dispatch<AuthAction>) {
         type: 'LOAD_SUCCESS',
         payload: { session: null as Session | null, user: null as User | null, profile: null as Profile | null },
       });
-    } else {
+      return;
+    }
+
+    try {
       const profile = await fetchProfile(session.user.id);
+
+      if (!profile) {
+        await supabase.auth.signOut();
+        dispatch({
+          type: 'LOAD_SUCCESS',
+          payload: { session: null as Session | null, user: null as User | null, profile: null as Profile | null },
+        });
+        return;
+      }
+
       dispatch({ type: 'LOAD_SUCCESS', payload: { session, user: session.user, profile } });
+    } catch {
+      await supabase.auth.signOut();
+      dispatch({
+        type: 'LOAD_SUCCESS',
+        payload: { session: null as Session | null, user: null as User | null, profile: null as Profile | null },
+      });
     }
   });
+
   return subscription;
 }
 
@@ -71,11 +91,6 @@ export async function runSignUp(dispatch: Dispatch<AuthAction>, username: string
   try {
     const { data, error } = await supabase.auth.signUp({ email, password: UNIVERSAL_PIN, options: { data: { username: usernameTrim } } });
     if (error || !data.user) throw new Error('Sign up failed');
-    const { error: profileError } = await supabase.from('profiles').insert({
-      id: data.user.id,
-      username: usernameTrim,
-    });
-    if (profileError) throw profileError;
     const profile = await fetchProfile(data.user.id);
     dispatch({ type: 'SIGN_UP_SUCCESS', payload: { session: data.session, user: data.user, profile } });
   } catch (error) {

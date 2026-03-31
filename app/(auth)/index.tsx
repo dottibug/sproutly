@@ -7,7 +7,7 @@ import { Input, AppButton } from '../../components/uiComponentBarrel';
 import Logo from '../../components/app/Logo';
 import { colors } from '../../styles/theme';
 
-// (auth)/index.tsx: Sign in page for the app
+// (auth)/signIn.tsx: Sign in page for the app
 export default function SignIn() {
   const router = useRouter();
   const { signIn } = useAuth();
@@ -30,7 +30,6 @@ export default function SignIn() {
     try {
       setSubmitting(true);
       await signIn(username, pin);
-      router.replace('/(tabs)/home');
     } catch {
       Alert.alert(SIGN_IN_FAILED, SIGN_IN_FAIL_MESSAGE);
     } finally {
@@ -38,7 +37,7 @@ export default function SignIn() {
     }
   };
 
-  const handleSignUp = () => router.push('/(auth)/signUp');
+  const handleSignUp = () => router.push('/signUp');
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>

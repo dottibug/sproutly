@@ -28,7 +28,6 @@ export default function SignUp() {
     try {
       setSubmitting(true);
       await signUp(username);
-      router.replace('/(tabs)/home');
     } catch {
       Alert.alert(SIGN_UP_FAILED, SIGN_UP_FAIL_MESSAGE);
     } finally {
@@ -36,7 +35,7 @@ export default function SignUp() {
     }
   };
 
-  const handleSignIn = () => router.replace('/(auth)/');
+  const handleSignIn = () => router.back();
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
