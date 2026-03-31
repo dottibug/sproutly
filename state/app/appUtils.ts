@@ -15,12 +15,10 @@ export function searchSeeds(seeds: UserSeed[] | BrowseSeed[], searchQuery: strin
   const query = searchQuery.trim().toLowerCase();
   if (!query) return seeds;
 
-  return seeds.filter((seed) => {
-    const variety = seed.variety?.toLowerCase() ?? '';
-    const plant = seed.plant?.toLowerCase() ?? '';
-    const category = seed.category?.toLowerCase() ?? '';
-    const sku = seed.sku?.toLowerCase() ?? '';
+  const terms = query.split(' ').filter(Boolean);
 
-    return variety.includes(query) || plant.includes(query) || category.includes(query) || sku.includes(query);
+  return seeds.filter((seed) => {
+    const searchableFields = [seed.variety, seed.plant, seed.category, seed.sku, seed.latin].filter(Boolean).join(' ').toLowerCase();
+    return terms.every((term) => searchableFields.includes(term));
   });
 }
