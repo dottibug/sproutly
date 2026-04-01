@@ -32,16 +32,18 @@ export async function runAddSeedFromBrowse(
   browseSeed: BrowseSeed,
 ): Promise<AddSeedFromBrowseResult> {
   const { id } = browseSeed;
+  const tempId = createTempId();
 
   if (isDuplicateSeed(seeds, id)) return 'duplicate';
 
   // Optimistic state update
-  dispatch({ type: 'ADD_SEED_FROM_BROWSE', payload: browseSeed });
+  dispatch({ type: 'ADD_SEED_FROM_BROWSE', payload: { browseSeed, tempId } });
 
   try {
-    await addBrowseSeedToCollection(userId, id);
+    const insertedSeed = await addBrowseSeedToCollection(userId, id);
+    dispatch({ type: 'SYNC_BROWSE_SEED_WITH_DB', payload: { tempId, id: insertedSeed.id } });
     return 'added';
-  } catch (error) {
+  } catch {
     dispatch({ type: 'DELETE_BY_CATALOG_ID', payload: id });
     return 'failed';
   }

@@ -30,9 +30,9 @@ export function buildBrowseSeed(input: BuildBrowseSeedInput): BrowseSeed {
 }
 
 // Create a user seed from a browse seed
-export function createUserSeedFromBrowse(seed: BrowseSeed) {
+export function createUserSeedFromBrowse(seed: BrowseSeed, tempId: string) {
   return buildUserSeed({
-    id: '',
+    id: tempId,
     catalogSeedId: seed.id,
     customSeedId: null,
     variety: seed.variety,

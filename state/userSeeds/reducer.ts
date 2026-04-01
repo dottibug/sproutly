@@ -23,7 +23,13 @@ export function userSeedReducer(state: UserSeedState, action: UserSeedAction): U
       return { ...state, loading: false, error: payload };
 
     case 'ADD_SEED_FROM_BROWSE':
-      return { ...state, seeds: [...state.seeds, createUserSeedFromBrowse(payload)] };
+      return { ...state, seeds: [createUserSeedFromBrowse(payload.browseSeed, payload.tempId), ...state.seeds] };
+
+    case 'SYNC_BROWSE_SEED_WITH_DB':
+      return {
+        ...state,
+        seeds: state.seeds.map((seed) => (seed.id === payload.tempId ? { ...seed, id: payload.id } : seed)),
+      };
 
     case 'ADD_CUSTOM_SEED':
       return { ...state, seeds: [payload, ...state.seeds] };

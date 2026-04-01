@@ -14,7 +14,8 @@ export type SeedAction =
   | { type: 'LOAD_START'; payload: null }
   | { type: 'LOAD_SUCCESS'; payload: UserSeed[] }
   | { type: 'LOAD_ERROR'; payload: string }
-  | { type: 'ADD_SEED_FROM_BROWSE'; payload: BrowseSeed }
+  | { type: 'ADD_SEED_FROM_BROWSE'; payload: { browseSeed: BrowseSeed; tempId: string } }
+  | { type: 'SYNC_BROWSE_SEED_WITH_DB'; payload: { tempId: string; id: string } }
   | { type: 'ADD_CUSTOM_SEED'; payload: UserSeed }
   | { type: 'SYNC_CUSTOM_SEED_WITH_DB'; payload: UserSeed & { tempId: string } }
   | { type: 'DELETE_BY_CATALOG_ID'; payload: UserSeed['catalogSeedId'] }
