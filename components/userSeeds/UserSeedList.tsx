@@ -1,6 +1,7 @@
 import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
 import UserSeedCard from './UserSeedCard';
 import { FlatList, View } from 'react-native';
+import { colors } from '../../styles/theme';
 
 // UserSeedList.tsx: Renders a list of seeds in the user's collection.
 
@@ -24,7 +25,7 @@ export default function UserSeedList({ seeds, deleteIsOpenForId, setDeleteIsOpen
         />
       )}
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 2, paddingBottom: 76 }}
+      contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 2, paddingBottom: 76, backgroundColor: colors.white }}
       ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
     />
   );

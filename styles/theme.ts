@@ -131,7 +131,7 @@ export const appStyles = StyleSheet.create({
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 5 },
         shadowOpacity: 0.13,
-        shadowRadius: 14,
+        shadowRadius: 9,
       },
       android: {
         elevation: 5,
@@ -145,6 +145,5 @@ export const appStyles = StyleSheet.create({
   resultsList: {
     flex: 1,
     gap: 16,
-    paddingTop: 8,
   },
 });
