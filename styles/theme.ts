@@ -145,5 +145,6 @@ export const appStyles = StyleSheet.create({
   resultsList: {
     flex: 1,
     gap: 16,
+    paddingTop: 8,
   },
 });
