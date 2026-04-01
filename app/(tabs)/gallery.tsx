@@ -7,7 +7,6 @@ import { flattenPhotos } from '../../state/userSeeds/photos/photoUtils';
 import { Loading, ScreenMessage } from '../../components/uiComponentBarrel';
 import GalleryModal from '../../components/gallery/GalleryModal';
 import { colors } from '../../styles/theme';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 // GalleryScreen.tsx: Displays all the user's photos in a 2x2 grid
 
@@ -43,7 +42,7 @@ export default function GalleryScreen() {
           headerTitleStyle: { fontSize: 16 },
         }}
       />
-      <SafeAreaView style={styles.container} edges={['top']}>
+      <View style={styles.container}>
         <Text style={styles.subtitle}>Tap a photo for a larger view</Text>
         {!hasPhotos && <ScreenMessage message={NO_PHOTOS_MESSAGE} />}
         {hasPhotos && (
@@ -62,7 +61,7 @@ export default function GalleryScreen() {
           selected={selected}
           isSeedInCollection={isSeedInCollection(selected?.seed?.id ?? '')}
         />
-      </SafeAreaView>
+      </View>
     </>
   );
 }
@@ -80,6 +79,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.gray200,
     flex: 1,
+    paddingTop: 16,
   },
   subtitle: {
     color: colors.secondary,
