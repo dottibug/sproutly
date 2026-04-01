@@ -38,10 +38,9 @@ export default function TaskSheet() {
   const dateMinimum = startOfToday();
 
   const dateForPicker = useMemo(() => {
-    if (!isUpdate) return startOfToday();
     const taskDate = new Date(task.date);
     return Number.isNaN(taskDate.getTime()) ? startOfToday() : taskDate;
-  }, [isUpdate, task.date]);
+  }, [task.date]);
 
   const sheetTitle = useMemo(() => getTaskSheetTitle(isUpdate, variety, plant), [isUpdate, variety, plant]);
 

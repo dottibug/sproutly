@@ -53,7 +53,7 @@ export default function CustomSeedSheet() {
     }, [resetCustomSeed]),
   );
 
-  const onSaveSeed = () => {
+  const onSaveSeed = async () => {
     if (!userId) return;
     const {
       isValid,
@@ -85,11 +85,14 @@ export default function CustomSeedSheet() {
       return;
     }
     if (customSeedDraft) {
-      addCustomSeed(preview, customSeedDraft).catch((error) =>
+      try {
+        await addCustomSeed(preview, customSeedDraft);
+      } catch (error) {
         Alert.alert('Could not add custom seed', 'Please try again.', [
           { text: 'OK', onPress: () => console.error('Error adding custom seed:', error) },
-        ]),
-      );
+        ]);
+        return;
+      }
     }
     customSeed.resetCustomSeed();
     router.back();
