@@ -21,18 +21,26 @@ export default function Settings() {
 
   // Save new filter order to the database
   const handleSaveFilterOrder = useCallback(async () => {
-    const newPrefs = { ...preferences, order: editingFilterOrder };
-    setFilterPreferences(newPrefs);
-    await saveFilterPreferences(newPrefs);
-    Alert.alert('Settings saved', 'Your filter preferences were updated successfully.');
+    try {
+      const newPrefs = { ...preferences, order: editingFilterOrder };
+      setFilterPreferences(newPrefs);
+      await saveFilterPreferences(newPrefs);
+      Alert.alert('Settings saved', 'Your filter preferences were updated successfully.');
+    } catch {
+      Alert.alert('Could not save', 'Please sign in again and try once more.');
+    }
   }, [saveFilterPreferences, preferences, editingFilterOrder, setFilterPreferences]);
 
   // Save new open filter preferences to the database
   const handleSaveOpenFilterPreferences = useCallback(async () => {
-    const newPrefs = { ...preferences, openByDefault: openByDefault };
-    setFilterPreferences(newPrefs);
-    await saveFilterPreferences(newPrefs);
-    Alert.alert('Settings saved', 'Your filter preferences were updated successfully.');
+    try {
+      const newPrefs = { ...preferences, openByDefault: openByDefault };
+      setFilterPreferences(newPrefs);
+      await saveFilterPreferences(newPrefs);
+      Alert.alert('Settings saved', 'Your filter preferences were updated successfully.');
+    } catch {
+      Alert.alert('Could not save', 'Please sign in again and try once more.');
+    }
   }, [saveFilterPreferences, preferences, setFilterPreferences, openByDefault]);
 
   // Toggles the "default open" filter settings (in the UI)

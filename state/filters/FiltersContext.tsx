@@ -132,7 +132,8 @@ export function FilterProvider({ children }: FilterProviderProps) {
   const saveFilterPreferences = useCallback(
     async (prefsToSave?: UserFilterPreferences) => {
       const prefs = prefsToSave ?? state.preferences;
-      await updateUserFilterPreferences(profile?.id as string, prefs);
+      if (!profile?.id) throw new Error('Sign in required');
+      await updateUserFilterPreferences(profile.id, prefs);
     },
     [profile?.id, state.preferences],
   );
