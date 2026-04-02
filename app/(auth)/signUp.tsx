@@ -1,4 +1,4 @@
-import { Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, Pressable, View, useWindowDimensions } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, Pressable, View, useWindowDimensions, ScrollView } from 'react-native';
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../state/auth/AuthContext';
@@ -39,25 +39,30 @@ export default function SignUp() {
   const handleSignIn = () => router.back();
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <Logo size="medium" />
-      <View style={styles.formContainer}>
-        <Text style={styles.description}>{SUBTITLE}</Text>
-        <View style={styles.inputContainer}>
-          <Input label="Username" placeholder="Username" value={username} onChangeText={(text) => setUsername(text)} />
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <ScrollView
+        contentContainerStyle={{ flex: 1, justifyContent: 'center' }}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled">
+        <Logo size="medium" />
+        <View style={styles.formContainer}>
+          <Text style={styles.description}>{SUBTITLE}</Text>
+          <View style={styles.inputContainer}>
+            <Input label="Username" placeholder="Username" value={username} onChangeText={(text) => setUsername(text)} />
+          </View>
+          <View style={styles.buttonContainer}>
+            <AppButton
+              text={submitting ? CREATING_ACCOUNT : CREATE_ACCOUNT}
+              onPress={handleSignUp}
+              disabled={submitting}
+              width={buttonWidth}
+            />
+            <Pressable style={styles.signInLink} onPress={handleSignIn}>
+              <Text style={styles.signInLinkText}>{SIGN_IN}</Text>
+            </Pressable>
+          </View>
         </View>
-        <View style={styles.buttonContainer}>
-          <AppButton
-            text={submitting ? CREATING_ACCOUNT : CREATE_ACCOUNT}
-            onPress={handleSignUp}
-            disabled={submitting}
-            width={buttonWidth}
-          />
-          <Pressable style={styles.signInLink} onPress={handleSignIn}>
-            <Text style={styles.signInLinkText}>{SIGN_IN}</Text>
-          </Pressable>
-        </View>
-      </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
@@ -74,9 +79,7 @@ const PADDING = 48;
 // ---- STYLES ----
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
     flex: 1,
-    justifyContent: 'center',
   },
   formContainer: {
     alignItems: 'center',

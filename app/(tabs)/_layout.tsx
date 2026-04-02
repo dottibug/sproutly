@@ -7,6 +7,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 // (tabs)/_layout.tsx: Tabs layout for the app
 export default function TabsLayout() {
   const insets = useSafeAreaInsets();
+  const tabBaseHeight = 56;
+
   return (
     <Tabs
       screenOptions={{
@@ -18,13 +20,15 @@ export default function TabsLayout() {
         },
         tabBarStyle: {
           paddingHorizontal: 12,
-          paddingBottom: insets.bottom,
+          height: tabBaseHeight + insets.bottom,
+          paddingBottom: insets.bottom + 10,
           backgroundColor: colors.white,
         },
         tabBarLabelStyle: {
           fontSize: 11,
           marginTop: 2,
         },
+        tabBarHideOnKeyboard: true,
       }}>
       <Tabs.Screen
         name="home"

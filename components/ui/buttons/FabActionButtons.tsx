@@ -49,9 +49,9 @@ export default function FabActionButtons({
         icon={open ? 'close' : 'plus'}
         open={open}
         onStateChange={({ open }) => setFabOpen(open)}
-        fabStyle={[styles.mainFab, { bottom: bottomInset, marginTop: Platform.OS === 'ios' ? 24 : 42 }]}
+        fabStyle={[styles.mainFab, { bottom: bottomInset, marginTop: Platform.OS === 'ios' ? 24 : 20 }]}
         color={colors.gray200}
-        style={[styles.groupStyle, { bottom: Platform.OS === 'ios' ? 18 : 0 }]}
+        style={[styles.groupStyle, { bottom: Platform.OS === 'ios' ? 18 : 56 - bottomInset }]}
         visible={showFabActions}
       />
     </Portal>
