@@ -60,13 +60,13 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
     case 'LOAD_ERROR':
       return { ...state, loading: false, error: payload };
     case 'SIGN_IN_START':
-      return { ...state, loading: true, error: null };
+      return { ...state, error: null };
     case 'SIGN_IN_SUCCESS':
       return { ...state, session: payload.session, user: payload.user, profile: payload.profile, loading: false, error: null };
     case 'SIGN_IN_ERROR':
       return { ...state, loading: false, error: payload };
     case 'SIGN_UP_START':
-      return { ...state, loading: true, error: null };
+      return { ...state, error: null };
     case 'SIGN_UP_SUCCESS':
       return { ...state, session: payload.session, user: payload.user, profile: payload.profile, loading: false, error: null };
     case 'SIGN_UP_ERROR':

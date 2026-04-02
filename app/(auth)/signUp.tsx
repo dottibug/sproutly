@@ -2,7 +2,7 @@ import { Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, Pressable, Vie
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../state/auth/AuthContext';
-import { validateSignUp } from '../../state/auth/authUtils';
+import { getSignUpAlertContent, validateSignUp } from '../../state/auth/authUtils';
 import Logo from '../../components/app/Logo';
 import Input from '../../components/ui/form/Input';
 import AppButton from '../../components/ui/buttons/AppButton';
@@ -29,8 +29,8 @@ export default function SignUp() {
       setSubmitting(true);
       await signUp(username);
     } catch (error) {
-      const message = error instanceof Error ? error.message : SIGN_UP_FAIL_MESSAGE;
-      Alert.alert(SIGN_UP_FAILED, message);
+      const { title, message } = getSignUpAlertContent(error);
+      Alert.alert(title, message, [{ text: 'OK' }]);
     } finally {
       setSubmitting(false);
     }
@@ -71,8 +71,6 @@ export default function SignUp() {
 const SUBTITLE = 'Choose a username';
 const CREATE_ACCOUNT = 'Create account';
 const CREATING_ACCOUNT = 'Creating...';
-const SIGN_UP_FAILED = 'Sign up failed';
-const SIGN_UP_FAIL_MESSAGE = 'Username may be taken already';
 const SIGN_IN = 'Already have an account? Sign in';
 const PADDING = 48;
 
