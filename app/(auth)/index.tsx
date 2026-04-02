@@ -30,8 +30,9 @@ export default function SignIn() {
     try {
       setSubmitting(true);
       await signIn(username, pin);
-    } catch {
-      Alert.alert(SIGN_IN_FAILED, SIGN_IN_FAIL_MESSAGE);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : SIGN_IN_FAIL_MESSAGE;
+      Alert.alert(SIGN_IN_FAILED, message);
     } finally {
       setSubmitting(false);
     }

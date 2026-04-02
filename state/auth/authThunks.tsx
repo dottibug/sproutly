@@ -75,11 +75,14 @@ export async function runSignIn(dispatch: Dispatch<AuthAction>, username: string
   const email = getAuthEmail(usernameTrim);
   try {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password: UNIVERSAL_PIN });
-    if (error || !data.user) throw new Error('Sign in failed');
+    if (error) throw error;
+    if (!data.user) throw new Error('Sign in failed');
     const profile = await fetchProfile(data.user.id);
+    if (!profile) throw new Error('Profile not found');
     dispatch({ type: 'SIGN_IN_SUCCESS', payload: { session: data.session, user: data.user, profile } });
   } catch (error) {
-    dispatch({ type: 'SIGN_IN_ERROR', payload: error as string });
+    dispatch({ type: 'SIGN_IN_ERROR', payload: String(error) });
+    throw error;
   }
 }
 
@@ -90,10 +93,13 @@ export async function runSignUp(dispatch: Dispatch<AuthAction>, username: string
   const email = getAuthEmail(usernameTrim);
   try {
     const { data, error } = await supabase.auth.signUp({ email, password: UNIVERSAL_PIN, options: { data: { username: usernameTrim } } });
-    if (error || !data.user) throw new Error('Sign up failed');
+    if (error) throw error;
+    if (!data.user) throw new Error('Sign up failed');
     const profile = await fetchProfile(data.user.id);
+    if (!profile) throw new Error('Profile was not created');
     dispatch({ type: 'SIGN_UP_SUCCESS', payload: { session: data.session, user: data.user, profile } });
   } catch (error) {
-    dispatch({ type: 'SIGN_UP_ERROR', payload: error as string });
+    dispatch({ type: 'SIGN_UP_ERROR', payload: String(error) });
+    throw error;
   }
 }

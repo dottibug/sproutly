@@ -28,8 +28,9 @@ export default function SignUp() {
     try {
       setSubmitting(true);
       await signUp(username);
-    } catch {
-      Alert.alert(SIGN_UP_FAILED, SIGN_UP_FAIL_MESSAGE);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : SIGN_UP_FAIL_MESSAGE;
+      Alert.alert(SIGN_UP_FAILED, message);
     } finally {
       setSubmitting(false);
     }
