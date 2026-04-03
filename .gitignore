@@ -44,3 +44,6 @@ yarn-error.*
 
 # scripts
 scripts/uploadSeeds.js
+
+.vscode/*
+.idea/*
