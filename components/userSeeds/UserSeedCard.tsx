@@ -3,6 +3,7 @@ import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
 import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
 import SeedCard from '../seeds/seedCard/SeedCard';
 import SeedCardOverlay from '../seeds/seedCard/SeedCardOverlay';
+import { alertConfirmRemoveSeed } from './alertConfirmRemoveSeed';
 
 // UserSeedCard.tsx: Renders a single seed in the user's collection on a card
 type UserSeedCardProps = {
@@ -37,11 +38,13 @@ export default function UserSeedCard({ seed, showDeleteConfirmation, onSetDelete
   // Hide the delete confirmation
   const handleCancel = () => onSetDeleteIsOpenForId(null);
 
-  // Delete the seed from the database
+  // Overlay "Delete" → system alert → then remove from DB and close overlay
   const handleDelete = () => {
-    if (seed.catalogSeedId) deleteByCatalogId(seed);
-    else deleteByCustomId(seed);
-    onSetDeleteIsOpenForId(null);
+    alertConfirmRemoveSeed(seed, async () => {
+      if (seed.catalogSeedId) await deleteByCatalogId(seed);
+      else await deleteByCustomId(seed);
+      onSetDeleteIsOpenForId(null);
+    });
   };
 
   // Toggle the favorite status of the seed

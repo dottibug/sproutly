@@ -2,11 +2,12 @@ import { ScrollView, View, Text, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useUserSeed } from '../../state/userSeeds/UserSeedsContext';
 import { UserSeed, UserSeedTab, Exposure } from '../../state/barrels/typesBarrel';
-import { AppButton, Accordion, Heading, ScreenOptions } from '../uiComponentBarrel';
+import { AppButton, Accordion, Heading } from '../uiComponentBarrel';
 import SeedImage from '../seeds/SeedImage';
 import SeedHeader from '../seeds/SeedHeader';
 import SeedQuickFacts from '../seeds/SeedQuickFacts';
 import { text } from '../../styles/theme';
+import { alertConfirmRemoveSeed } from './alertConfirmRemoveSeed';
 
 // UserSeedDetails.tsx: Displays the details of a single seed in the user's collection
 
@@ -27,13 +28,15 @@ export default function UserSeedDetails({ seed, activeTab }: UserSeedDetailsProp
   const showCompanionPlanting = seed.companionPlanting !== null && seed.companionPlanting !== '';
 
   const handleDeleteFromCollection = () => {
-    if (seed.catalogSeedId) deleteByCatalogId(seed);
-    else deleteByCustomId(seed);
-    router.replace({
-      pathname: '/(tabs)/home',
-      params: {
-        tab: 'mySeeds',
-      },
+    alertConfirmRemoveSeed(seed, async () => {
+      if (seed.catalogSeedId) await deleteByCatalogId(seed);
+      else await deleteByCustomId(seed);
+      router.replace({
+        pathname: '/(tabs)/home',
+        params: {
+          tab: 'mySeeds',
+        },
+      });
     });
   };
 
