@@ -1,4 +1,5 @@
-import { StyleSheet, View, Alert, ScrollView } from 'react-native';
+import { StyleSheet, View, Alert, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useMemo, useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useUserSeed, useTask } from '../../../state/barrels/contextBarrel';
@@ -18,6 +19,7 @@ type TaskSheetParams = {
 };
 
 export default function TaskSheet() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const params = useLocalSearchParams<TaskSheetParams>();
   const { userSeedId, taskId, variety, plant } = params;
@@ -122,9 +124,18 @@ export default function TaskSheet() {
   };
 
   return (
-    <ScrollView ref={scrollRef} style={styles.screen} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
-      <ScreenOptions backButtonMode="generic" title="Tasks" />
-      <View style={styles.contentContainer}>
+    <KeyboardAvoidingView
+      style={styles.kav}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={insets.top + 56}>
+      <ScrollView
+        ref={scrollRef}
+        style={styles.screen}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        automaticallyAdjustKeyboardInsets>
+        <ScreenOptions backButtonMode="generic" title="Tasks" />
+        <View style={styles.contentContainer}>
         <Heading size="small" customStyles={styles.sheetTitle}>
           {sheetTitle}
         </Heading>
@@ -169,7 +180,8 @@ export default function TaskSheet() {
           </View>
         </View>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -179,8 +191,15 @@ const CUSTOM_PLACEHOLER_SELECT = `Tap 'custom' to enable`;
 
 // ---- STYLES ----
 const styles = StyleSheet.create({
+  kav: {
+    flex: 1,
+  },
   screen: {
     flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 24,
   },
   sheetTitle: {
     fontSize: 17,

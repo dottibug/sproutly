@@ -1,4 +1,5 @@
-import { ScrollView, View, StyleSheet, Alert } from 'react-native';
+import { ScrollView, View, StyleSheet, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useState, useCallback, useRef } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useAuth } from '../../../state/auth/AuthContext';
@@ -17,6 +18,7 @@ import { inputStyles, appStyles } from '../../../styles/theme';
 // (tabs)/home/customSeedSheet.tsx: Screen for creating a custom seed.
 
 export default function CustomSeedSheet() {
+  const insets = useSafeAreaInsets();
   const { profile } = useAuth();
   const userId = profile?.id;
   const router = useRouter();
@@ -117,14 +119,19 @@ export default function CustomSeedSheet() {
   };
 
   return (
-    <ScrollView
-      ref={scrollRef}
-      style={styles.screen}
-      keyboardShouldPersistTaps="handled"
-      automaticallyAdjustKeyboardInsets
-      keyboardDismissMode="none">
-      <ScreenOptions backButtonMode="generic" title="Create Custom Seed" backTitle="Home" />
-      <View style={styles.contentContainer}>
+    <KeyboardAvoidingView
+      style={styles.kav}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={insets.top + 56}>
+      <ScrollView
+        ref={scrollRef}
+        style={styles.screen}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        automaticallyAdjustKeyboardInsets
+        keyboardDismissMode="none">
+        <ScreenOptions backButtonMode="generic" title="Create Custom Seed" backTitle="Home" />
+        <View style={styles.contentContainer}>
         <View style={styles.inputs}>
           <ImagePicker profileId={userId || null} preview={preview} setPreview={setPreview} />
           <PlantVarietyInput errors={errors || {}} onDismissPlantError={dismissPlantError} />
@@ -146,7 +153,8 @@ export default function CustomSeedSheet() {
           <InfoModal visible={showInfoModal} onRequestClose={handleCloseInfoModal} infoModalType={infoModalType} title={infoModalTitle} />
         </View>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -157,8 +165,15 @@ const EXPOSURE_INFO_TITLE = 'Sun Exposure';
 
 // ---- STYLES ----
 const styles = StyleSheet.create({
+  kav: {
+    flex: 1,
+  },
   screen: {
     flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 24,
   },
   sheetTitle: {
     fontSize: 17,

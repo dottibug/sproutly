@@ -1,4 +1,5 @@
-import { View, Alert, ScrollView, StyleSheet } from 'react-native';
+import { View, Alert, ScrollView, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useState, useMemo, useEffect } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useNote, useUserSeed } from '../../../state/barrels/contextBarrel';
@@ -17,6 +18,7 @@ type NoteSheetParams = {
 };
 
 export default function NoteSheet() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const params = useLocalSearchParams<NoteSheetParams>();
   const { userSeedId, noteId, variety, plant } = params;
@@ -86,9 +88,17 @@ export default function NoteSheet() {
   };
 
   return (
-    <ScrollView style={styles.screen} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
-      <ScreenOptions backButtonMode="generic" title="Notes" />
-      <View style={styles.contentContainer}>
+    <KeyboardAvoidingView
+      style={styles.kav}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={insets.top + 56}>
+      <ScrollView
+        style={styles.screen}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        automaticallyAdjustKeyboardInsets>
+        <ScreenOptions backButtonMode="generic" title="Notes" />
+        <View style={styles.contentContainer}>
         <Heading size="small" customStyles={styles.sheetTitle}>
           {sheetTitle}
         </Heading>
@@ -121,14 +131,22 @@ export default function NoteSheet() {
           <AppButton text={isUpdate ? 'Save Changes' : 'Save Note'} size="small" rounded onPress={onSaveNote} />
         </View>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 // ---- STYLES ----
 const styles = StyleSheet.create({
+  kav: {
+    flex: 1,
+  },
   screen: {
     flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 24,
   },
   contentContainer: {
     gap: 18,
