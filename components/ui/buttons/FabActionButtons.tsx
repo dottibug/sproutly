@@ -31,7 +31,7 @@ export default function FabActionButtons({
             onPress: onAddCustomSeed,
             style: styles.fab,
             color: colors.gray200,
-            wrapperStyle: styles.wrapperStyle,
+            wrapperStyle: [styles.wrapperStyle, { marginBottom: 8 }],
             containerStyle: styles.containerStyle,
             labelStyle: styles.labelStyle,
           },
@@ -41,7 +41,7 @@ export default function FabActionButtons({
             onPress: onBrowse,
             style: styles.fab,
             color: colors.gray200,
-            wrapperStyle: styles.wrapperStyle,
+            wrapperStyle: [styles.wrapperStyle, { marginBottom: bottomInset }],
             containerStyle: styles.containerStyle,
             labelStyle: styles.labelStyle,
           },
@@ -49,7 +49,7 @@ export default function FabActionButtons({
         icon={open ? 'close' : 'plus'}
         open={open}
         onStateChange={({ open }) => setFabOpen(open)}
-        fabStyle={[styles.mainFab, { bottom: bottomInset, marginTop: Platform.OS === 'ios' ? 24 : 20 }]}
+        fabStyle={[styles.mainFab, { bottom: bottomInset, marginTop: 0 }]}
         color={colors.gray200}
         style={[styles.groupStyle, { bottom: Platform.OS === 'ios' ? 18 : 56 - bottomInset }]}
         visible={showFabActions}
@@ -65,7 +65,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gray600,
     borderRadius: 100,
     color: colors.gray200,
-    marginTop: 28,
     padding: 4,
   },
   fab: {
@@ -73,9 +72,12 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     padding: 4,
   },
-  wrapperStyle: {},
+  wrapperStyle: {
+    alignItems: 'center',
+  },
   containerStyle: {
     marginRight: 8,
+    alignItems: 'center',
   },
   labelStyle: {
     fontSize: 16,

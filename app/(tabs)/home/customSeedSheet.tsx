@@ -1,5 +1,5 @@
 import { ScrollView, View, StyleSheet, Alert } from 'react-native';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useAuth } from '../../../state/auth/AuthContext';
 import { useCustomSeed, useUserSeed } from '../../../state/barrels/contextBarrel';
@@ -27,8 +27,15 @@ export default function CustomSeedSheet() {
   const [showInfoModal, setShowInfoModal] = useState<boolean>(false);
   const [infoModalType, setInfoModalType] = useState<InfoModalType | null>(null);
   const [errors, setErrors] = useState<CustomSeedErrors | null>(null);
+  const scrollRef = useRef<ScrollView>(null);
 
   const infoModalTitle = infoModalType === 'difficulty' ? DIFFICULTY_INFO_TITLE : EXPOSURE_INFO_TITLE;
+
+  const scrollFormToTop = useCallback(() => {
+    requestAnimationFrame(() => {
+      scrollRef.current?.scrollTo({ y: 0, animated: true });
+    });
+  }, []);
 
   // Dismiss plant error when the plant type is changed
   const dismissPlantError = useCallback(() => {
@@ -82,6 +89,7 @@ export default function CustomSeedSheet() {
 
     if (!isValid) {
       setErrors(validationErrors);
+      scrollFormToTop();
       return;
     }
     if (customSeedDraft) {
@@ -109,7 +117,12 @@ export default function CustomSeedSheet() {
   };
 
   return (
-    <ScrollView style={styles.screen} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets keyboardDismissMode="none">
+    <ScrollView
+      ref={scrollRef}
+      style={styles.screen}
+      keyboardShouldPersistTaps="handled"
+      automaticallyAdjustKeyboardInsets
+      keyboardDismissMode="none">
       <ScreenOptions backButtonMode="generic" title="Create Custom Seed" backTitle="Home" />
       <View style={styles.contentContainer}>
         <View style={styles.inputs}>

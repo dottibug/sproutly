@@ -1,5 +1,5 @@
 import { StyleSheet, View, Alert, ScrollView } from 'react-native';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useUserSeed, useTask } from '../../../state/barrels/contextBarrel';
 import { TaskType, TaskErrors, UserSeedTask } from '../../../state/barrels/typesBarrel';
@@ -34,6 +34,13 @@ export default function TaskSheet() {
   const [customTaskEnabled, setCustomTaskEnabled] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [errors, setErrors] = useState<TaskErrors | null>(null);
+  const scrollRef = useRef<ScrollView>(null);
+
+  const scrollFormToTop = useCallback(() => {
+    requestAnimationFrame(() => {
+      scrollRef.current?.scrollTo({ y: 0, animated: true });
+    });
+  }, []);
 
   const dateMinimum = startOfToday();
 
@@ -84,6 +91,7 @@ export default function TaskSheet() {
     if (!isUpdate) {
       if (!isValid) {
         setErrors(errors);
+        scrollFormToTop();
         return;
       }
       if (taskDraft)
@@ -99,6 +107,7 @@ export default function TaskSheet() {
       if (!taskToUpdate) return;
       if (!isValid) {
         setErrors(errors);
+        scrollFormToTop();
         return;
       }
       if (taskDraft)
@@ -113,7 +122,7 @@ export default function TaskSheet() {
   };
 
   return (
-    <ScrollView style={styles.screen} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
+    <ScrollView ref={scrollRef} style={styles.screen} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
       <ScreenOptions backButtonMode="generic" title="Tasks" />
       <View style={styles.contentContainer}>
         <Heading size="small" customStyles={styles.sheetTitle}>
