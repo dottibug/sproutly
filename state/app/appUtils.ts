@@ -18,7 +18,10 @@ export function searchSeeds(seeds: UserSeed[] | BrowseSeed[], searchQuery: strin
   const terms = query.split(' ').filter(Boolean);
 
   return seeds.filter((seed) => {
-    const searchableFields = [seed.variety, seed.plant, seed.category, seed.sku, seed.latin].filter(Boolean).join(' ').toLowerCase();
+    const searchableFields = [seed.variety, seed.plant, seed.category, seed.sku, seed.latin, seed.exposure, seed.difficulty]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase();
     return terms.every((term) => searchableFields.includes(term));
   });
 }

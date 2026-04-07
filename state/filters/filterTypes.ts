@@ -23,7 +23,7 @@ export const DEFAULT_OPEN: SearchFilter[] = ['category', 'starting'];
 export const FILTER_NAME_MAP: Record<SearchFilter, string> = {
   category: 'Category',
   starting: 'Starting',
-  exposure: 'Exposure',
+  exposure: 'Sun Requirements',
   season: 'Season',
   month: 'Month',
   readyToHarvest: 'Ready to Harvest',

@@ -161,6 +161,7 @@ const styles = StyleSheet.create({
     height: 48,
     alignItems: 'center',
     justifyContent: 'center',
+    right: -10,
   },
   sheetScroll: {
     // Intentionally not flex:1 to allow for variable-height sheets.
