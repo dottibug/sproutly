@@ -3,6 +3,7 @@ import { useFilters } from '../../state/filters/FiltersContext';
 import { FILTER_NAME_MAP, SEARCH_FILTERS } from '../../state/filters/filterTypes';
 import FilterCategory from './FilterCategory';
 import SheetModal from '../ui/SheetModal';
+import { AppButton } from '../uiComponentBarrel';
 
 // Filters.tsx: Renders the filters sheet modal on the 'My Seeds' or 'Browse' screens.
 
@@ -32,10 +33,15 @@ export default function Filters({ open, setOpen }: FiltersProps) {
       open={open}
       onPressTrigger={handlePressTrigger}
       onRequestClose={handleCloseSheet}>
-      <View style={styles.filters}>
-        {preferences.order.map((filter) => (
-          <FilterCategory key={filter} title={FILTER_NAME_MAP[filter]} options={SEARCH_FILTERS[filter]} filter={filter} />
-        ))}
+      <View style={styles.content}>
+        <View style={styles.filters}>
+          {preferences.order.map((filter) => (
+            <FilterCategory key={filter} title={FILTER_NAME_MAP[filter]} options={SEARCH_FILTERS[filter]} filter={filter} />
+          ))}
+        </View>
+        <View style={styles.applyButtonContainer}>
+          <AppButton text="Apply Filters" onPress={handleCloseSheet} size="xsmall" rounded />
+        </View>
       </View>
     </SheetModal>
   );
@@ -44,10 +50,16 @@ export default function Filters({ open, setOpen }: FiltersProps) {
 const FILTERS_TITLE = 'Filter Seeds';
 
 const styles = StyleSheet.create({
+  content: {
+    gap: 16,
+  },
   filters: {
     flexDirection: 'column',
     gap: 6,
-    marginBottom: 16,
     marginTop: 8,
+  },
+  applyButtonContainer: {
+    marginBottom: 16,
+    paddingHorizontal: 16,
   },
 });
