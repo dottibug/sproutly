@@ -1,11 +1,11 @@
 import { View, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { usePathname, useRouter, useFocusEffect } from 'expo-router';
 import { useUserSeed, useFilters } from '../../state/barrels/contextBarrel';
 import { ListTab, UserSeed } from '../../state/barrels/typesBarrel';
-import { applyFilters, getNumberOfSelectedFilters, searchSeeds } from '../../state/barrels/utilsBarrel';
-import { Loading, ScreenMessage, SearchBar, FabActionButtons } from '../uiComponentBarrel';
+import { applyFilters, getNumberOfSelectedFilters, searchSeeds, getPendingTodayCount } from '../../state/barrels/utilsBarrel';
+import { Loading, ScreenMessage, SearchBar, FabActionButtons, IconButton } from '../uiComponentBarrel';
 import Filters from '../filters/Filters';
 import FilterChips from '../filters/FilterChips';
 import UserSeedList from './UserSeedList';
@@ -27,6 +27,8 @@ export default function UserSeeds({ activeTab, onGoToBrowse }: UserSeedsProps) {
   // State
   const [openFilterMenu, setOpenFilterMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showFavSeeds, setShowFavSeeds] = useState(false);
+  const [showSeedsWithTasks, setShowSeedsWithTasks] = useState(false);
   const [fabOpen, setFabOpen] = useState(false);
   const [deleteIsOpenForId, setDeleteIsOpenForId] = useState<string | null>(null);
 
@@ -37,7 +39,15 @@ export default function UserSeeds({ activeTab, onGoToBrowse }: UserSeedsProps) {
 
   // Filter and search seeds
   const filteredSeeds = applyFilters(seeds, selected);
-  const displayedSeeds = searchQuery.trim() === '' ? filteredSeeds : searchSeeds(filteredSeeds, searchQuery);
+  const searchedSeeds = searchQuery.trim() === '' ? filteredSeeds : searchSeeds(filteredSeeds, searchQuery);
+
+  const displayedSeeds = useMemo(() => {
+    let seedList = searchedSeeds as UserSeed[];
+    if (showFavSeeds) seedList = seedList.filter((seed) => seed.isFavorite);
+    if (showSeedsWithTasks) seedList = seedList.filter((seed) => getPendingTodayCount(seed.tasks ?? []) > 0);
+    return seedList;
+  }, [searchedSeeds, showFavSeeds, showSeedsWithTasks]);
+
   const emptySeedsList: boolean = displayedSeeds.length === 0;
   const numberOfSelectedFilters = getNumberOfSelectedFilters(selected);
   const showFilterChips = !openFilterMenu && numberOfSelectedFilters > 0;
@@ -54,6 +64,8 @@ export default function UserSeeds({ activeTab, onGoToBrowse }: UserSeedsProps) {
   }, [activeTab]);
 
   const handleSearchQuery = (query: string) => setSearchQuery(query);
+  const handleShowFavSeeds = () => setShowFavSeeds((prev) => !prev);
+  const handleShowSeedsWithTasks = () => setShowSeedsWithTasks((prev) => !prev);
 
   const onAddCustomSeed = () => {
     router.push({
@@ -68,19 +80,41 @@ export default function UserSeeds({ activeTab, onGoToBrowse }: UserSeedsProps) {
   if (loading) return <Loading />;
   if (error) return <ScreenMessage message={error} />;
 
+  const favIconColor = showFavSeeds ? colors.greenMedium : colors.gray300;
+  const tasksIconColor = showSeedsWithTasks ? colors.greenMedium : colors.gray300;
+
+  const userCollectionFilters = (
+    <>
+      {activeTab === 'My Seeds' && (
+        <>
+          <IconButton
+            icon="heart"
+            size={23}
+            onPress={handleShowFavSeeds}
+            color={colors.white}
+            customStyles={[styles.userCollectionFilter, { backgroundColor: favIconColor }]}
+          />
+          <IconButton
+            icon="calender"
+            size={21}
+            onPress={handleShowSeedsWithTasks}
+            color={colors.white}
+            customStyles={[styles.userCollectionFilter, { backgroundColor: tasksIconColor, paddingBottom: 2 }]}
+          />
+        </>
+      )}
+    </>
+  );
+
   return (
     <View style={[styles.userSeedsContainer, { display: activeTab === 'My Seeds' ? 'flex' : 'none' }]}>
       <SearchBar searchQuery={searchQuery} handleSearchQuery={handleSearchQuery} />
-      <Filters open={openFilterMenu} setOpen={setOpenFilterMenu} />
+      <Filters open={openFilterMenu} setOpen={setOpenFilterMenu} userCollectionFilters={userCollectionFilters} />
       {showFilterChips && <FilterChips />}
       <View style={styles.userSeedsContent}>
         <View style={appStyles.resultsList}>
           {emptySeedsList && <ScreenMessage message={userCollectionSize > 0 ? NO_RESULTS_MESSAGE : EMPTY_SEEDS_LIST} />}
-          <UserSeedList
-            seeds={displayedSeeds as UserSeed[]}
-            deleteIsOpenForId={deleteIsOpenForId}
-            setDeleteIsOpenForId={setDeleteIsOpenForId}
-          />
+          <UserSeedList seeds={displayedSeeds} deleteIsOpenForId={deleteIsOpenForId} setDeleteIsOpenForId={setDeleteIsOpenForId} />
         </View>
       </View>
       <FabActionButtons
@@ -107,6 +141,14 @@ const styles = StyleSheet.create({
   },
   userSeedsContent: {
     flex: 1,
+  },
+  userCollectionFilter: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 8,
+    backgroundColor: colors.gray300,
+    width: 32,
+    height: 32,
   },
   deleteHint: {
     fontSize: 14,

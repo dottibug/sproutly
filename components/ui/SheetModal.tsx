@@ -17,6 +17,7 @@ type SheetModalProps = {
   readonly showTrigger?: boolean;
   readonly onPressTrigger: () => void;
   readonly onRequestClose: () => void;
+  readonly userCollectionFilters?: React.ReactNode;
 };
 
 export default function SheetModal({
@@ -27,6 +28,7 @@ export default function SheetModal({
   showTrigger,
   onPressTrigger,
   onRequestClose,
+  userCollectionFilters,
 }: SheetModalProps) {
   const insets = useSafeAreaInsets();
   const { height: windowHeight } = useWindowDimensions();
@@ -53,15 +55,22 @@ export default function SheetModal({
               </Heading>
             </View>
           </Pressable>
-          {hasSelectedFilters && (
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Clear all filters"
-              onPress={clearAllSelected}
-              style={({ pressed }) => [styles.clearTrigger, pressed && styles.clearTriggerPressed]}>
-              <Text style={styles.clearTriggerText}>Clear Filters</Text>
-            </Pressable>
-          )}
+          {userCollectionFilters && <View style={styles.userCollectionFilters}>{userCollectionFilters}</View>}
+          <View>
+            {hasSelectedFilters ? (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Clear all filters"
+                onPress={clearAllSelected}
+                style={({ pressed }) => [styles.clearTrigger, pressed && styles.clearTriggerPressed]}>
+                <Text style={styles.clearTriggerText}>Clear Filters</Text>
+              </Pressable>
+            ) : (
+              <View style={styles.clearPlaceholder}>
+                <Text style={styles.clearPlaceholderText}>Clear Filters</Text>
+              </View>
+            )}
+          </View>
         </View>
       )}
       <Modal visible={open} transparent animationType="slide" presentationStyle="overFullScreen" onRequestClose={onRequestClose}>
@@ -100,14 +109,15 @@ const styles = StyleSheet.create({
   triggerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     marginHorizontal: 16,
     paddingVertical: 18,
-    gap: 12,
+    justifyContent: 'space-between',
   },
   trigger: {
     backgroundColor: colors.white,
     flexShrink: 0,
+    height: 32,
+    justifyContent: 'center',
   },
   triggerPressed: {
     opacity: 0.85,
@@ -129,6 +139,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
     alignItems: 'center',
+  },
+  userCollectionFilters: {
+    flexDirection: 'row',
+    gap: 16,
+  },
+  clearPlaceholder: {
+    paddingVertical: 4,
+    paddingHorizontal: 4,
+  },
+  clearPlaceholderText: {
+    fontSize: 14,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    opacity: 0,
   },
   modalRoot: {
     flex: 1,

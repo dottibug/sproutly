@@ -10,9 +10,10 @@ import { AppButton } from '../uiComponentBarrel';
 type FiltersProps = {
   readonly open: boolean;
   readonly setOpen: (open: boolean) => void;
+  readonly userCollectionFilters?: React.ReactNode;
 };
 
-export default function Filters({ open, setOpen }: FiltersProps) {
+export default function Filters({ open, setOpen, userCollectionFilters }: FiltersProps) {
   const { applyOpenFilters, preferences } = useFilters();
 
   const handlePressTrigger = () => {
@@ -32,7 +33,8 @@ export default function Filters({ open, setOpen }: FiltersProps) {
       title={FILTERS_TITLE}
       open={open}
       onPressTrigger={handlePressTrigger}
-      onRequestClose={handleCloseSheet}>
+      onRequestClose={handleCloseSheet}
+      userCollectionFilters={userCollectionFilters}>
       <View style={styles.content}>
         <View style={styles.filters}>
           {preferences.order.map((filter) => (
