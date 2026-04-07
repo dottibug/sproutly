@@ -80,8 +80,8 @@ export default function UserSeeds({ activeTab, onGoToBrowse }: UserSeedsProps) {
   if (loading) return <Loading />;
   if (error) return <ScreenMessage message={error} />;
 
-  const favIconColor = showFavSeeds ? colors.greenMedium : colors.gray300;
-  const tasksIconColor = showSeedsWithTasks ? colors.greenMedium : colors.gray300;
+  const favIconColor = showFavSeeds ? colors.greenLight : colors.gray300;
+  const tasksIconColor = showSeedsWithTasks ? colors.greenLight : colors.gray300;
 
   const userCollectionFilters = (
     <>
@@ -95,7 +95,7 @@ export default function UserSeeds({ activeTab, onGoToBrowse }: UserSeedsProps) {
             customStyles={[styles.userCollectionFilter, { backgroundColor: favIconColor }]}
           />
           <IconButton
-            icon="calender"
+            icon="calendar"
             size={21}
             onPress={handleShowSeedsWithTasks}
             color={colors.white}

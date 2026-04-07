@@ -19,6 +19,7 @@ type SeedCardInfoProps = {
   readonly onFavoriteSeed: () => void;
   readonly isFavorite?: boolean;
   readonly showDeleteConfirmation?: boolean;
+  readonly hasPendingTasks?: boolean;
 };
 
 export default function SeedCardInfo({
@@ -33,6 +34,7 @@ export default function SeedCardInfo({
   onFavoriteSeed,
   isFavorite = false,
   showDeleteConfirmation,
+  hasPendingTasks,
 }: SeedCardInfoProps) {
   const heading = `${variety} ${plant} ${beanType || ''}`;
   const backgroundColor = categoryColor[category];
@@ -63,8 +65,15 @@ export default function SeedCardInfo({
               </View>
             )}
             {cardType === 'user' && (
-              <View style={styles.cornerButton}>
-                <IconButton icon="heart" size={28} color={isFavorite ? colors.pink : colors.gray300} onPress={onFavoriteSeed} />
+              <View style={styles.cornerButtons}>
+                {hasPendingTasks && (
+                  <View style={[styles.cornerButton, { paddingBottom: 1 }]}>
+                    <IconButton icon="calendar" size={24} color={colors.greenLight} onPress={onViewSeed} />
+                  </View>
+                )}
+                <View style={styles.cornerButton}>
+                  <IconButton icon="heart" size={28} color={isFavorite ? colors.pink : colors.gray300} onPress={onFavoriteSeed} />
+                </View>
               </View>
             )}
           </View>
@@ -84,6 +93,10 @@ const categoryColor = {
 
 // ---- STYLES ----
 const styles = StyleSheet.create({
+  cornerButtons: {
+    flexDirection: 'row',
+    gap: 12,
+  },
   cornerButton: {
     alignItems: 'center',
     borderRadius: 16,

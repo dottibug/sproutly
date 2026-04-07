@@ -7,7 +7,7 @@ import { colors } from '../../../styles/theme';
 // IconButton.tsx: Reusable icon button component.
 
 type IconButtonProps = {
-  readonly icon: 'info' | 'close' | 'closeCircle' | 'plus' | 'pencil' | 'xmark' | 'chevronRight' | 'heart' | 'heartOutline' | 'calender';
+  readonly icon: 'info' | 'close' | 'closeCircle' | 'plus' | 'pencil' | 'xmark' | 'chevronRight' | 'heart' | 'heartOutline' | 'calendar';
   readonly size?: number;
   readonly color?: string;
   readonly onPress: () => void;
@@ -30,7 +30,7 @@ export default function IconButton({ icon, size = 24, color = colors.primary, on
       {icon === 'chevronRight' && <FontAwesome6 name="chevron-right" size={size} color={color} />}
       {icon === 'heart' && <MaterialCommunityIcons name="cards-heart" size={size} color={color} />}
       {icon === 'heartOutline' && <MaterialCommunityIcons name="cards-heart-outline" size={size} color={color} />}
-      {icon === 'calender' && <FontAwesome5 name="calendar" size={size} color={color} />}
+      {icon === 'calendar' && <FontAwesome5 name="calendar" size={size} color={color} />}
     </Pressable>
   );
 }

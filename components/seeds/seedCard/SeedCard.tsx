@@ -20,6 +20,7 @@ type SeedCardProps = {
   readonly onDelete?: () => void; // user cards only
   readonly showDeleteConfirmation?: boolean; // user cards only
   readonly onFavoriteSeed?: () => void; // user cards only
+  readonly hasPendingTasks?: boolean; // user cards only
 };
 
 export default function SeedCard({
@@ -34,6 +35,7 @@ export default function SeedCard({
   onDelete,
   showDeleteConfirmation,
   onFavoriteSeed,
+  hasPendingTasks,
 }: SeedCardProps) {
   const seedLabel = `${seed.variety} ${seed.plant}`.trim();
   const confirmingDelete = !!showDeleteConfirmation;
@@ -71,6 +73,7 @@ export default function SeedCard({
               onFavoriteSeed={onFavoriteSeed ?? (() => {})}
               isFavorite={favoriteActive}
               showDeleteConfirmation={showDeleteConfirmation}
+              hasPendingTasks={cardType === 'user' ? hasPendingTasks : false}
             />
           </View>
         </View>

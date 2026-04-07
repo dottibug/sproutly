@@ -4,6 +4,7 @@ import { UserSeed } from '../../state/userSeeds/seeds/seedTypes';
 import SeedCard from '../seeds/seedCard/SeedCard';
 import SeedCardOverlay from '../seeds/seedCard/SeedCardOverlay';
 import { alertConfirmRemoveSeed } from './alertConfirmRemoveSeed';
+import { getPendingTodayCount } from '../../state/userSeeds/tasks/taskUtils';
 
 // UserSeedCard.tsx: Renders a single seed in the user's collection on a card
 type UserSeedCardProps = {
@@ -50,6 +51,8 @@ export default function UserSeedCard({ seed, showDeleteConfirmation, onSetDelete
   // Toggle the favorite status of the seed
   const handleFavorite = () => void setSeedFavorite(seed, !seed.isFavorite);
 
+  const hasPendingTasks = getPendingTodayCount(seed.tasks ?? []) > 0;
+
   return (
     <>
       <SeedCard
@@ -62,6 +65,7 @@ export default function UserSeedCard({ seed, showDeleteConfirmation, onSetDelete
         onDelete={handleDelete}
         showDeleteConfirmation={showDeleteConfirmation}
         onFavoriteSeed={handleFavorite}
+        hasPendingTasks={hasPendingTasks}
       />
       {isSaving && !showDeleteConfirmation && <SeedCardOverlay />}
     </>
